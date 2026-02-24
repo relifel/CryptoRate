@@ -116,7 +116,7 @@ cd CryptoRate
 
 ```bash
 mysql -u root -p
-# 输入密码: 148017805
+# 输入密码: userpassword
 ```
 
 #### 2.2 执行初始化脚本
@@ -151,8 +151,8 @@ CREATE TABLE `user` (
 
 -- 插入测试数据
 INSERT INTO `user` (`username`, `password`, `email`, `created_at`) VALUES
-('admin', '123456', 'admin@cryptorate.com', NOW()),
-('test', '123456', 'test@cryptorate.com', NOW());
+('admin', 'xxxxxx', 'admin@cryptorate.com', NOW()),
+('test', 'xxxxxx', 'test@cryptorate.com', NOW());
 ```
 
 #### 2.3 验证数据
@@ -175,11 +175,11 @@ SELECT * FROM user;
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cryptorate?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 148017805  # 你的 MySQL 密码
+    username: yourusername
+    password: yourpassword  # 你的 MySQL 密码
 
 coinlayer:
-  access-key: 3b4fb0d39af519933feb7c0fe5bc2472  # 你的 Coinlayer API Key
+  access-key: yourAPI Key  # 你的 Coinlayer API Key
   base-url: http://api.coinlayer.com
 ```
 
