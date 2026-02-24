@@ -1,0 +1,575 @@
+2026-02-22 19:07:25.562 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 21760 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:07:25.575 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:07:25.576 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:07:27.561 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:07:27.582 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:07:27.582 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:07:27.681 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:07:27.681 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2008 ms
+2026-02-22 19:07:28.968 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-22 19:07:28.979 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 4.295 seconds (process running for 5.167)
+2026-02-22 19:07:29.166 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-22 19:07:29.166 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-22 19:07:29.168 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-02-22 19:07:58.995 [scheduling-1] INFO  com.cryptorate.scheduler.RateScheduler - [å®šæ—¶ä»»åŠ¡] 2026-02-22 19:07:58 å¼€å§‹è‡ªåŠ¨åŒæ­¥æ±‡çŽ‡æ•°æ®...
+2026-02-22 19:07:58.997 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - å¼€å§‹åŒæ­¥æ±‡çŽ‡æ•°æ®åˆ°æ•°æ®åº“...
+2026-02-22 19:07:58.997 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - å¼€å§‹èŽ·å– Coinlayer å®žæ—¶æ±‡çŽ‡æ•°æ®...
+2026-02-22 19:07:58.997 [scheduling-1] DEBUG com.cryptorate.service.CryptoMarketService - è¯·æ±‚ URL: http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:07:59.024 [scheduling-1] INFO  okhttp3.OkHttpClient - --> GET http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:07:59.026 [scheduling-1] INFO  okhttp3.OkHttpClient - --> END GET
+2026-02-22 19:07:59.630 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:07:59.632 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:07:59.632 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:07:59.632 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 442 Âµs: OkHttp ConnectionPool
+2026-02-22 19:07:59.641 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 canceled              : OkHttp ConnectionPool
+2026-02-22 19:07:59.901 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:07:59.901 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:07:59.901 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:07:59.901 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 259 Âµs: OkHttp ConnectionPool
+2026-02-22 19:08:00.176 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- 429 Too Many Requests http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472 (1151ms)
+2026-02-22 19:08:00.177 [scheduling-1] INFO  okhttp3.OkHttpClient - date: Sun, 22 Feb 2026 11:08:01 GMT
+2026-02-22 19:08:00.177 [scheduling-1] INFO  okhttp3.OkHttpClient - content-type: application/json; Charset=UTF-8
+2026-02-22 19:08:00.177 [scheduling-1] INFO  okhttp3.OkHttpClient - transfer-encoding: chunked
+2026-02-22 19:08:00.177 [scheduling-1] INFO  okhttp3.OkHttpClient - x-apilayer-transaction-id: 8c3cdda8-d8df-4a92-a097-4db7a75e7fdb
+2026-02-22 19:08:00.177 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS
+2026-02-22 19:08:00.178 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-origin: *
+2026-02-22 19:08:00.179 [scheduling-1] INFO  okhttp3.OkHttpClient - 
+2026-02-22 19:08:00.179 [scheduling-1] INFO  okhttp3.OkHttpClient - {"success":false,"error":{"code":106,"type":"rate_limit_reached","info":"You have exceeded the maximum rate limitation allowed on your subscription plan. Please refer to the \"Rate Limits\" section of the API Documentation for details. "}}
+2026-02-22 19:08:00.179 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- END HTTP (239-byte body)
+2026-02-22 19:08:00.179 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:08:00.179 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:08:00.179 [scheduling-1] WARN  com.cryptorate.service.CryptoMarketService - Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+2026-02-22 19:08:00.179 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:08:00.179 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 232 Âµs: OkHttp ConnectionPool
+2026-02-22 19:08:00.179 [scheduling-1] ERROR com.cryptorate.service.CryptoMarketService - åŒæ­¥æ±‡çŽ‡æ•°æ®å¤±è´¥: Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+com.cryptorate.common.exception.ApiException: Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+	at com.cryptorate.service.CryptoMarketService.getRealTimeRates(CryptoMarketService.java:153)
+	at com.cryptorate.service.CryptoMarketService.fetchRatesWithRetry(CryptoMarketService.java:308)
+	at com.cryptorate.service.CryptoMarketService.syncRatesToDatabase(CryptoMarketService.java:258)
+	at com.cryptorate.scheduler.RateScheduler.syncRatesPeriodically(RateScheduler.java:74)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124)
+	at io.micrometer.observation.Observation.observe(Observation.java:499)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124)
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-02-22 19:08:00.185 [scheduling-1] WARN  com.cryptorate.scheduler.RateScheduler - [å®šæ—¶ä»»åŠ¡] 2026-02-22 19:07:58 Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429ï¼‰ã€‚æœ¬æ¬¡åŒæ­¥è·³è¿‡ï¼Œä¸‹æ¬¡å®šæ—¶ä»»åŠ¡å°†é‡æ–°å°è¯•ã€‚å¦‚éœ€æ›´é¢‘ç¹åœ°é‡‡é›†æ•°æ®ï¼Œè¯·å‡çº§ Coinlayer å¥—é¤ï¼Œæˆ–åœ¨ application.yml ä¸­å¢žå¤§ scheduler.rate-sync-interval-msã€‚
+2026-02-22 19:13:00.193 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:13:00.195 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in   2 ms: OkHttp ConnectionPool
+2026-02-22 19:25:54.775 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 14460 (C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate)
+2026-02-22 19:25:54.779 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:25:54.780 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:25:56.448 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:25:56.467 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:25:56.467 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:25:56.553 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:25:56.555 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1690 ms
+2026-02-22 19:25:57.742 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-22 19:25:57.757 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 3.701 seconds (process running for 4.163)
+2026-02-22 19:26:27.761 [scheduling-1] INFO  com.cryptorate.scheduler.RateScheduler - [¶¨Ê±ÈÎÎñ] 2026-02-22 19:26:27 ¿ªÊ¼×Ô¶¯Í¬²½»ãÂÊÊý¾Ý...
+2026-02-22 19:26:27.763 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - ¿ªÊ¼Í¬²½»ãÂÊÊý¾Ýµ½Êý¾Ý¿â...
+2026-02-22 19:26:27.763 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - ¿ªÊ¼»ñÈ¡ Coinlayer ÊµÊ±»ãÂÊÊý¾Ý...
+2026-02-22 19:26:27.763 [scheduling-1] DEBUG com.cryptorate.service.CryptoMarketService - ÇëÇó URL: http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:26:27.811 [scheduling-1] INFO  okhttp3.OkHttpClient - --> GET http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:26:27.811 [scheduling-1] INFO  okhttp3.OkHttpClient - --> END GET
+2026-02-22 19:26:28.737 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 ?s: OkHttp ConnectionPool
+2026-02-22 19:26:28.738 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:26:28.738 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:26:28.738 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 514 ?s: OkHttp ConnectionPool
+2026-02-22 19:26:29.076 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- 200 OK http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472 (1265ms)
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - date: Sun, 22 Feb 2026 11:26:30 GMT
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - content-type: application/json; Charset=UTF-8
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - transfer-encoding: chunked
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - x-rate-limit: 1
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - x-rate-limit-remaining: 0
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - x-rate-limit-reset: 1771759591
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - x-apilayer-transaction-id: 0a103f37-e153-463f-958d-64e162c03ead
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-origin: *
+2026-02-22 19:26:29.078 [scheduling-1] INFO  okhttp3.OkHttpClient - x-request-time: 0.026
+2026-02-22 19:26:30.075 [scheduling-1] INFO  okhttp3.OkHttpClient - 
+2026-02-22 19:26:30.077 [scheduling-1] INFO  okhttp3.OkHttpClient - {"success":true,"terms":"https:\/\/coinlayer.com\/terms","privacy":"https:\/\/coinlayer.com\/privacy","timestamp":1771759565,"target":"USD","rates":{"ABC":59.99,"ACP":0.014931,"ACT":0.189,"ACT*":0.017178,"ADA":0.276075,"ADCN":0.00013,"ADL":0.01515,"ADX":0.07796,"ADZ":0.0023,"AE":0.009995,"AGI":0.251,"AIB":0.005626,"AIDOC":0.004298,"AION":0.000372,"AIR":0.0058,"ALT":0.602,"AMB":3.987971974922861e-5,"AMM":0.002271,"ANT":1.5,"APC":0.0017,"APPC":0.000613,"ARC":0.021,"ARCT":0.00061,"ARDR":0.047864,"ARK":0.2,"ARN":0.000849,"ASAFE2":0.4,"AST":0.01,"ATB":0.017,"ATM":1.3751,"AURS":0.352867,"AVAX":9.1788,"AVT":0.77,"BAR":2.635,"BASH":0.0056,"BAT":0.204644,"BAY":0.0644,"BBP":0.0005,"BCD":0.003488,"BCH":571.571167,"BCN":3.6612e-5,"BCPT":0.000925,"BEE":1.0e-6,"BIO":0.136,"BLC":0.072132,"BLOCK":0.18,"BLU":0.00054,"BLZ":0.0138,"BMC":0.002028,"BNB":758.711965,"BNT":0.318971,"BOST":0.048,"BQ":7.775e-5,"BQX":2.720931,"BRD":3.87708,"BRIT":0.03,"BT1":0,"BT2":0,"BTC":68287.597857,"BTCA":0.00036,"BTCS":0.01201,"BTCZ":6.80427581487177e-5,"BTG":0.63479,"BTLC":9,"BTM":0.078282,"BTM*":0.122609,"BTQ":0.01,"BTS":0.001059,"BTX":0.045787,"BURST":0.017348,"CALC":0.0006,"CAS":0.007,"CAT":1.847902090179488e-6,"CCRB":0.08888,"CDT":0.096652,"CESC":0.0037,"CHAT":0.05827,"CJ":0.000898,"CL":0.028,"CLD":0.02,"CLOAK":10,"CMT*":0.03954,"CND":0.000318,"CNX":1.996594,"CPC":0.0005,"CRAVE":0.4,"CRC":0.08475,"CRE":1.316485,"CRW":0.02202,"CTO":0.005,"CTR":0.000182,"CVC":0.08475,"DAS":0.937816,"DASH":33.987867,"DAT":0.001299,"DATA":0,"DBC":0.000282,"DBET":0.027656,"DCN":1.42e-6,"DCR":25.569,"DCT":0.068723,"DEEP":0.001,"DENT":0.000146,"DGB":0.004139,"DGD":748.932282,"DIM":9.4957e-5,"DIME":3.0e-5,"DMD":0.58782,"DNT":0.0293,"DOGE":0.10055,"DRGN":0.015442,"DRZ":3,"DSH":252.13175,"DTA":3.248371547700393e-6,"EC":50,"EDG":0.002109,"EDO":0.61442,"EDR":0.00023,"EKO":4.497777750161511e-7,"ELA":0.6,"ELF":0.061,"EMC":0.000509,"EMGO":0.43382,"ENG":0.000681,"ENJ":0.44,"EOS":0.082821,"ERT":0.2054,"ETC":9.02,"ETH":1985.587143,"ETN":0.001051,"ETP":0.005267,"ETT":2.9,"EVR":0.104931,"EVX":0.00249,"FCT":0.012398,"FLP":0.015,"FOTA":7.996049333620465e-5,"FRST":0.78001,"FUEL":0.001329,"FUN":0.009089,"FUNC":0.00061,"FUTC":0.004,"GAME":0.001484,"GAS":2.450015,"GBYTE":21.093255,"GMX":54.5,"GNO":123.02505,"GNT":9.99498937753967e-9,"GNX":0.000334,"GRC":0.0067,"GRS":10,"GRWI":10000,"GTC":0.1,"GTO":0.082519,"GUP":0.02178,"GVT":8.399571,"GXS":1.067152,"HAC":0.034021,"HNC":0,"HSR":10.831507,"HST":0.0027,"HVN":0.03529,"ICN":0.145128,"ICOS":17,"ICX":0.039746,"IGNIS":0.00041,"ILC":0.098703,"INK":2.898525996811102e-5,"INS":1.681139,"INSN":0.0473,"INT":0.000316,"IOP":15.455555,"IOST":0.001216,"ITC":0.021399,"KCS":5.33,"KICK":0.000324,"KIN":1.6e-6,"KLC":0.000703,"KMD":0.008501,"KNC":0.139524,"KRB":6,"LA":0.223648,"LEND":3.185997,"LEO":9.594174,"LINDA":0.000271,"LINK":8.718565,"LOC":0.12,"LOG":0.060174,"LRC":0.057,"LSK":0.139786,"LTC":54.7293,"LUN":0.014289,"LUX":2.09e-6,"MAID":0.079961,"MANA":0.11819,"MCAP":0.005398,"MCO":0.844577,"MDA":0.000748,"MDS":2.228866542375434e-5,"MIOTA":0.06878,"MKR":1161.2,"MLN":15.457,"MNX":0.028649,"MOD":0.180464,"MOIN":0.033073,"MONA":0.065875,"MTL":0.274322,"MTN*":0.009575,"MTX":0.0007,"NAS":0.004095,"NAV":0.022669,"NBT":0.001301,"NDC":0.008989,"NEBL":0.000191,"NEO":2.7175,"NEU":0.024194,"NEWB":0.002604,"NGC":0.027451,"NKC":0.038763,"NLC2":0.599935,"NMC":5.867998,"NMR":8.7098,"NULS":0.003628,"NVC":10,"NXT":0.00066,"OAX":0.017999,"OBITS":0.015,"OC":0.000407,"OCN":1.34931382610172e-5,"ODN":0.5,"OK":0.007839,"OMG":0.133736,"OMNI":1.1,"ORE":0,"ORME":1.235715,"OST":5.187362042568834e-6,"OTN":0,"OTX":0.023,"OXY":0.0146,"PART":3.951477,"PAY":0.001399,"PBT":27.234629,"PCS":0.019961,"PIVX":0.094594,"PIZZA":0.001,"PLBT":20,"PLR":0.00311,"POE":2.64841681022289e-6,"POLY":0.1246,"POSW":0.48712,"POWR":0.066531,"PPC":0.37,"PPT":0.00052,"PPY":5.45,"PRC":3.0e-5,"PRES":0.219998,"PRG":1.07172,"PRL":0.733546,"PRO":0.325306,"PURA":0.25,"PUT":0,"QASH":0.006827,"QAU":0,"QSP":0.001252,"QTUM":2.865017,"QUN":0.008318,"R":0.01052,"RBIES":1,"RCN":0.000239,"RDD":8.295901183631232e-5,"RDN":0,"RDN*":0.324446,"REBL":0.000785,"REE":1.0e-5,"REP":0.804,"REQ":0.15,"REV":8.8e-6,"RGC":0.001,"RHOC":0.178417,"RIYA":0.090025,"RKC":5,"RLC":0.437403,"RPX":0.061017,"RUFF":0.000229,"SALT":0.768708,"SAN":1.79908510146896e-5,"SBC":7,"SC":0.00124,"SENT":0.001,"SHIFT":0,"SIB":5.177,"SMART":2.6e-5,"SMLY":6.0e-5,"SMT*":0.011226,"SNC":0.018377,"SNGLS":4.765932706520188e-5,"SNM":0.00021,"SNT":0.01,"SOL":85.3042,"SPK":0.0084,"SRN":6.127627765525956e-5,"STEEM":0.052339,"STK":0.071465,"STORJ":0.293104,"STRAT":0.63864,"STU":0.00019,"STX":2.4005,"SUB":0.000135,"SUR":0.01,"SWFTC":0.005,"SYS":0.014154,"TAAS":10,"TESLA":0.019139,"THC":0.00068,"THETA":0.200793,"THS":0.00171,"TIO":0.085,"TKN":0,"TKY":0.000691,"TNB":2.498747344384918e-5,"TNT":0.009152,"TOA":0.002397,"TRC":6.2,"TRIG":6.186747,"TRST":0.04799,"TRUMP":8.67,"TRX":0.294278,"UBQ":0.006804,"UNO":13.4,"UNRC":6.0e-5,"UQC":8,"USDT":1.00332,"UTK":0.010188,"UTT":0.000102,"VEE":0.003708,"VEN":10.820205,"VERI":23.736235,"VIA":0.000831,"VIB":0.000509,"VIBE":0.000313,"VOISE":0.00018,"VOX":0.199901,"VRS":0.1375,"VTC":0.060123,"VUC":9.9e-5,"WABI":0.001699,"WAVES":0.48491,"WAX":0.0492,"WC":0.045,"WGR":5703500263.932747,"WINGS":6.80427581487177e-6,"WLK":0.0058,"WOP":0.046453,"WPR":0.04073,"WRC":0.002299,"WTC":0.004698,"XAUR":0.10301,"XBP":0.0027,"XBY":0.2889,"XCP":2.041283,"XCXT":0.095658,"XDN":2.369694926151531e-5,"XEM":0.000778,"XGB":0.0015,"XHI":0.001325,"XID":0.010924,"XLM":0.156528,"XMR":322.532367,"XNC":0.00018,"XRB":20.542692,"XRP":1.427978,"XTO":0.324858,"XTZ":0.440524,"XUC":0.00082,"XVG":0.006062,"XZC":4.96985,"YEE":0.01252,"YOC":0.00012,"YOYOW":0.005445,"ZBC":0.01006,"ZCL":0.139574,"ZEC":252.419,"ZEN":5.968445,"ZIL":0.00479,"ZNY":0.02,"ZRX":0.118524,"ZSC":2.376e-5,"611":0.389165}}
+2026-02-22 19:26:30.077 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- END HTTP (5830-byte body)
+2026-02-22 19:26:30.077 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 ?s: OkHttp ConnectionPool
+2026-02-22 19:26:30.077 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:26:30.078 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:26:30.078 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 590 ?s: OkHttp ConnectionPool
+2026-02-22 19:26:30.080 [scheduling-1] DEBUG com.cryptorate.service.CryptoMarketService - ÏìÓ¦ Body: {"success":true,"terms":"https:\/\/coinlayer.com\/terms","privacy":"https:\/\/coinlayer.com\/privacy","timestamp":1771759565,"target":"USD","rates":{"ABC":59.99,"ACP":0.014931,"ACT":0.189,"ACT*":0.017178,"ADA":0.276075,"ADCN":0.00013,"ADL":0.01515,"ADX":0.07796,"ADZ":0.0023,"AE":0.009995,"AGI":0.251,"AIB":0.005626,"AIDOC":0.004298,"AION":0.000372,"AIR":0.0058,"ALT":0.602,"AMB":3.987971974922861e-5,"AMM":0.002271,"ANT":1.5,"APC":0.0017,"APPC":0.000613,"ARC":0.021,"ARCT":0.00061,"ARDR":0.047864,"ARK":0.2,"ARN":0.000849,"ASAFE2":0.4,"AST":0.01,"ATB":0.017,"ATM":1.3751,"AURS":0.352867,"AVAX":9.1788,"AVT":0.77,"BAR":2.635,"BASH":0.0056,"BAT":0.204644,"BAY":0.0644,"BBP":0.0005,"BCD":0.003488,"BCH":571.571167,"BCN":3.6612e-5,"BCPT":0.000925,"BEE":1.0e-6,"BIO":0.136,"BLC":0.072132,"BLOCK":0.18,"BLU":0.00054,"BLZ":0.0138,"BMC":0.002028,"BNB":758.711965,"BNT":0.318971,"BOST":0.048,"BQ":7.775e-5,"BQX":2.720931,"BRD":3.87708,"BRIT":0.03,"BT1":0,"BT2":0,"BTC":68287.597857,"BTCA":0.00036,"BTCS":0.01201,"BTCZ":6.80427581487177e-5,"BTG":0.63479,"BTLC":9,"BTM":0.078282,"BTM*":0.122609,"BTQ":0.01,"BTS":0.001059,"BTX":0.045787,"BURST":0.017348,"CALC":0.0006,"CAS":0.007,"CAT":1.847902090179488e-6,"CCRB":0.08888,"CDT":0.096652,"CESC":0.0037,"CHAT":0.05827,"CJ":0.000898,"CL":0.028,"CLD":0.02,"CLOAK":10,"CMT*":0.03954,"CND":0.000318,"CNX":1.996594,"CPC":0.0005,"CRAVE":0.4,"CRC":0.08475,"CRE":1.316485,"CRW":0.02202,"CTO":0.005,"CTR":0.000182,"CVC":0.08475,"DAS":0.937816,"DASH":33.987867,"DAT":0.001299,"DATA":0,"DBC":0.000282,"DBET":0.027656,"DCN":1.42e-6,"DCR":25.569,"DCT":0.068723,"DEEP":0.001,"DENT":0.000146,"DGB":0.004139,"DGD":748.932282,"DIM":9.4957e-5,"DIME":3.0e-5,"DMD":0.58782,"DNT":0.0293,"DOGE":0.10055,"DRGN":0.015442,"DRZ":3,"DSH":252.13175,"DTA":3.248371547700393e-6,"EC":50,"EDG":0.002109,"EDO":0.61442,"EDR":0.00023,"EKO":4.497777750161511e-7,"ELA":0.6,"ELF":0.061,"EMC":0.000509,"EMGO":0.43382,"ENG":0.000681,"ENJ":0.44,"EOS":0.082821,"ERT":0.2054,"ETC":9.02,"ETH":1985.587143,"ETN":0.001051,"ETP":0.005267,"ETT":2.9,"EVR":0.104931,"EVX":0.00249,"FCT":0.012398,"FLP":0.015,"FOTA":7.996049333620465e-5,"FRST":0.78001,"FUEL":0.001329,"FUN":0.009089,"FUNC":0.00061,"FUTC":0.004,"GAME":0.001484,"GAS":2.450015,"GBYTE":21.093255,"GMX":54.5,"GNO":123.02505,"GNT":9.99498937753967e-9,"GNX":0.000334,"GRC":0.0067,"GRS":10,"GRWI":10000,"GTC":0.1,"GTO":0.082519,"GUP":0.02178,"GVT":8.399571,"GXS":1.067152,"HAC":0.034021,"HNC":0,"HSR":10.831507,"HST":0.0027,"HVN":0.03529,"ICN":0.145128,"ICOS":17,"ICX":0.039746,"IGNIS":0.00041,"ILC":0.098703,"INK":2.898525996811102e-5,"INS":1.681139,"INSN":0.0473,"INT":0.000316,"IOP":15.455555,"IOST":0.001216,"ITC":0.021399,"KCS":5.33,"KICK":0.000324,"KIN":1.6e-6,"KLC":0.000703,"KMD":0.008501,"KNC":0.139524,"KRB":6,"LA":0.223648,"LEND":3.185997,"LEO":9.594174,"LINDA":0.000271,"LINK":8.718565,"LOC":0.12,"LOG":0.060174,"LRC":0.057,"LSK":0.139786,"LTC":54.7293,"LUN":0.014289,"LUX":2.09e-6,"MAID":0.079961,"MANA":0.11819,"MCAP":0.005398,"MCO":0.844577,"MDA":0.000748,"MDS":2.228866542375434e-5,"MIOTA":0.06878,"MKR":1161.2,"MLN":15.457,"MNX":0.028649,"MOD":0.180464,"MOIN":0.033073,"MONA":0.065875,"MTL":0.274322,"MTN*":0.009575,"MTX":0.0007,"NAS":0.004095,"NAV":0.022669,"NBT":0.001301,"NDC":0.008989,"NEBL":0.000191,"NEO":2.7175,"NEU":0.024194,"NEWB":0.002604,"NGC":0.027451,"NKC":0.038763,"NLC2":0.599935,"NMC":5.867998,"NMR":8.7098,"NULS":0.003628,"NVC":10,"NXT":0.00066,"OAX":0.017999,"OBITS":0.015,"OC":0.000407,"OCN":1.34931382610172e-5,"ODN":0.5,"OK":0.007839,"OMG":0.133736,"OMNI":1.1,"ORE":0,"ORME":1.235715,"OST":5.187362042568834e-6,"OTN":0,"OTX":0.023,"OXY":0.0146,"PART":3.951477,"PAY":0.001399,"PBT":27.234629,"PCS":0.019961,"PIVX":0.094594,"PIZZA":0.001,"PLBT":20,"PLR":0.00311,"POE":2.64841681022289e-6,"POLY":0.1246,"POSW":0.48712,"POWR":0.066531,"PPC":0.37,"PPT":0.00052,"PPY":5.45,"PRC":3.0e-5,"PRES":0.219998,"PRG":1.07172,"PRL":0.733546,"PRO":0.325306,"PURA":0.25,"PUT":0,"QASH":0.006827,"QAU":0,"QSP":0.001252,"QTUM":2.865017,"QUN":0.008318,"R":0.01052,"RBIES":1,"RCN":0.000239,"RDD":8.295901183631232e-5,"RDN":0,"RDN*":0.324446,"REBL":0.000785,"REE":1.0e-5,"REP":0.804,"REQ":0.15,"REV":8.8e-6,"RGC":0.001,"RHOC":0.178417,"RIYA":0.090025,"RKC":5,"RLC":0.437403,"RPX":0.061017,"RUFF":0.000229,"SALT":0.768708,"SAN":1.79908510146896e-5,"SBC":7,"SC":0.00124,"SENT":0.001,"SHIFT":0,"SIB":5.177,"SMART":2.6e-5,"SMLY":6.0e-5,"SMT*":0.011226,"SNC":0.018377,"SNGLS":4.765932706520188e-5,"SNM":0.00021,"SNT":0.01,"SOL":85.3042,"SPK":0.0084,"SRN":6.127627765525956e-5,"STEEM":0.052339,"STK":0.071465,"STORJ":0.293104,"STRAT":0.63864,"STU":0.00019,"STX":2.4005,"SUB":0.000135,"SUR":0.01,"SWFTC":0.005,"SYS":0.014154,"TAAS":10,"TESLA":0.019139,"THC":0.00068,"THETA":0.200793,"THS":0.00171,"TIO":0.085,"TKN":0,"TKY":0.000691,"TNB":2.498747344384918e-5,"TNT":0.009152,"TOA":0.002397,"TRC":6.2,"TRIG":6.186747,"TRST":0.04799,"TRUMP":8.67,"TRX":0.294278,"UBQ":0.006804,"UNO":13.4,"UNRC":6.0e-5,"UQC":8,"USDT":1.00332,"UTK":0.010188,"UTT":0.000102,"VEE":0.003708,"VEN":10.820205,"VERI":23.736235,"VIA":0.000831,"VIB":0.000509,"VIBE":0.000313,"VOISE":0.00018,"VOX":0.199901,"VRS":0.1375,"VTC":0.060123,"VUC":9.9e-5,"WABI":0.001699,"WAVES":0.48491,"WAX":0.0492,"WC":0.045,"WGR":5703500263.932747,"WINGS":6.80427581487177e-6,"WLK":0.0058,"WOP":0.046453,"WPR":0.04073,"WRC":0.002299,"WTC":0.004698,"XAUR":0.10301,"XBP":0.0027,"XBY":0.2889,"XCP":2.041283,"XCXT":0.095658,"XDN":2.369694926151531e-5,"XEM":0.000778,"XGB":0.0015,"XHI":0.001325,"XID":0.010924,"XLM":0.156528,"XMR":322.532367,"XNC":0.00018,"XRB":20.542692,"XRP":1.427978,"XTO":0.324858,"XTZ":0.440524,"XUC":0.00082,"XVG":0.006062,"XZC":4.96985,"YEE":0.01252,"YOC":0.00012,"YOYOW":0.005445,"ZBC":0.01006,"ZCL":0.139574,"ZEC":252.419,"ZEN":5.968445,"ZIL":0.00479,"ZNY":0.02,"ZRX":0.118524,"ZSC":2.376e-5,"611":0.389165}}
+2026-02-22 19:26:30.155 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - ³É¹¦»ñÈ¡ 388 ¸ö¼ÓÃÜ»õ±ÒµÄÊµÊ±»ãÂÊ
+2026-02-22 19:26:30.219 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
+2026-02-22 19:26:30.433 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@1b866224
+2026-02-22 19:26:30.435 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
+2026-02-22 19:26:30.527 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - ³É¹¦Í¬²½ 388 Ìõ»ãÂÊÊý¾Ýµ½Êý¾Ý¿â
+2026-02-22 19:26:30.527 [scheduling-1] INFO  com.cryptorate.scheduler.RateScheduler - [¶¨Ê±ÈÎÎñ] 2026-02-22 19:26:27 ×Ô¶¯Í¬²½Íê³É£¬¹²Ð´Èë 388 Ìõ¼ÇÂ¼
+2026-02-22 19:27:41.827 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 26692 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:27:41.828 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:27:41.829 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:27:43.067 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:27:43.082 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:27:43.082 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:27:43.160 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:27:43.160 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1276 ms
+2026-02-22 19:27:44.071 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-22 19:27:44.088 [main] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-22 19:27:44.105 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-02-22 19:28:01.217 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 14692 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:28:01.218 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:28:01.220 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:28:02.330 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:28:02.340 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:28:02.340 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:28:02.400 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:28:02.401 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1125 ms
+2026-02-22 19:28:03.235 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-22 19:28:03.249 [main] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-22 19:28:03.264 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-02-22 19:31:52.017 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 3088 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:31:52.019 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:31:52.019 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:31:53.021 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:31:53.033 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:31:53.033 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:31:53.099 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:31:53.101 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1034 ms
+2026-02-22 19:31:53.889 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-22 19:31:53.899 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.401 seconds (process running for 2.953)
+2026-02-22 19:32:23.553 [http-nio-8080-exec-6] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-22 19:32:23.553 [http-nio-8080-exec-6] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-22 19:32:23.556 [http-nio-8080-exec-6] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-02-22 19:32:23.915 [scheduling-1] INFO  com.cryptorate.scheduler.RateScheduler - [å®šæ—¶ä»»åŠ¡] 2026-02-22 19:32:23 å¼€å§‹è‡ªåŠ¨åŒæ­¥æ±‡çŽ‡æ•°æ®...
+2026-02-22 19:32:23.916 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - å¼€å§‹åŒæ­¥æ±‡çŽ‡æ•°æ®åˆ°æ•°æ®åº“...
+2026-02-22 19:32:23.916 [scheduling-1] INFO  com.cryptorate.service.CryptoMarketService - å¼€å§‹èŽ·å– Coinlayer å®žæ—¶æ±‡çŽ‡æ•°æ®...
+2026-02-22 19:32:23.916 [scheduling-1] DEBUG com.cryptorate.service.CryptoMarketService - è¯·æ±‚ URL: http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:32:23.948 [scheduling-1] INFO  okhttp3.OkHttpClient - --> GET http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472
+2026-02-22 19:32:23.948 [scheduling-1] INFO  okhttp3.OkHttpClient - --> END GET
+2026-02-22 19:32:24.291 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.292 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:32:24.292 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:32:24.292 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 862 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.309 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 canceled              : OkHttp ConnectionPool
+2026-02-22 19:32:24.577 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.579 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:32:24.579 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:32:24.579 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 502 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- 429 Too Many Requests http://api.coinlayer.com/live?access_key=3b4fb0d39af519933feb7c0fe5bc2472 (923ms)
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - date: Sun, 22 Feb 2026 11:32:26 GMT
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - content-type: application/json; Charset=UTF-8
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - transfer-encoding: chunked
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - x-apilayer-transaction-id: 2bbec1c4-c75f-4993-b602-f5c3860c4f25
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-methods: GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS
+2026-02-22 19:32:24.871 [scheduling-1] INFO  okhttp3.OkHttpClient - access-control-allow-origin: *
+2026-02-22 19:32:24.874 [scheduling-1] INFO  okhttp3.OkHttpClient - 
+2026-02-22 19:32:24.874 [scheduling-1] INFO  okhttp3.OkHttpClient - {"success":false,"error":{"code":106,"type":"rate_limit_reached","info":"You have exceeded the maximum rate limitation allowed on your subscription plan. Please refer to the \"Rate Limits\" section of the API Documentation for details. "}}
+2026-02-22 19:32:24.874 [scheduling-1] INFO  okhttp3.OkHttpClient - <-- END HTTP (239-byte body)
+2026-02-22 19:32:24.874 [scheduling-1] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 scheduled after   0 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.875 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:32:24.875 [scheduling-1] WARN  com.cryptorate.service.CryptoMarketService - Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+2026-02-22 19:32:24.875 [OkHttp ConnectionPool] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 run again after 300 s : OkHttp ConnectionPool
+2026-02-22 19:32:24.875 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 460 Âµs: OkHttp ConnectionPool
+2026-02-22 19:32:24.875 [scheduling-1] ERROR com.cryptorate.service.CryptoMarketService - åŒæ­¥æ±‡çŽ‡æ•°æ®å¤±è´¥: Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+com.cryptorate.common.exception.ApiException: Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429 Too Many Requestsï¼‰ã€‚å…è´¹å¥—é¤æ¯æœˆä»…æœ‰ 100 æ¬¡è°ƒç”¨ï¼Œè¯·åœ¨ application.yml ä¸­å°† scheduler.rate-sync-interval-ms è®¾ç½®ä¸º 86400000ï¼ˆ24 å°æ—¶ï¼‰æˆ–æ›´å¤§å€¼ï¼Œæˆ–ç™»å½• https://coinlayer.com å‡çº§å¥—é¤ã€‚
+	at com.cryptorate.service.CryptoMarketService.getRealTimeRates(CryptoMarketService.java:153)
+	at com.cryptorate.service.CryptoMarketService.fetchRatesWithRetry(CryptoMarketService.java:308)
+	at com.cryptorate.service.CryptoMarketService.syncRatesToDatabase(CryptoMarketService.java:258)
+	at com.cryptorate.scheduler.RateScheduler.syncRatesPeriodically(RateScheduler.java:74)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124)
+	at io.micrometer.observation.Observation.observe(Observation.java:499)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124)
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+2026-02-22 19:32:24.882 [scheduling-1] WARN  com.cryptorate.scheduler.RateScheduler - [å®šæ—¶ä»»åŠ¡] 2026-02-22 19:32:23 Coinlayer API è°ƒç”¨æ¬¡æ•°å·²è¶…å‡ºå…è´¹é™é¢ï¼ˆHTTP 429ï¼‰ã€‚æœ¬æ¬¡åŒæ­¥è·³è¿‡ï¼Œä¸‹æ¬¡å®šæ—¶ä»»åŠ¡å°†é‡æ–°å°è¯•ã€‚å¦‚éœ€æ›´é¢‘ç¹åœ°é‡‡é›†æ•°æ®ï¼Œè¯·å‡çº§ Coinlayer å¥—é¤ï¼Œæˆ–åœ¨ application.yml ä¸­å¢žå¤§ scheduler.rate-sync-interval-msã€‚
+2026-02-22 19:37:24.885 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 starting              : OkHttp ConnectionPool
+2026-02-22 19:37:24.886 [OkHttp TaskRunner] DEBUG okhttp3.internal.concurrent.TaskRunner - Q10000 finished run in 912 Âµs: OkHttp ConnectionPool
+2026-02-22 19:41:38.320 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 16944 (C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate)
+2026-02-22 19:41:38.323 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:41:38.323 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:41:39.860 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:41:39.884 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:41:39.886 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:41:39.999 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:41:40.000 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1614 ms
+2026-02-22 19:41:41.065 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-22 19:41:41.084 [main] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-22 19:41:41.105 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-02-22 19:44:40.009 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 26368 (C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\±ÏÒµÉè¼Æ\CryptoRate)
+2026-02-22 19:44:40.012 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:44:40.013 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:44:41.380 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:44:41.394 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:44:41.394 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:44:41.464 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:44:41.465 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1396 ms
+2026-02-22 19:44:42.514 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-22 19:44:42.532 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 3.06 seconds (process running for 3.542)
+2026-02-22 19:44:52.041 [http-nio-8080-exec-2] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-22 19:44:52.042 [http-nio-8080-exec-2] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-22 19:44:52.043 [http-nio-8080-exec-2] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-02-22 19:44:52.123 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:44:52.123 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:44:52.124 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:44:52.124 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:44:52.147 [http-nio-8080-exec-3] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
+2026-02-22 19:44:52.328 [http-nio-8080-exec-3] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@5b6a5eb4
+2026-02-22 19:44:52.330 [http-nio-8080-exec-3] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
+2026-02-22 19:45:12.546 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [¶¨Ê±ÈÎÎñ] scheduler.enabled=false£¬±¾´Î¶¨Ê±Í¬²½ÒÑÌø¹ý
+2026-02-22 19:45:37.552 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:45:37.552 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:45:37.561 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:45:51.959 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:51.960 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:51.960 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:51.960 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.788 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.788 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:45:58.788 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:45:58.789 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:45:58.789 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:45:58.789 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.793 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.794 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.794 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:45:58.794 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:45:58.797 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.797 [http-nio-8080-exec-10] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.800 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:45:58.806 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:45:58.806 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:45:58.808 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:45:58.813 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:45:58.813 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:45:58.817 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:45:58.817 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:45:58.818 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:45:58.818 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:45:58.825 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:45:58.826 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.827 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:45:58.827 [http-nio-8080-exec-2] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.838 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:45:58.845 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:45:58.852 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.853 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.854 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.854 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.858 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.858 [http-nio-8080-exec-3] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:45:58.884 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:45:58.884 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:18.161 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BT
+2026-02-22 19:46:18.162 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BT
+2026-02-22 19:46:18.168 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 16 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:46:18.583 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BTX
+2026-02-22 19:46:18.584 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BTX
+2026-02-22 19:46:18.590 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 1 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:46:19.436 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BT
+2026-02-22 19:46:19.437 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BT
+2026-02-22 19:46:19.445 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 16 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:46:20.189 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BTC
+2026-02-22 19:46:20.189 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BTC
+2026-02-22 19:46:20.195 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 4 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:46:23.965 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:23.965 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:23.973 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:23.974 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCA, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:23.974 [http-nio-8080-exec-6] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:23.974 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCA, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:24.540 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:46:24.540 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:24.540 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:24.540 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:24.540 [http-nio-8080-exec-2] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:46:24.540 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:24.916 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCA, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:24.916 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:24.916 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:24.916 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCA, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:24.916 [http-nio-8080-exec-1] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:24.916 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:25.333 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:46:25.333 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:25.333 [http-nio-8080-exec-6] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:46:25.333 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:25.333 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:25.333 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:25.881 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:25.881 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:25.881 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:25.881 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCA, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:25.881 [http-nio-8080-exec-2] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:46:25.881 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCA, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:26.210 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:26.210 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:26.216 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCS, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:46:26.216 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:46:26.216 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCS, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:46:26.216 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:46:28.784 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:28.784 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:51.951 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:51.952 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:51.952 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:51.953 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:56.959 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:56.959 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:58.771 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:46:58.771 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:26.954 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:26.955 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:28.779 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:28.779 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:47.152 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:47.152 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:47.154 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: 611, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:47:47.154 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: 611, ·¶Î§: 7d
+2026-02-22 19:47:47.154 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: 611, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:47:47.154 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: 611, ·¶Î§: 7d
+2026-02-22 19:47:47.558 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:47.558 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:47.560 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: ABC, ·¶Î§: 7d
+2026-02-22 19:47:47.560 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: ABC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:47:47.560 [http-nio-8080-exec-5] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: ABC, ·¶Î§: 7d
+2026-02-22 19:47:47.560 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: ABC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:47:48.550 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:48.550 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:48.552 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: ACP, ·¶Î§: 7d
+2026-02-22 19:47:48.552 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: ACP, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:47:48.552 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: ACP, ·¶Î§: 7d
+2026-02-22 19:47:48.552 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: ACP, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:47:51.954 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:51.954 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:51.956 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:51.964 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:56.420 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BTT
+2026-02-22 19:47:56.420 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BTT
+2026-02-22 19:47:56.424 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 0 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:47:56.955 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:56.956 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:57.909 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½ËÑË÷±ÒÖÖÇëÇó£¬¹Ø¼ü´Ê: BTC
+2026-02-22 19:47:57.910 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - ËÑË÷±ÒÖÖ£¬¹Ø¼ü´Ê: BTC
+2026-02-22 19:47:57.915 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - ËÑË÷µ½ 4 ¸öÆ¥Åä±ÒÖÖ
+2026-02-22 19:47:58.748 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:58.748 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:47:58.748 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:47:58.748 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:47:58.748 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:47:58.748 [http-nio-8080-exec-3] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:48:26.224 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:26.224 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:28.749 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:28.749 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:29.109 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:29.109 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:48:29.109 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:29.109 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:48:29.109 [http-nio-8080-exec-2] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:48:29.109 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:48:51.957 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:51.958 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:58.756 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:58.756 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:59.957 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:48:59.958 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:28.760 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:28.760 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:29.958 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:29.958 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:51.955 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:51.955 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:58.757 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:58.757 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:59.768 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:49:59.768 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:01.862 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:01.862 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:01.866 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:01.866 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:02.538 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:02.538 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:02.538 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:02.538 [http-nio-8080-exec-8] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:07.938 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:07.938 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:07.939 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:50:07.939 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:50:07.942 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCA, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:07.942 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCA, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:08.488 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:08.488 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:08.488 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:50:08.488 [http-nio-8080-exec-9] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:50:08.493 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCS, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:08.493 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCS, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:08.906 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:08.906 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:08.913 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCZ, ·¶Î§: 7d
+2026-02-22 19:50:08.913 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCZ, ·¶Î§: 7d
+2026-02-22 19:50:08.913 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCZ, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:08.913 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCZ, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:09.849 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:50:09.849 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCS, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:09.849 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCS, ·¶Î§: 7d
+2026-02-22 19:50:09.849 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:09.849 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCS, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:09.849 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:10.219 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:10.219 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTCA, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:10.219 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:50:10.219 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:10.219 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTCA, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:10.219 [http-nio-8080-exec-1] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTCA, ·¶Î§: 7d
+2026-02-22 19:50:10.598 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:10.598 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:50:10.598 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:10.598 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:10.598 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:50:10.598 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:12.866 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:50:12.866 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:12.866 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:50:12.866 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:12.866 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:50:12.867 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:50:12.869 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:12.869 [http-nio-8080-exec-10] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:12.874 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:50:12.876 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:50:12.876 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:50:12.879 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:50:12.879 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:50:12.882 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:12.882 [http-nio-8080-exec-9] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:50:12.887 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:50:12.906 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:12.906 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:28.756 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:28.756 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:33.150 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.AnalysisController - ½ÓÊÕµ½Éú³ÉÐÐÇé½â¶ÁÇëÇó£¬±ÒÖÖ: BTC
+2026-02-22 19:50:33.150 [http-nio-8080-exec-4] INFO  com.cryptorate.service.AnalysisService - Éú³ÉÐÐÇé½â¶Á£¬±ÒÖÖ: BTC
+2026-02-22 19:50:42.861 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:42.861 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:51.950 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:51.950 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:52.394 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.UserController - ½ÓÊÕµ½ÓÃ»§µÇÂ¼ÇëÇó£¬ÓÃ»§Ãû: admin
+2026-02-22 19:50:52.394 [http-nio-8080-exec-1] INFO  com.cryptorate.service.UserService - ÓÃ»§µÇÂ¼£¬ÓÃ»§Ãû: admin
+2026-02-22 19:50:52.397 [http-nio-8080-exec-1] INFO  com.cryptorate.service.UserService - ÓÃ»§µÇÂ¼³É¹¦£¬ÓÃ»§ID: 1
+2026-02-22 19:50:58.952 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:50:58.952 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:04.194 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:51:04.194 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-21 - 2026-02-22
+2026-02-22 19:51:04.194 [http-nio-8080-exec-7] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:51:04.194 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-21, ½áÊø: 2026-02-22
+2026-02-22 19:51:12.288 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:12.289 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:12.307 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡±ÒÖÖÁÐ±íÇëÇó
+2026-02-22 19:51:12.308 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡ÏµÍ³Ö§³ÖµÄ±ÒÖÖ
+2026-02-22 19:51:12.308 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½²éÑ¯ÀúÊ·»ãÂÊÇëÇó£¬±ÒÖÖ: BTC, Ê±¼ä·¶Î§: 2026-02-15 - 2026-02-22
+2026-02-22 19:51:12.308 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - ²éÑ¯ÀúÊ·»ãÂÊ£¬±ÒÖÖ: BTC, ¿ªÊ¼: 2026-02-15, ½áÊø: 2026-02-22
+2026-02-22 19:51:12.314 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - ½ÓÊÕµ½»ñÈ¡Í³¼ÆÕªÒªÇëÇó£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:51:12.314 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - »ñÈ¡Í³¼ÆÕªÒª£¬±ÒÖÖ: BTC, ·¶Î§: 7d
+2026-02-22 19:51:12.368 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - ¹²Ö§³Ö 388 ¸ö±ÒÖÖ
+2026-02-22 19:51:12.959 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:12.961 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:51.951 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:51:51.951 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:52:18.960 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - ½ÓÊÕµ½»ñÈ¡×îÐÂ»ãÂÊÇëÇó£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:52:18.960 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - »ñÈ¡×îÐÂÊµÊ±»ãÂÊ£¬É¸Ñ¡±ÒÖÖ: null
+2026-02-22 19:52:27.554 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 24520 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:52:27.556 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:52:27.556 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:52:28.713 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:52:28.727 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:52:28.727 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:52:28.798 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:52:28.798 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1191 ms
+2026-02-22 19:52:29.768 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-02-22 19:52:29.783 [main] INFO  o.s.b.a.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-22 19:52:29.800 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2026-02-22 19:52:58.440 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 7408 (C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\æ¯•ä¸šè®¾è®¡\CryptoRate)
+2026-02-22 19:52:58.443 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-22 19:52:58.444 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-22 19:52:59.418 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-22 19:52:59.427 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-22 19:52:59.429 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-22 19:52:59.488 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-22 19:52:59.488 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 993 ms
+2026-02-22 19:53:00.323 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-22 19:53:00.335 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.373 seconds (process running for 2.897)

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    用户资产 MyBatis Mapper XML 配置文件
+    
+    @author CryptoRate Team
+    @version 1.0
+    @since 2026-02-14
+-->
+<mapper namespace="com.cryptorate.mapper.UserAssetMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.cryptorate.entity.UserAsset">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 基础字段列表 -->
+    <sql id="Base_Column_List">
+        id, user_id, symbol, amount, created_at, updated_at
+    </sql>
+
+    <!-- 插入资产记录 -->
+    <insert id="insert" parameterType="com.cryptorate.entity.UserAsset" 
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_asset (
+            user_id,
+            symbol,
+            amount,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{userId},
+            #{symbol},
+            #{amount},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 根据 ID 删除资产记录 -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM user_asset
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 更新资产数量 -->
+    <update id="update" parameterType="com.cryptorate.entity.UserAsset">
+        UPDATE user_asset
+        SET amount = #{amount},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据 ID 查询资产记录 -->
+    <select id="selectById" parameterType="java.lang.Long" 
+            resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM user_asset
+        WHERE id = #{id}
+    </select>
+
+    <!-- 查询指定用户的所有资产记录 -->
+    <select id="selectByUserId" parameterType="java.lang.Long" 
+            resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM user_asset
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询指定用户的指定币种资产 -->
+    <select id="selectByUserIdAndSymbol" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM user_asset
+        WHERE user_id = #{userId} AND symbol = #{symbol}
+    </select>
+
+</mapper>
