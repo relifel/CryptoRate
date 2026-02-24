@@ -16,7 +16,7 @@ spring:
     # 数据库连接 URL
     url: jdbc:mysql://localhost:3306/cryptorate?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: 148017805  # 生产环境建议使用环境变量: ${DB_PASSWORD}
+    password: ${DB_PASSWORD}  # 生产环境建议使用环境变量: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     
     # HikariCP 连接池配置（Spring Boot 3 默认）
@@ -73,7 +73,7 @@ mybatis:
 # Coinlayer API 配置
 coinlayer:
   # API 访问密钥（生产环境建议使用环境变量: ${COINLAYER_API_KEY}）
-  access-key: 3b4fb0d39af519933feb7c0fe5bc2472
+  access-key: ${COINLAYER_API_KEY}
   # API 基础 URL
   base-url: http://api.coinlayer.com
   # 默认目标货币

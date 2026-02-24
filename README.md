@@ -116,7 +116,7 @@ cd CryptoRate
 
 ```bash
 mysql -u root -p
-# 输入密码: userpassword
+# 输入密码: your_mysql_password
 ```
 
 #### 2.2 执行初始化脚本
@@ -175,11 +175,11 @@ SELECT * FROM user;
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cryptorate?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: yourusername
-    password: yourpassword  # 你的 MySQL 密码
+    username: root
+    password: your_mysql_password  # 你的 MySQL 密码
 
 coinlayer:
-  access-key: yourAPI Key  # 你的 Coinlayer API Key
+  access-key: your_coinlayer_api_key  # 你的 Coinlayer API Key
   base-url: http://api.coinlayer.com
 ```
 
