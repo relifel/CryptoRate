@@ -930,3 +930,318 @@ try (Response response = okHttpClient.newCall(request).execute()) {
 **祝你使用愉快！🎉**
 
 如果觉得项目有帮助，欢迎 ⭐ Star 支持我们！
+
+---
+
+## 📅 附录A: 定时获取价格配置说明
+
+# 瀹氭椂鑾峰彇浠锋牸 - 閰嶇疆璇存槑
+
+## 鈽?鏈€蹇柟寮忥細鏀?application.yml锛堜笉鐢ㄦ敼 Java 浠ｇ爜锛?
+
+鎵撳紑鏂囦欢锛?
+
+```
+CryptoRate/src/main/resources/application.yml
+```
+
+鎵惧埌鏈熬鐨?`scheduler` 鑺傜偣锛岀洿鎺ヤ慨鏀规暟鍊硷紝閲嶅惎鍚庣鍗冲彲鐢熸晥锛?
+
+```yaml
+scheduler:
+  initial-delay-ms: 30000          # 绋嬪簭鍚姩鍚庣瓑寰呭灏戞绉掑啀鎵ц绗竴娆★紙褰撳墠 30 绉掞級
+  rate-sync-interval-ms: 86400000  # 鈽?鏀硅繖閲岋紒姣忛殧澶氬皯姣閲囬泦涓€娆★紙褰撳墠 24 灏忔椂锛?
+```
+
+### 甯哥敤闂撮殧瀵圭収琛?
+
+| 鎯宠鐨勯鐜?| 濉啓鐨勬绉掑€?| 姣忔湀娑堣€楁鏁?| 鏄惁瓒呭嚭鍏嶈垂闄愰锛?00娆?鏈堬級 |
+|-----------|------------|------------|--------------------------|
+| 姣?24 灏忔椂 | `86400000` | 鈮?30 娆?| 鉁?鎺ㄨ崘锛屽畨鍏?|
+| 姣?12 灏忔椂 | `43200000` | 鈮?60 娆?| 鉁?瀹夊叏 |
+| 姣? 6 灏忔椂 | `21600000` | 鈮?120 娆?| 鉂?瓒呴檺 |
+| 姣? 1 灏忔椂 | `3600000`  | 鈮?720 娆?| 鉂?涓ラ噸瓒呴檺 |
+| 姣?30 鍒嗛挓 | `1800000`  | 鈮?1440 娆?| 鉂?涓ラ噸瓒呴檺 |
+
+> 鈿狅笍 **Coinlayer 鍏嶈垂濂楅姣忔湀鍙湁 100 娆¤姹傞搴︺€?*  
+> 瓒呰繃鍚庢帴鍙ｄ細杩斿洖 `HTTP 429 Too Many Requests`锛屾暟鎹噰闆嗗皢鏆傚仠鐩村埌涓嬫湀閲嶇疆銆? 
+> 濡傞渶鏇撮珮棰戠巼锛岃鍒?[https://coinlayer.com](https://coinlayer.com) 鍗囩骇浠樿垂濂楅銆?
+
+---
+
+## 鏂囦欢浣嶇疆鎬昏
+
+闇€瑕佸叧娉ㄧ殑鏂囦欢鍙湁浠ヤ笅鍑犱釜锛?
+
+```
+CryptoRate/
+鈹溾攢鈹€ src/main/resources/
+鈹?  鈹斺攢鈹€ application.yml                         鈫?鈽?鏀归噰闆嗛鐜囧氨鏀硅繖閲岋紙鎺ㄨ崘锛?
+鈹斺攢鈹€ src/main/java/com/cryptorate/
+    鈹溾攢鈹€ CryptoRateApplication.java              鈫?宸插姞 @EnableScheduling锛屾棤闇€淇敼
+    鈹溾攢鈹€ scheduler/
+    鈹?  鈹斺攢鈹€ RateScheduler.java                  鈫?瀹氭椂浠诲姟鍏ュ彛锛堣鍙?yml 涓殑闂撮殧鍊硷級
+    鈹斺攢鈹€ service/
+        鈹斺攢鈹€ CryptoMarketService.java            鈫?瀹為檯鎵ц API 璋冪敤 + 鍐欏簱閫昏緫
+```
+
+---
+
+## 濡傛灉鎯崇敤 cron 琛ㄨ揪寮忥紙绮剧‘鎺у埗鏃堕棿鐐癸級
+
+鎵撳紑 `scheduler/RateScheduler.java`锛屾妸 `@Scheduled` 鏀逛负锛?
+
+```java
+// 姣忓ぉ鍑屾櫒 2 鐐规暣鎵ц
+@Scheduled(cron = "0 0 2 * * ?")
+public void syncRatesPeriodically() { ... }
+```
+
+甯哥敤 cron 琛ㄨ揪寮忥細
+
+| 琛ㄨ揪寮?| 鍚箟 |
+|--------|------|
+| `0 0 2 * * ?` | 姣忓ぉ 02:00 |
+| `0 0 0,12 * * ?` | 姣忓ぉ 0 鐐瑰拰 12 鐐?|
+| `0 0 */12 * * ?` | 姣?12 灏忔椂 |
+| `0 0 */6 * * ?` | 姣?6 灏忔椂 |
+
+---
+
+## 鍏充簬 HTTP 429 閿欒
+
+**閿欒鍚箟**锛氫綘鐨?Coinlayer API Key 褰撴湀宸茶秴鍑?100 娆″厤璐硅皟鐢ㄩ搴︺€?
+
+**瑙ｅ喅鏂规硶**锛堟寜鎺ㄨ崘椤哄簭锛夛細
+
+1. **璋冧綆閲囬泦棰戠巼**锛堟渶绠€鍗曪級  
+   鍦?`application.yml` 涓皢 `rate-sync-interval-ms` 鏀逛负 `86400000`锛?4 灏忔椂锛夛紝绛変笅鏈堥搴﹂噸缃嵆鍙仮澶嶆甯搞€?
+
+2. **鍗囩骇 Coinlayer 濂楅**  
+   鐧诲綍 [https://coinlayer.com/product](https://coinlayer.com/product) 鍗囩骇涓轰粯璐硅鍒掍互鑾峰緱鏇村璋冪敤娆℃暟銆?
+
+3. **鏇存崲 API 鏁版嵁婧?*  
+   鍙互鎹㈢敤 [CoinGecko 鍏嶈垂 API](https://www.coingecko.com/api/documentation)锛堟瘡鍒嗛挓 10-30 娆¤皟鐢紝鏃犳湀闄愶級锛屽彧闇€淇敼 `CryptoMarketService.java` 涓殑璇锋眰 URL 鍜屽搷搴旇В鏋愰€昏緫銆?
+
+---
+
+## 淇敼鍚庡浣曢噸鍚悗绔?
+
+```bash
+# 鍦?CryptoRate 鐩綍涓嬫墽琛?
+mvn spring-boot:run
+```
+
+閲嶅惎鍚庢棩蹇椾腑鍙湅鍒板畾鏃朵换鍔￠娆¤Е鍙戠殑杈撳嚭锛?
+
+```
+[瀹氭椂浠诲姟] 2026-02-20 08:00:30 寮€濮嬭嚜鍔ㄥ悓姝ユ眹鐜囨暟鎹?..
+[瀹氭椂浠诲姟] 2026-02-20 08:00:32 鑷姩鍚屾瀹屾垚锛屽叡鍐欏叆 150 鏉¤褰?
+```
+
+鑻ヤ粛鏈?429锛屾棩蹇楀彧浼氭墦鍗颁竴琛?WARN 鎻愮ず锛屼笉褰卞搷绋嬪簭杩愯锛?
+
+```
+[瀹氭椂浠诲姟] 2026-02-20 08:00:30 Coinlayer API 璋冪敤娆℃暟宸茶秴鍑哄厤璐归檺棰濓紙HTTP 429锛?..
+```
+
+
+---
+
+## 🔐 附录B: 后端登录与注册接口补充
+
+# 鍚庣鐧诲綍涓庢敞鍐屾帴鍙ｆ枃妗?
+
+鏈枃妗ｈ鏄?CryptoRate 鍚庣鎻愪緵鐨?*鐢ㄦ埛鐧诲綍鎺ュ彛**涓?*鐢ㄦ埛娉ㄥ唽鎺ュ彛**鐨勮姹傛牸寮忋€佸搷搴旀牸寮忋€侀敊璇爜鍙婂疄鐜颁綅缃€?
+
+---
+
+## 涓€銆佺櫥褰曟帴鍙?
+
+### 1.1 鎺ュ彛姒傝
+
+| 椤圭洰 | 璇存槑 |
+|------|------|
+| 鎺ュ彛鍚嶇О | 鐢ㄦ埛鐧诲綍 |
+| 璇锋眰鏂规硶 | `POST` |
+| 鎺ュ彛璺緞 | `/user/login` |
+| 瀹屾暣 URL | `http://localhost:8080/user/login`锛堜互瀹為檯閮ㄧ讲涓哄噯锛?|
+| Content-Type | `application/json` |
+| 璁よ瘉瑕佹眰 | 鏃犻渶鎼哄甫 Token锛堢櫥褰曟帴鍙ｆ湰韬敤浜庤幏鍙栬韩浠斤級 |
+
+### 1.2 璇锋眰璇存槑
+
+璇锋眰浣撲负 JSON锛?
+
+| 瀛楁鍚?| 绫诲瀷 | 蹇呭～ | 璇存槑 |
+|--------|------|------|------|
+| username | string | 鏄?| 鐢ㄦ埛鍚嶏紝鍓嶅悗绌烘牸浼氳鑷姩鍘婚櫎 |
+| password | string | 鏄?| 瀵嗙爜锛堝綋鍓嶆槑鏂囨牎楠岋紝鐢熶骇鐜寤鸿 BCrypt 绛夊姞瀵嗭級 |
+
+**绀轰緥锛?*
+
+```json
+{
+  "username": "testuser",
+  "password": "123456"
+}
+```
+
+**鍙傛暟鏍￠獙锛?*
+
+- 鑻ヨ姹備綋涓?`null`锛屾垨缂哄皯 `username`銆乣password` 浠讳竴瀛楁锛岃繑鍥?**400**锛宍msg` 涓恒€岃杈撳叆鐢ㄦ埛鍚嶅拰瀵嗙爜銆嶃€?
+- `username` 浼氬湪鏈嶅姟绔墽琛?`trim()`锛屽啀鍙備笌鏌ヨ涓庢牎楠屻€?
+
+### 1.3 鍝嶅簲璇存槑
+
+**鎴愬姛锛坈ode = 200锛夛細**
+
+```json
+{
+  "code": 200,
+  "msg": "鐧诲綍鎴愬姛",
+  "data": {
+    "id": 1,
+    "username": "testuser",
+    "email": "test@example.com",
+    "createdAt": "2026-02-13 10:30:00"
+  },
+  "timestamp": 1705924800000
+}
+```
+
+**data 瀛楁璇存槑锛?* id锛堢敤鎴?ID锛夈€乽sername锛堢敤鎴峰悕锛夈€乪mail锛堥偖绠憋紝鍙负绌猴級銆乧reatedAt锛堟敞鍐屾椂闂达級銆傚搷搴斾腑 **涓嶅寘鍚?* password銆?
+
+**澶辫触锛?*
+
+| code | 鍦烘櫙 | msg 绀轰緥 |
+|------|------|----------|
+| 400 | 璇锋眰浣撲负绌烘垨缂哄皯 username/password | 璇疯緭鍏ョ敤鎴峰悕鍜屽瘑鐮?|
+| 401 | 鐢ㄦ埛鍚嶄笉瀛樺湪鎴栧瘑鐮侀敊璇?| 鐢ㄦ埛鍚嶆垨瀵嗙爜閿欒 |
+
+### 1.4 涓氬姟閫昏緫绠€杩?
+
+1. **Controller**锛坄UserController.login`锛夋帴鏀?`POST /user/login`锛屾牎楠岃姹備綋闈炵┖涓斿寘鍚?`username`銆乣password`锛屼笉閫氳繃鍒欒繑鍥?400銆?
+2. **Service**锛坄UserService.login`锛夋牴鎹?`username` 鏌ヨ鐢ㄦ埛锛涜嫢涓嶅瓨鍦ㄦ垨瀵嗙爜涓嶅尮閰嶏紝鎶涘嚭 `ApiException(401, "鐢ㄦ埛鍚嶆垨瀵嗙爜閿欒")`锛岀敱鍏ㄥ眬寮傚父澶勭悊鍣ㄨ繑鍥?401銆?
+3. 鏍￠獙閫氳繃鍚庯紝灏嗙敤鎴峰璞′腑鐨?`password` 缃负 `null`锛屽啀閫氳繃 `R.ok("鐧诲綍鎴愬姛", user)` 杩斿洖 200 鍙婄敤鎴蜂俊鎭€?
+
+### 1.5 璋冪敤绀轰緥
+
+```bash
+curl -X POST http://localhost:8080/user/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"123456"}'
+```
+
+---
+
+## 浜屻€佹敞鍐屾帴鍙?
+
+### 2.1 鎺ュ彛姒傝
+
+| 椤圭洰 | 璇存槑 |
+|------|------|
+| 鎺ュ彛鍚嶇О | 鐢ㄦ埛娉ㄥ唽 |
+| 璇锋眰鏂规硶 | `POST` |
+| 鎺ュ彛璺緞 | `/user/register` |
+| 瀹屾暣 URL | `http://localhost:8080/user/register`锛堜互瀹為檯閮ㄧ讲涓哄噯锛?|
+| Content-Type | `application/json` |
+| 璁よ瘉瑕佹眰 | 鏃犻渶鎼哄甫 Token |
+
+### 2.2 璇锋眰璇存槑
+
+璇锋眰浣撲负 JSON锛?
+
+| 瀛楁鍚?| 绫诲瀷 | 蹇呭～ | 璇存槑 |
+|--------|------|------|------|
+| username | string | 鏄?| 鐢ㄦ埛鍚嶏紙鍞竴锛夛紝鍓嶅悗绌烘牸浼氳鑷姩鍘婚櫎 |
+| password | string | 鏄?| 瀵嗙爜锛堝綋鍓嶆槑鏂囧瓨鍌紝鐢熶骇鐜寤鸿 BCrypt 绛夊姞瀵嗭級 |
+| email | string | 鍚?| 閭 |
+
+**绀轰緥锛?*
+
+```json
+{
+  "username": "newuser",
+  "password": "123456",
+  "email": "newuser@example.com"
+}
+```
+
+**鍙傛暟鏍￠獙锛?*
+
+- 鑻ヨ姹備綋涓?`null`锛屾垨 `username`銆乣password` 涓虹┖/鏈紶锛岃繑鍥?**400**锛宍msg` 涓恒€岃杈撳叆鐢ㄦ埛鍚嶅拰瀵嗙爜銆嶃€?
+- **Service 灞?*锛氳嫢 `username` 鍘荤┖鏍煎悗涓虹┖锛屾姏鍑?`ApiException(400, "璇疯緭鍏ョ敤鎴峰悕")`锛涜嫢 `password` 涓虹┖锛屾姏鍑?`ApiException(400, "璇疯緭鍏ュ瘑鐮?)`锛涜嫢鐢ㄦ埛鍚嶅凡瀛樺湪锛屾姏鍑?`ApiException(400, "鐢ㄦ埛鍚嶅凡瀛樺湪")`銆?
+
+### 2.3 鍝嶅簲璇存槑
+
+**鎴愬姛锛坈ode = 200锛夛細**
+
+```json
+{
+  "code": 200,
+  "msg": "娉ㄥ唽鎴愬姛",
+  "data": {
+    "id": 2,
+    "username": "newuser",
+    "email": "newuser@example.com",
+    "createdAt": "2026-02-13 11:00:00"
+  },
+  "timestamp": 1705924800000
+}
+```
+
+**data 瀛楁璇存槑锛?* id锛堢敤鎴?ID锛夈€乽sername锛堢敤鎴峰悕锛夈€乪mail锛堥偖绠憋紝鍙负绌猴級銆乧reatedAt锛堟敞鍐屾椂闂达級銆傚搷搴斾腑 **涓嶅寘鍚?* password銆?
+
+**澶辫触锛?*
+
+| code | 鍦烘櫙 | msg 绀轰緥 |
+|------|------|----------|
+| 400 | 鏈紶鎴栫┖ username/password銆佺敤鎴峰悕宸插瓨鍦?| 璇疯緭鍏ョ敤鎴峰悕鍜屽瘑鐮?/ 璇疯緭鍏ョ敤鎴峰悕 / 璇疯緭鍏ュ瘑鐮?/ 鐢ㄦ埛鍚嶅凡瀛樺湪 |
+| 500 | 鏁版嵁搴撴彃鍏ュけ璐ョ瓑 | 鐢ㄦ埛娉ㄥ唽澶辫触 |
+
+### 2.4 涓氬姟閫昏緫绠€杩?
+
+1. **Controller**锛坄UserController.register`锛夋帴鏀?`POST /user/register`锛屾牎楠岃姹備綋闈炵┖涓?`username`銆乣password` 闈炵┖锛屼笉閫氳繃鍒欒繑鍥?400銆?
+2. **Service**锛坄UserService.register`锛夊 `username` 鍘荤┖鏍煎苟鏍￠獙闈炵┖銆佹牎楠?`password` 闈炵┖锛涜嫢 `userMapper.existsByUsername(username)` 涓?true锛屾姏鍑?`ApiException(400, "鐢ㄦ埛鍚嶅凡瀛樺湪")`锛涜缃?`createdAt` 鍚庤皟鐢?`userMapper.insert(user)`锛涙彃鍏ュけ璐ュ垯鎶涘嚭 `ApiException(500, "鐢ㄦ埛娉ㄥ唽澶辫触")`銆?
+3. 娉ㄥ唽鎴愬姛鍚庯紝灏嗙敤鎴峰璞′腑鐨?`password` 缃负 `null`锛屽啀閫氳繃 `R.ok("娉ㄥ唽鎴愬姛", user)` 杩斿洖 200 鍙婃柊鐢ㄦ埛淇℃伅銆?
+
+### 2.5 璋冪敤绀轰緥
+
+```bash
+curl -X POST http://localhost:8080/user/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"newuser","password":"123456","email":"newuser@example.com"}'
+```
+
+---
+
+## 涓夈€佷唬鐮佷綅缃?
+
+| 鎺ュ彛 | 灞傜骇 | 绫?/ 鏂规硶 | 鏂囦欢璺緞 |
+|------|------|-----------|----------|
+| 鐧诲綍 | 鎺у埗鍣?| `UserController#login` | `controller/UserController.java` |
+| 鐧诲綍 | 鏈嶅姟灞?| `UserService#login` | `service/UserService.java` |
+| 娉ㄥ唽 | 鎺у埗鍣?| `UserController#register` | `controller/UserController.java` |
+| 娉ㄥ唽 | 鏈嶅姟灞?| `UserService#register` | `service/UserService.java` |
+| 閫氱敤 | 鏁版嵁灞?| `UserMapper#selectByUsername`銆乣existsByUsername`銆乣insert` | `mapper/UserMapper.java` |
+| 閫氱敤 | 瀹炰綋 | `User` | `entity/User.java` |
+| 閫氱敤 | 缁熶竴鍝嶅簲 | `R<T>` | `common/R.java` |
+| 閫氱敤 | 寮傚父 | `ApiException`銆乣GlobalExceptionHandler` | `common/exception/` |
+
+---
+
+## 鍥涖€佸畨鍏ㄤ笌鎵╁睍璇存槑
+
+- **褰撳墠瀹炵幇**锛氬瘑鐮佷负鏄庢枃瀛樺偍涓庢瘮瀵癸紝浠呴€傚悎寮€鍙?婕旂ず鐜銆?
+- **鐢熶骇寤鸿**锛氫娇鐢?BCrypt 绛夌畻娉曞瀵嗙爜鍔犲瘑瀛樺偍锛涙敞鍐屾椂 `passwordEncoder.encode(rawPassword)`锛岀櫥褰曟椂 `passwordEncoder.matches(rawPassword, encodedPassword)`锛涘繀瑕佹椂鍙鍔犵櫥褰?娉ㄥ唽澶辫触娆℃暟闄愬埗銆侀獙璇佺爜绛夈€?
+- **Token 鎵╁睍**锛氳嫢闇€鍓嶅悗绔垎绂讳笅鐨勪細璇濅繚鎸侊紝鍙湪鐧诲綍/娉ㄥ唽鎴愬姛鍚庣敓鎴?JWT 鎴?Session Token锛屾斁鍏ュ搷搴?`data` 鎴栧搷搴斿ご锛岀敱鍓嶇鍦ㄥ悗缁姹備腑鎼哄甫锛堝 `Authorization: Bearer <token>`锛夛紝鍚庣鍐嶅鍔?Filter/Interceptor 鏍￠獙銆?
+
+---
+
+## 浜斻€佺浉鍏虫枃妗?
+
+- 鍓嶇鐧诲綍涓庢敞鍐屻€佹嫤鎴櫒璇存槑锛氳鍓嶇椤圭洰涓殑 **鐧诲綍鎺ュ彛涓庢嫤鎴櫒璇存槑.md**
+- 鍏ㄩ噺 API 鍒楄〃涓庢祴璇曪細瑙?**API鎺ュ彛鏂囨。涓庢祴璇曟寚鍗?md**
+
+
