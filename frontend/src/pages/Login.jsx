@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { userAPI } from '../api';
+import { userAPI, saveToken } from '../api';
 
 /**
  * 登录/注册页面
+ *
  * 支持切换：登录（用户名、密码）、注册（用户名、密码、邮箱）
+ *
+ * 登录流程：
+ * 1. 调用 POST /user/login 接口
+ * 2. 后端返回 JWT Token（data 字段）
+ * 3. 调用 saveToken() 将 Token 存入 localStorage
+ * 4. 调用 onSuccess 通知父组件更新登录状态
+ *
+ * 注册流程：
+ * 1. 调用 POST /user/register 接口
+ * 2. 注册成功后自动切换到登录模式
  */
 export default function Login({ onSuccess, onCancel }) {
   const [isRegister, setIsRegister] = useState(false);
@@ -14,21 +25,26 @@ export default function Login({ onSuccess, onCancel }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
+  /** 处理登录 */
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
     const u = username.trim();
-    const p = password;
-    if (!u || !p) {
+    if (!u || !password) {
       setError('请输入用户名和密码');
       return;
     }
     setLoading(true);
     try {
-      const res = await userAPI.login({ username: u, password: p });
+      const res = await userAPI.login({ username: u, password });
       if (res && res.data) {
-        onSuccess && onSuccess(res.data);
+        // 将后端返回的 JWT Token 存入 localStorage
+        saveToken(res.data);
+        // 通知父组件登录成功（传入用户名用于 UI 展示）
+        onSuccess && onSuccess({ username: u, token: res.data });
       } else {
         setError('登录失败，请重试');
       }
@@ -39,23 +55,23 @@ export default function Login({ onSuccess, onCancel }) {
     }
   };
 
+  /** 处理注册 */
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
     const u = username.trim();
-    const p = password;
-    if (!u || !p) {
+    if (!u || !password) {
       setError('请输入用户名和密码');
       return;
     }
     setLoading(true);
     try {
-      const res = await userAPI.register({ username: u, password: p, email: email.trim() || undefined });
-      if (res && res.data) {
-        onSuccess && onSuccess(res.data);
-      } else {
-        setError('注册失败，请重试');
-      }
+      await userAPI.register({ username: u, password, email: email.trim() || undefined });
+      // 注册成功后自动切换到登录模式，并填充用户名
+      setSuccessMsg('注册成功！请使用新账号登录');
+      setIsRegister(false);
+      setPassword('');
     } catch (err) {
       setError(err.message || '注册失败，请重试');
     } finally {
@@ -68,6 +84,7 @@ export default function Login({ onSuccess, onCancel }) {
   const switchMode = () => {
     setIsRegister(!isRegister);
     setError('');
+    setSuccessMsg('');
   };
 
   return (
@@ -79,10 +96,18 @@ export default function Login({ onSuccess, onCancel }) {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          {/* 错误提示 */}
           {error && (
             <div className="mb-4 flex items-center gap-2 text-red-600 text-sm bg-red-50 border border-red-100 rounded-lg px-3 py-2">
               <AlertCircle size={18} className="flex-shrink-0" />
               <span>{error}</span>
+            </div>
+          )}
+
+          {/* 成功提示 */}
+          {successMsg && (
+            <div className="mb-4 flex items-center gap-2 text-green-700 text-sm bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+              <span>✓ {successMsg}</span>
             </div>
           )}
 
@@ -96,7 +121,7 @@ export default function Login({ onSuccess, onCancel }) {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入用户名"
+                placeholder="请输入用户名（3~20 位）"
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 autoComplete="username"
                 disabled={loading}
@@ -111,7 +136,7 @@ export default function Login({ onSuccess, onCancel }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="请输入密码"
+                placeholder={isRegister ? '请输入密码（6~20 位）' : '请输入密码'}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 autoComplete={isRegister ? 'new-password' : 'current-password'}
                 disabled={loading}
@@ -148,17 +173,19 @@ export default function Login({ onSuccess, onCancel }) {
                   {isRegister ? '注册中...' : '登录中...'}
                 </>
               ) : (
-                isRegister ? '注册' : '登录'
+                isRegister ? '注 册' : '登 录'
               )}
             </button>
-            <button
-              type="button"
-              onClick={onCancel}
-              disabled={loading}
-              className="w-full py-2.5 text-gray-600 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
-            >
-              返回
-            </button>
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                disabled={loading}
+                className="w-full py-2.5 text-gray-600 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-60"
+              >
+                取消
+              </button>
+            )}
           </div>
 
           <p className="mt-4 text-center text-sm text-gray-500">

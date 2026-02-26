@@ -117,3 +117,10 @@ logging:
     name: logs/cryptorate.log
     max-size: 10MB
     max-history: 30
+
+# JWT 配置
+jwt:
+  # 签名密钥：生产环境请替换为更复杂的随机字符串（建议 256 位以上）
+  secret: "CryptoRate@2026!SecretKey#ForJWT$Generation&Validation*SafeKey"
+  # Token 过期时间：24 小时（单位：毫秒）
+  expiration: 86400000

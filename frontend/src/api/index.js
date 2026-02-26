@@ -10,11 +10,38 @@ const API_CONFIG = {
   TIMEOUT: 10000, // 10秒超时
 };
 
-/** 本地存储的登录用户 key，与 App 中一致 */
+/** 本地存储的 JWT Token key */
+const AUTH_TOKEN_KEY = 'cryptorate_token';
+
+/** 本地存储的登录用户信息 key（兼容旧版保留） */
 const AUTH_STORAGE_KEY = 'cryptorate_user';
 
 /**
- * 从本地存储读取当前登录用户（用于请求头）
+ * 从 localStorage 读取 JWT Token
+ * @returns {string|null}
+ */
+function getToken() {
+  return localStorage.getItem(AUTH_TOKEN_KEY) || null;
+}
+
+/**
+ * 将 JWT Token 保存到 localStorage
+ * @param {string} token - JWT Token 字符串
+ */
+export function saveToken(token) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+/**
+ * 清除 JWT Token 和用户信息（退出登录时调用）
+ */
+export function clearAuth() {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+}
+
+/**
+ * 从本地存储读取当前登录用户（用于 UI 展示）
  * @returns {{ id: number, username: string } | null}
  */
 function getStoredUser() {
@@ -27,32 +54,34 @@ function getStoredUser() {
 }
 
 /**
- * 请求拦截：为已登录用户自动附加身份头（需登录的接口可由后端校验）
- * 登录/注册接口不附加，避免无意义带参
+ * 请求拦截：自动从 localStorage 读取 JWT Token 并附加到 Authorization 请求头。
+ * 登录/注册接口不附加 Token（公开接口）。
+ * @param {string} url - 请求地址
+ * @param {object} headers - 已有请求头
+ * @returns {object} 附加 Authorization 头后的请求头
  */
 function attachAuthHeaders(url, headers) {
   if (!url || typeof url !== 'string') return headers;
-  const isAuthUrl = url.includes('/user/login') || url.includes('/user/register');
-  if (isAuthUrl) return headers;
-  const user = getStoredUser();
-  if (!user || !user.id) return headers;
+  // 公开接口不需要附加 Token
+  const isPublicUrl = url.includes('/user/login') || url.includes('/user/register');
+  if (isPublicUrl) return headers;
+  const token = getToken();
+  if (!token) return headers;
   return {
     ...headers,
-    'X-User-Id': String(user.id),
-    'X-Username': user.username || '',
+    'Authorization': `Bearer ${token}`,
   };
 }
 
 /**
- * 响应拦截：业务码 401 时清除登录态并通知应用跳转登录页
+ * 响应拦截：收到业务码 401 或 HTTP 401 时，清除本地 Token 并跳转到登录页。
+ * @param {object} data - 解析后的响应体
  */
 function handleResponseAuth(data) {
   if (data && data.code === 401) {
-    try {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
-    } catch (_) {}
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('auth:logout'));
+    clearAuth();
+    if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+      window.location.href = '/login';
     }
   }
 }
@@ -249,6 +278,7 @@ export const userAPI = {
       method: 'POST',
       body: { username: body.username, password: body.password },
     });
+    // 注意：登录成功后需由调用方手动 saveToken(data.data) 保存 JWT Token
   },
 
   /**

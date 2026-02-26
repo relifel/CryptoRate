@@ -1,186 +1,169 @@
-2026-02-25 04:53:30.249 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 26600 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
-2026-02-25 04:53:30.258 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
-2026-02-25 04:53:30.259 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-25 04:53:31.236 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-25 04:53:31.247 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-25 04:53:31.249 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
-2026-02-25 04:53:31.305 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-25 04:53:31.307 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 994 ms
-2026-02-25 04:53:32.125 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-25 04:53:32.135 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.462 seconds (process running for 3.295)
-2026-02-25 05:01:20.451 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 27660 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
-2026-02-25 05:01:20.453 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
-2026-02-25 05:01:20.454 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-25 05:01:21.270 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-25 05:01:21.277 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-25 05:01:21.277 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
-2026-02-25 05:01:21.323 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-25 05:01:21.323 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 831 ms
-2026-02-25 05:01:21.943 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-25 05:01:21.951 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 1.904 seconds (process running for 2.46)
-2026-02-25 05:01:45.728 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-25 05:01:45.729 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-25 05:01:45.729 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
-2026-02-25 05:01:45.786 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:01:45.786 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:01:45.795 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:01:45.795 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:01:45.795 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:01:45.798 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:01:45.798 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:01:45.798 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:01:45.808 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
-2026-02-25 05:01:46.070 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@15958d56
-2026-02-25 05:01:46.071 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
-2026-02-25 05:01:46.176 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:01:46.241 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:01:46.241 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:01:46.244 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:01:46.244 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:01:46.246 [http-nio-8080-exec-5] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:01:46.246 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:01:46.248 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:01:46.248 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:01:46.249 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:01:51.479 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:01:51.479 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:01:51.479 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:01:51.480 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:01:51.482 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:01:51.482 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:01:51.482 [http-nio-8080-exec-8] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:01:51.482 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:01:51.485 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:01:51.488 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:01:51.488 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:01:51.489 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:01:51.489 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:01:51.494 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:01:51.495 [http-nio-8080-exec-10] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:01:51.495 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:01:51.513 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:01:51.513 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:01:51.958 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [定时任务] scheduler.enabled=false，本次定时同步已跳过
-2026-02-25 05:01:55.658 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到搜索币种请求，关键词: B
-2026-02-25 05:01:55.658 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 搜索币种，关键词: B
-2026-02-25 05:01:55.664 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 搜索到 50 个匹配币种
-2026-02-25 05:01:56.258 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到搜索币种请求，关键词: BT
-2026-02-25 05:01:56.259 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 搜索币种，关键词: BT
-2026-02-25 05:01:56.262 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 搜索到 16 个匹配币种
-2026-02-25 05:01:56.588 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到搜索币种请求，关键词: BTC
-2026-02-25 05:01:56.589 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 搜索币种，关键词: BTC
-2026-02-25 05:01:56.593 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 搜索到 4 个匹配币种
-2026-02-25 05:01:59.561 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:01:59.561 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:01:59.566 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTCA, 范围: 7d
-2026-02-25 05:01:59.566 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTCA, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:01:59.568 [http-nio-8080-exec-3] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTCA, 范围: 7d
-2026-02-25 05:01:59.568 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTCA, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:02:00.391 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:00.392 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:02:00.397 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTCS, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:02:00.397 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTCS, 范围: 7d
-2026-02-25 05:02:00.397 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTCS, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:02:00.397 [http-nio-8080-exec-8] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTCS, 范围: 7d
-2026-02-25 05:02:00.811 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:00.811 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:02:00.816 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTCZ, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:02:00.816 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTCZ, 范围: 7d
-2026-02-25 05:02:00.816 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTCZ, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:02:00.816 [http-nio-8080-exec-9] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTCZ, 范围: 7d
-2026-02-25 05:02:01.751 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:02:01.751 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:01.751 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:02:01.751 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:02:01.751 [http-nio-8080-exec-1] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:02:01.751 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:02:21.484 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:21.484 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:02:32.082 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:32.082 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:02:51.479 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:02:51.479 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:03:02.094 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:03:02.094 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:03:21.477 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:03:21.477 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:03:32.086 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:03:32.087 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:03:51.482 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:03:51.482 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:04:21.475 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:04:21.475 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:04:44.959 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown initiated...
-2026-02-25 05:04:44.965 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown completed.
-2026-02-25 05:04:48.858 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 24440 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
-2026-02-25 05:04:48.860 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
-2026-02-25 05:04:48.860 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
-2026-02-25 05:04:49.745 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-02-25 05:04:49.757 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-25 05:04:49.757 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
-2026-02-25 05:04:49.809 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-25 05:04:49.810 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 909 ms
-2026-02-25 05:04:50.595 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
-2026-02-25 05:04:50.603 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.152 seconds (process running for 2.744)
-2026-02-25 05:04:51.529 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-25 05:04:51.529 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-02-25 05:04:51.529 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
-2026-02-25 05:04:51.561 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:04:51.563 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:04:51.575 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
-2026-02-25 05:04:51.700 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@2d70ffb7
-2026-02-25 05:04:51.702 [http-nio-8080-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
-2026-02-25 05:05:00.424 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:05:00.424 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:00.424 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:05:00.424 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:00.425 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:00.425 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:00.428 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:05:00.428 [http-nio-8080-exec-5] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:05:00.434 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:05:00.440 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
-2026-02-25 05:05:00.442 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
-2026-02-25 05:05:00.445 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:00.445 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:00.448 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
-2026-02-25 05:05:00.451 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:05:00.451 [http-nio-8080-exec-8] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:05:00.462 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:00.462 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:02.165 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:02.165 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:02.172 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: 611, 范围: 7d
-2026-02-25 05:05:02.172 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: 611, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:02.173 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: 611, 范围: 7d
-2026-02-25 05:05:02.173 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: 611, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:02.520 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:02.520 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:02.525 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: ABC, 范围: 7d
-2026-02-25 05:05:02.525 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: ABC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:02.525 [http-nio-8080-exec-8] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: ABC, 范围: 7d
-2026-02-25 05:05:02.525 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: ABC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:02.843 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:02.843 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:02.850 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: ACP, 范围: 7d
-2026-02-25 05:05:02.851 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: ACP, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:02.851 [http-nio-8080-exec-4] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: ACP, 范围: 7d
-2026-02-25 05:05:02.851 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: ACP, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:14.166 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.UserController - 接收到用户登录请求，用户名: admin
-2026-02-25 05:05:14.166 [http-nio-8080-exec-2] INFO  com.cryptorate.service.UserService - 用户登录，用户名: admin
-2026-02-25 05:05:14.187 [http-nio-8080-exec-2] INFO  com.cryptorate.service.UserService - 用户登录成功，用户ID: 1
-2026-02-25 05:05:20.609 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [定时任务] scheduler.enabled=false，本次定时同步已跳过
-2026-02-25 05:05:21.477 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:21.477 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:26.778 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.AnalysisController - 接收到生成行情解读请求，币种: ACP
-2026-02-25 05:05:26.778 [http-nio-8080-exec-7] INFO  com.cryptorate.service.AnalysisService - 生成行情解读，币种: ACP
-2026-02-25 05:05:30.098 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
-2026-02-25 05:05:30.098 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:30.098 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-18 - 2026-02-25
-2026-02-25 05:05:30.098 [http-nio-8080-exec-6] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
-2026-02-25 05:05:30.098 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:30.098 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-18, 结束: 2026-02-25
-2026-02-25 05:05:51.483 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
-2026-02-25 05:05:51.483 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
-2026-02-25 05:05:53.421 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown initiated...
-2026-02-25 05:05:53.425 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown completed.
+2026-02-27 02:07:20.044 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 5328 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
+2026-02-27 02:07:20.050 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-27 02:07:20.052 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-27 02:07:21.048 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-27 02:07:21.059 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-27 02:07:21.060 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-27 02:07:21.126 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-27 02:07:21.126 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1029 ms
+2026-02-27 02:07:22.003 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-27 02:07:22.012 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.452 seconds (process running for 3.169)
+2026-02-27 02:07:52.015 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [定时任务] scheduler.enabled=false，本次定时同步已跳过
+2026-02-27 02:08:02.369 [http-nio-8080-exec-5] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-27 02:08:02.369 [http-nio-8080-exec-5] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-27 02:08:02.371 [http-nio-8080-exec-5] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-02-27 02:08:02.405 [http-nio-8080-exec-1] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:08:02.405 [http-nio-8080-exec-4] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:08:02.405 [http-nio-8080-exec-6] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:08:02.405 [http-nio-8080-exec-5] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:08:02.405 [http-nio-8080-exec-3] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:08:02.405 [http-nio-8080-exec-2] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:08:02.409 [http-nio-8080-exec-4] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.409 [http-nio-8080-exec-3] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.409 [http-nio-8080-exec-2] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.409 [http-nio-8080-exec-5] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.409 [http-nio-8080-exec-1] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.409 [http-nio-8080-exec-6] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.442 [http-nio-8080-exec-7] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:08:02.442 [http-nio-8080-exec-8] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:08:02.444 [http-nio-8080-exec-7] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:08:02.444 [http-nio-8080-exec-8] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:08:22.314 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.UserController - 接收到用户登录请求，用户名: admin
+2026-02-27 02:08:22.314 [http-nio-8080-exec-10] INFO  com.cryptorate.service.UserService - 用户登录请求，用户名: admin
+2026-02-27 02:08:22.333 [http-nio-8080-exec-10] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
+2026-02-27 02:08:22.659 [http-nio-8080-exec-10] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@efe3684
+2026-02-27 02:08:22.662 [http-nio-8080-exec-10] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
+2026-02-27 02:08:22.760 [http-nio-8080-exec-10] WARN  o.s.security.crypto.bcrypt.BCryptPasswordEncoder - Encoded password does not look like BCrypt
+2026-02-27 02:08:22.760 [http-nio-8080-exec-10] WARN  com.cryptorate.service.UserService - 登录失败，密码错误，用户名: admin
+2026-02-27 02:08:22.762 [http-nio-8080-exec-10] ERROR c.c.common.exception.GlobalExceptionHandler - 业务异常: code=401, message=用户名或密码错误
+2026-02-27 02:08:23.075 [http-nio-8080-exec-3] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:08:23.075 [http-nio-8080-exec-1] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:08:23.075 [http-nio-8080-exec-4] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:08:23.075 [http-nio-8080-exec-5] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:08:23.075 [http-nio-8080-exec-3] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.075 [http-nio-8080-exec-1] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.075 [http-nio-8080-exec-2] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:08:23.075 [http-nio-8080-exec-4] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.075 [http-nio-8080-exec-5] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.075 [http-nio-8080-exec-2] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.075 [http-nio-8080-exec-6] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:08:23.075 [http-nio-8080-exec-6] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.087 [http-nio-8080-exec-7] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:08:23.087 [http-nio-8080-exec-7] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:08:23.089 [http-nio-8080-exec-8] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:08:23.089 [http-nio-8080-exec-8] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:08:44.312 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown initiated...
+2026-02-27 02:08:44.318 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Shutdown completed.
+2026-02-27 02:10:27.715 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 22952 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
+2026-02-27 02:10:27.718 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-27 02:10:27.719 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-27 02:10:28.653 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-27 02:10:28.663 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-27 02:10:28.663 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-27 02:10:28.714 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-27 02:10:28.714 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 948 ms
+2026-02-27 02:10:29.374 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-27 02:10:29.382 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.111 seconds (process running for 2.599)
+2026-02-27 02:10:59.387 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [定时任务] scheduler.enabled=false，本次定时同步已跳过
+2026-02-27 02:16:57.271 [http-nio-8080-exec-5] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-27 02:16:57.275 [http-nio-8080-exec-5] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-27 02:16:57.277 [http-nio-8080-exec-5] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-02-27 02:16:57.310 [http-nio-8080-exec-5] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:16:57.310 [http-nio-8080-exec-6] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:16:57.310 [http-nio-8080-exec-4] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:16:57.310 [http-nio-8080-exec-1] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/symbols
+2026-02-27 02:16:57.310 [http-nio-8080-exec-3] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:16:57.310 [http-nio-8080-exec-2] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:16:57.313 [http-nio-8080-exec-1] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.313 [http-nio-8080-exec-4] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/symbols] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.313 [http-nio-8080-exec-5] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.313 [http-nio-8080-exec-6] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.313 [http-nio-8080-exec-3] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.313 [http-nio-8080-exec-2] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.345 [http-nio-8080-exec-8] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/stats/summary/BTC
+2026-02-27 02:16:57.345 [http-nio-8080-exec-7] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/history
+2026-02-27 02:16:57.345 [http-nio-8080-exec-8] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/stats/summary/BTC] 缺少有效的 Authorization 头
+2026-02-27 02:16:57.346 [http-nio-8080-exec-7] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/history] 缺少有效的 Authorization 头
+2026-02-27 02:17:27.428 [http-nio-8080-exec-9] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:17:27.428 [http-nio-8080-exec-9] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:17:57.435 [http-nio-8080-exec-10] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:17:57.436 [http-nio-8080-exec-10] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:18:27.438 [http-nio-8080-exec-3] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:18:27.438 [http-nio-8080-exec-3] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:18:57.432 [http-nio-8080-exec-7] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:18:57.432 [http-nio-8080-exec-7] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:19:27.438 [http-nio-8080-exec-8] DEBUG com.cryptorate.interceptor.JwtInterceptor - JWT 拦截器校验请求: /api/v1/rates/latest
+2026-02-27 02:19:27.438 [http-nio-8080-exec-8] WARN  com.cryptorate.interceptor.JwtInterceptor - 请求 [/api/v1/rates/latest] 缺少有效的 Authorization 头
+2026-02-27 02:19:49.471 [main] INFO  com.cryptorate.CryptoRateApplication - Starting CryptoRateApplication using Java 17.0.10 with PID 26628 (C:\Users\ASUS\Desktop\毕业设计\CryptoRate\target\classes started by ASUS in C:\Users\ASUS\Desktop\毕业设计\CryptoRate)
+2026-02-27 02:19:49.473 [main] DEBUG com.cryptorate.CryptoRateApplication - Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-02-27 02:19:49.474 [main] INFO  com.cryptorate.CryptoRateApplication - No active profile set, falling back to 1 default profile: "default"
+2026-02-27 02:19:50.404 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-27 02:19:50.414 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-27 02:19:50.414 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-27 02:19:50.475 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-27 02:19:50.475 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 961 ms
+2026-02-27 02:19:51.214 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path ''
+2026-02-27 02:19:51.224 [main] INFO  com.cryptorate.CryptoRateApplication - Started CryptoRateApplication in 2.191 seconds (process running for 2.706)
+2026-02-27 02:19:53.930 [http-nio-8080-exec-6] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-27 02:19:53.930 [http-nio-8080-exec-6] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-27 02:19:53.932 [http-nio-8080-exec-6] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-02-27 02:19:53.987 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
+2026-02-27 02:19:53.987 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
+2026-02-27 02:19:53.993 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
+2026-02-27 02:19:53.993 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-20 - 2026-02-27
+2026-02-27 02:19:53.993 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:19:53.995 [http-nio-8080-exec-9] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
+2026-02-27 02:19:53.995 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:19:53.995 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-20, 结束: 2026-02-27
+2026-02-27 02:19:54.003 [http-nio-8080-exec-5] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Starting...
+2026-02-27 02:19:54.225 [http-nio-8080-exec-5] INFO  com.zaxxer.hikari.pool.HikariPool - CryptoRateHikariPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@6cd6dcd9
+2026-02-27 02:19:54.230 [http-nio-8080-exec-5] INFO  com.zaxxer.hikari.HikariDataSource - CryptoRateHikariPool - Start completed.
+2026-02-27 02:19:54.325 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
+2026-02-27 02:19:54.410 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到获取币种列表请求
+2026-02-27 02:19:54.412 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 获取系统支持的币种
+2026-02-27 02:19:54.412 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.StatsController - 接收到获取统计摘要请求，币种: BTC, 范围: 7d
+2026-02-27 02:19:54.412 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到查询历史汇率请求，币种: BTC, 时间范围: 2026-02-20 - 2026-02-27
+2026-02-27 02:19:54.414 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 查询历史汇率，币种: BTC, 开始: 2026-02-20, 结束: 2026-02-27
+2026-02-27 02:19:54.414 [http-nio-8080-exec-2] INFO  com.cryptorate.service.StatsService - 获取统计摘要，币种: BTC, 范围: 7d
+2026-02-27 02:19:54.419 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 共支持 388 个币种
+2026-02-27 02:19:54.420 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:19:54.420 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:20:21.227 [scheduling-1] DEBUG com.cryptorate.scheduler.RateScheduler - [定时任务] scheduler.enabled=false，本次定时同步已跳过
+2026-02-27 02:20:24.444 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:20:24.444 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:20:54.430 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:20:54.430 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:21:24.433 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:21:24.433 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:21:54.436 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:21:54.436 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:22:24.436 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:22:24.436 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:22:54.443 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:22:54.445 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:23:24.432 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:23:24.433 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:24:11.431 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:24:11.433 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:25:11.436 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:25:11.437 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:26:11.448 [http-nio-8080-exec-6] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:26:11.452 [http-nio-8080-exec-6] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:27:11.431 [http-nio-8080-exec-1] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:27:11.434 [http-nio-8080-exec-1] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:28:11.430 [http-nio-8080-exec-10] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:28:11.430 [http-nio-8080-exec-10] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:29:11.441 [http-nio-8080-exec-7] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:29:11.441 [http-nio-8080-exec-7] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:30:11.441 [http-nio-8080-exec-2] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:30:11.442 [http-nio-8080-exec-2] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:31:11.442 [http-nio-8080-exec-4] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:31:11.442 [http-nio-8080-exec-4] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:32:11.441 [http-nio-8080-exec-3] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:32:11.441 [http-nio-8080-exec-3] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:33:11.435 [http-nio-8080-exec-8] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:33:11.436 [http-nio-8080-exec-8] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:34:11.428 [http-nio-8080-exec-5] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:34:11.428 [http-nio-8080-exec-5] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
+2026-02-27 02:35:11.442 [http-nio-8080-exec-9] INFO  com.cryptorate.controller.RateController - 接收到获取最新汇率请求，筛选币种: null
+2026-02-27 02:35:11.443 [http-nio-8080-exec-9] INFO  com.cryptorate.service.RateService - 获取最新实时汇率，筛选币种: null
