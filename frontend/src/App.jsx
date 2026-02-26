@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Bell, TrendingUp, TrendingDown, Search, Star, Activity, BarChart3, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { rateAPI, statsAPI, analysisAPI, clearAuth } from './api';
+import { rateAPI, statsAPI, analysisAPI, clearAuth, favoriteAPI } from './api';
 import { getDateRangeByTimeframe } from './utils/dateUtils';
 import Login from './pages/Login';
 
@@ -119,11 +119,12 @@ function App() {
     }
   });
   const [showLoginPage, setShowLoginPage] = useState(false);
+  const [activeTab, setActiveTab] = useState('market'); // 'market' | 'favorites' | 'analysis'
 
   // 基础状态
   const [selectedCrypto, setSelectedCrypto] = useState('BTC');
   const [activeTimeframe, setActiveTimeframe] = useState('1D');
-  const [favorites, setFavorites] = useState(['BTC']); // 收藏列表
+  const [favorites, setFavorites] = useState([]); // 收藏列表（从后端加载）
   const [showAiAnalysis, setShowAiAnalysis] = useState(false); // AI分析显示状态
 
   // 数据状态
@@ -158,13 +159,45 @@ function App() {
 
   const timeframes = ['15M', '1H', '4H', '1D', '1W', '1M'];
 
-  // 切换收藏
-  const toggleFavorite = (symbol) => {
-    setFavorites(prev =>
-      prev.includes(symbol)
-        ? prev.filter(s => s !== symbol)
-        : [...prev, symbol]
-    );
+  // 登录后从后端加载收藏列表
+  useEffect(() => {
+    if (!user) {
+      setFavorites([]);
+      return;
+    }
+    const loadFavorites = async () => {
+      try {
+        const res = await favoriteAPI.getList();
+        if (res && res.data && Array.isArray(res.data)) {
+          setFavorites(res.data);
+        }
+      } catch (err) {
+        console.error('加载收藏列表失败:', err);
+      }
+    };
+    loadFavorites();
+  }, [user]);
+
+  // 切换收藏（对接后端 API）
+  const toggleFavorite = async (symbol) => {
+    // 未登录时引导用户登录
+    if (!user) {
+      setShowLoginPage(true);
+      return;
+    }
+    const isFav = favorites.includes(symbol);
+    try {
+      if (isFav) {
+        await favoriteAPI.remove(symbol);
+        setFavorites(prev => prev.filter(s => s !== symbol));
+      } else {
+        await favoriteAPI.add(symbol);
+        setFavorites(prev => [...prev, symbol]);
+      }
+    } catch (err) {
+      console.error('收藏操作失败:', err);
+      setError(isFav ? '取消收藏失败' : '收藏失败，请重试');
+    }
   };
 
   // 初始化：获取支持的币种列表
@@ -429,9 +462,21 @@ function App() {
           <div className="flex items-center gap-8">
             <h1 className="text-2xl font-bold text-gray-900">CryptoRate</h1>
             <nav className="flex gap-6">
-              <button className="text-sm font-medium text-gray-900 border-b-2 border-gray-900 pb-1">市场</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-gray-900 pb-1">收藏</button>
-              <button className="text-sm font-medium text-gray-500 hover:text-gray-900 pb-1">分析</button>
+              {[{ key: 'market', label: '市场' }, { key: 'favorites', label: '收藏' }, { key: 'analysis', label: '分析' }].map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`text-sm font-medium pb-1 transition-colors ${activeTab === tab.key
+                      ? 'text-gray-900 border-b-2 border-gray-900'
+                      : 'text-gray-500 hover:text-gray-900'
+                    }`}
+                >
+                  {tab.label}
+                  {tab.key === 'favorites' && favorites.length > 0 && (
+                    <span className="ml-1 text-xs text-gray-400">({favorites.length})</span>
+                  )}
+                </button>
+              ))}
             </nav>
           </div>
           <div className="flex items-center gap-4">
@@ -466,402 +511,490 @@ function App() {
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden h-full">
-        {/* Left Sidebar - Crypto List */}
-        <aside className="w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto flex-shrink-0">
-          <div className="p-4">
-            <div className="relative mb-4">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                placeholder="搜索币种（如 BTC、ETH）..."
-                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400"
-              />
-              {loading.search && (
-                <Loader2 size={18} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
-              )}
-            </div>
 
-            {loading.symbols ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 size={24} className="animate-spin text-gray-400" />
+        {/* ========== 收藏 Tab ========== */}
+        {activeTab === 'favorites' && (
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-3 mb-6">
+                <Star size={24} className="text-yellow-500" fill="currentColor" />
+                <h2 className="text-xl font-bold text-gray-900">我的收藏</h2>
+                <span className="text-sm text-gray-500">({favorites.length} 个币种)</span>
               </div>
-            ) : (
-              <div className="space-y-1">
-                {cryptoList.length === 0 ? (
-                  <div className="py-8 text-center text-sm text-gray-500">
-                    {searchKeyword.trim() ? '未找到匹配的币种' : '暂无币种数据'}
-                  </div>
-                ) : (
-                  cryptoList.map((symbol) => {
-                    const crypto = getCryptoDisplay(symbol);
-                    const rate = latestRates[symbol] ?? crypto.basePrice;
-                    const change = (Math.random() - 0.3) * 5;
-                    const isPositive = change >= 0;
-
-                    return (
-                      <button
-                        key={symbol}
-                        onClick={() => setSelectedCrypto(symbol)}
-                        className={`w-full p-4 rounded-lg text-left transition-colors ${selectedCrypto === symbol
-                            ? 'bg-white shadow-sm border border-gray-200'
-                            : 'hover:bg-white'
-                          }`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-lg">
-                              {crypto.icon}
-                            </div>
-                            <div>
-                              <div className="font-semibold text-sm">{symbol}</div>
-                              <div className="text-xs text-gray-500">{crypto.name}</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-semibold">
-                            ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </div>
-                          <div className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                            {isPositive ? '+' : ''}{change.toFixed(2)}%
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            )}
-          </div>
-        </aside>
-
-        {/* Center - Chart Area */}
-        <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-          {/* Price Header */}
-          <div className="border-b border-gray-200 bg-white px-6 py-4">
-            {loading.latest ? (
-              <div className="flex items-center justify-center py-4">
-                <Loader2 size={24} className="animate-spin text-gray-400" />
-                <span className="ml-2 text-sm text-gray-500">加载价格数据...</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h2 className="text-2xl font-bold">{selectedCrypto}/USDT</h2>
-                      <span className="text-sm text-gray-500">{currentCrypto.name}</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-3xl font-bold">
-                        ${displayPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </div>
-                      <div className={`flex items-center gap-1 px-3 py-1 rounded-md ${priceChange >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
-                        }`}>
-                        {priceChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                        <span className="text-sm font-semibold">
-                          {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+              {!user ? (
+                <div className="text-center py-16">
+                  <Star size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500 mb-4">登录后可收藏关注的币种</p>
+                  <button
+                    onClick={() => setShowLoginPage(true)}
+                    className="px-6 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800"
+                  >去登录</button>
                 </div>
-                <div className="flex items-center gap-6 text-sm">
-                  <div>
-                    <div className="text-gray-500 mb-1">24h 成交量</div>
-                    <div className="font-semibold">{currentCrypto.volume24h}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500 mb-1">24h 最高</div>
-                    <div className="font-semibold">
-                      ${statsData?.maxValue?.toFixed(2) || (displayPrice * 1.05).toFixed(2)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-gray-500 mb-1">24h 最低</div>
-                    <div className="font-semibold">
-                      ${statsData?.minValue?.toFixed(2) || (displayPrice * 0.95).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Timeframe Selector */}
-          <div className="border-b border-gray-200 bg-white px-6 py-3">
-            <div className="flex items-center gap-2">
-              {timeframes.map((tf) => (
-                <button
-                  key={tf}
-                  onClick={() => setActiveTimeframe(tf)}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTimeframe === tf
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                >
-                  {tf}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Chart */}
-          <div className="flex-1 bg-white p-6 relative">
-            {loading.history ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
-                <Loader2 size={40} className="animate-spin text-gray-400 mb-3" />
-                <p className="text-sm text-gray-500">加载图表数据...</p>
-              </div>
-            ) : chartData.length === 0 ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
-                <AlertCircle size={40} className="text-gray-400 mb-3" />
-                <p className="text-sm text-gray-500">暂无数据</p>
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis
-                    dataKey="time"
-                    stroke="#9ca3af"
-                    style={{ fontSize: '12px' }}
-                  />
-                  <YAxis
-                    yAxisId="price"
-                    stroke="#9ca3af"
-                    style={{ fontSize: '12px' }}
-                    domain={['auto', 'auto']}
-                    tickFormatter={(value) => `$${value.toFixed(0)}`}
-                  />
-                  <YAxis
-                    yAxisId="volume"
-                    orientation="right"
-                    stroke="#9ca3af"
-                    style={{ fontSize: '12px' }}
-                    domain={[0, 'auto']}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-
-                  {/* 成交量柱状图 */}
-                  <Bar
-                    dataKey="volume"
-                    fill="#e5e7eb"
-                    opacity={0.3}
-                    yAxisId="volume"
-                  />
-
-                  {/* K线图 - 用线条模拟 */}
-                  <Line
-                    yAxisId="price"
-                    type="monotone"
-                    dataKey="high"
-                    stroke="#10b981"
-                    strokeWidth={1}
-                    dot={false}
-                  />
-                  <Line
-                    yAxisId="price"
-                    type="monotone"
-                    dataKey="low"
-                    stroke="#ef4444"
-                    strokeWidth={1}
-                    dot={false}
-                  />
-                  <Line
-                    yAxisId="price"
-                    type="monotone"
-                    dataKey="close"
-                    stroke="#6b7280"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </main>
-
-        {/* Right Sidebar - Info & Analysis Panel */}
-        <aside className="w-96 border-l border-gray-200 bg-gray-50 overflow-y-auto flex-shrink-0">
-          <div className="p-6 pb-8">
-            {/* 收藏按钮 */}
-            <div className="mb-6">
-              <button
-                onClick={() => toggleFavorite(selectedCrypto)}
-                className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${favorites.includes(selectedCrypto)
-                    ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                  }`}
-              >
-                <Star
-                  size={20}
-                  fill={favorites.includes(selectedCrypto) ? 'currentColor' : 'none'}
-                />
-                {favorites.includes(selectedCrypto) ? '已收藏' : '收藏'}
-              </button>
-            </div>
-
-            {/* 市场统计 */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <BarChart3 size={18} className="text-gray-600" />
-                <h3 className="text-sm font-semibold text-gray-900">市场统计</h3>
-              </div>
-              {loading.stats ? (
-                <div className="bg-white rounded-lg p-4 border border-gray-200 flex items-center justify-center">
-                  <Loader2 size={20} className="animate-spin text-gray-400" />
+              ) : favorites.length === 0 ? (
+                <div className="text-center py-16">
+                  <Star size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500">还没有收藏任何币种</p>
+                  <p className="text-gray-400 text-sm mt-2">在市场页面点击 ★ 收藏感兴趣的币种</p>
+                  <button
+                    onClick={() => setActiveTab('market')}
+                    className="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800"
+                  >去市场看看</button>
                 </div>
               ) : (
-                <div className="space-y-3 text-sm bg-white rounded-lg p-4 border border-gray-200">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">最高价</span>
-                    <span className="font-semibold">
-                      ${statsData?.maxValue?.toFixed(2) || 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">最低价</span>
-                    <span className="font-semibold">
-                      ${statsData?.minValue?.toFixed(2) || 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">平均价</span>
-                    <span className="font-semibold">
-                      ${statsData?.avgValue?.toFixed(2) || 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">价格变动</span>
-                    <span className={`font-semibold ${(statsData?.priceChange || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {statsData?.priceChangePercent || 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">24h 成交量</span>
-                    <span className="font-semibold">{currentCrypto.volume24h}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 价格变化指标 */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Activity size={18} className="text-gray-600" />
-                <h3 className="text-sm font-semibold text-gray-900">价格变化</h3>
-              </div>
-              <div className="space-y-3 text-sm bg-white rounded-lg p-4 border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">7天</span>
-                  <span className="font-semibold text-green-600">+12.5%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">30天</span>
-                  <span className="font-semibold text-green-600">+28.3%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">90天</span>
-                  <span className="font-semibold text-red-600">-5.2%</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">1年</span>
-                  <span className="font-semibold text-green-600">+145.8%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* AI 分析 */}
-            <div className="mb-6">
-              <button
-                onClick={loadAiAnalysis}
-                disabled={loading.analysis}
-                className="w-full mb-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading.analysis ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" />
-                    加载中...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={20} />
-                    AI 市场分析
-                  </>
-                )}
-              </button>
-
-              {showAiAnalysis && aiAnalysis && (
-                <div className="bg-white rounded-lg p-4 border border-gray-200 space-y-3">
-                  <div className="flex items-start gap-2">
-                    <Sparkles size={16} className="text-purple-600 mt-1 flex-shrink-0" />
-                    <div className="text-sm">
-                      <p className="font-semibold text-gray-900 mb-2">AI 分析报告</p>
-                      <p className="text-gray-600 leading-relaxed">
-                        {aiAnalysis}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-gray-200 text-xs text-gray-500">
-                    * AI 分析仅供参考，不构成投资建议
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 我的收藏列表 */}
-            {favorites.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Star size={18} className="text-gray-600" fill="currentColor" />
-                  <h3 className="text-sm font-semibold text-gray-900">我的收藏</h3>
-                  <span className="text-xs text-gray-500">({favorites.length})</span>
-                </div>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {favorites.map(symbol => {
-                    const crypto = cryptoConfig[symbol];
-                    const rate = latestRates[symbol] || crypto.basePrice;
-                    const change = (Math.random() - 0.3) * 5;
-                    const isPositive = change >= 0;
-
+                    const crypto = getCryptoDisplay(symbol);
+                    const rate = latestRates[symbol];
                     return (
-                      <button
+                      <div
                         key={symbol}
-                        onClick={() => setSelectedCrypto(symbol)}
-                        className={`w-full p-3 rounded-lg text-left transition-colors ${selectedCrypto === symbol
-                            ? 'bg-white border border-gray-300 shadow-sm'
-                            : 'bg-white border border-gray-200 hover:border-gray-300'
-                          }`}
+                        className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer"
+                        onClick={() => { setSelectedCrypto(symbol); setActiveTab('market'); }}
                       >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{crypto.icon}</span>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{crypto.icon}</span>
                             <div>
-                              <div className="text-sm font-semibold">{symbol}</div>
+                              <div className="font-bold text-gray-900">{symbol}</div>
                               <div className="text-xs text-gray-500">{crypto.name}</div>
                             </div>
                           </div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(symbol); }}
+                            className="p-1.5 hover:bg-red-50 rounded-full transition-colors"
+                            title="取消收藏"
+                          >
+                            <Star size={18} className="text-yellow-500" fill="currentColor" />
+                          </button>
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-semibold">
-                            ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </div>
-                          <div className={`text-xs font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                            {isPositive ? '+' : ''}{change.toFixed(2)}%
-                          </div>
+                        <div className="text-lg font-bold text-gray-900">
+                          {rate ? `$${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '加载中...'}
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </aside>
+        )}
+
+        {/* ========== 分析 Tab ========== */}
+        {activeTab === 'analysis' && (
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center gap-3 mb-6">
+                <Sparkles size={24} className="text-purple-600" />
+                <h2 className="text-xl font-bold text-gray-900">AI 智能分析</h2>
+              </div>
+              <p className="text-gray-500 mb-6">在左侧市场页面选择币种后，点击"AI 分析"按钮即可获取该币种的智能分析报告。</p>
+              <button
+                onClick={() => setActiveTab('market')}
+                className="px-6 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"
+              >回到市场</button>
+            </div>
+          </div>
+        )}
+
+        {/* ========== 市场 Tab（原主内容） ========== */}
+        {activeTab === 'market' && <>
+          {/* Left Sidebar - Crypto List */}
+          <aside className="w-80 border-r border-gray-200 bg-gray-50 overflow-y-auto flex-shrink-0">
+            <div className="p-4">
+              <div className="relative mb-4">
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  placeholder="搜索币种（如 BTC、ETH）..."
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-gray-400"
+                />
+                {loading.search && (
+                  <Loader2 size={18} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-gray-400" />
+                )}
+              </div>
+
+              {loading.symbols ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 size={24} className="animate-spin text-gray-400" />
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {cryptoList.length === 0 ? (
+                    <div className="py-8 text-center text-sm text-gray-500">
+                      {searchKeyword.trim() ? '未找到匹配的币种' : '暂无币种数据'}
+                    </div>
+                  ) : (
+                    cryptoList.map((symbol) => {
+                      const crypto = getCryptoDisplay(symbol);
+                      const rate = latestRates[symbol] ?? crypto.basePrice;
+                      const change = (Math.random() - 0.3) * 5;
+                      const isPositive = change >= 0;
+
+                      return (
+                        <button
+                          key={symbol}
+                          onClick={() => setSelectedCrypto(symbol)}
+                          className={`w-full p-4 rounded-lg text-left transition-colors ${selectedCrypto === symbol
+                            ? 'bg-white shadow-sm border border-gray-200'
+                            : 'hover:bg-white'
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-lg">
+                                {crypto.icon}
+                              </div>
+                              <div>
+                                <div className="font-semibold text-sm">{symbol}</div>
+                                <div className="text-xs text-gray-500">{crypto.name}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-semibold">
+                              ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            <div className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                              {isPositive ? '+' : ''}{change.toFixed(2)}%
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </div>
+          </aside>
+
+          {/* Center - Chart Area */}
+          <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+            {/* Price Header */}
+            <div className="border-b border-gray-200 bg-white px-6 py-4">
+              {loading.latest ? (
+                <div className="flex items-center justify-center py-4">
+                  <Loader2 size={24} className="animate-spin text-gray-400" />
+                  <span className="ml-2 text-sm text-gray-500">加载价格数据...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-6">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h2 className="text-2xl font-bold">{selectedCrypto}/USDT</h2>
+                        <span className="text-sm text-gray-500">{currentCrypto.name}</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-3xl font-bold">
+                          ${displayPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        <div className={`flex items-center gap-1 px-3 py-1 rounded-md ${priceChange >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                          }`}>
+                          {priceChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                          <span className="text-sm font-semibold">
+                            {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6 text-sm">
+                    <div>
+                      <div className="text-gray-500 mb-1">24h 成交量</div>
+                      <div className="font-semibold">{currentCrypto.volume24h}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 mb-1">24h 最高</div>
+                      <div className="font-semibold">
+                        ${statsData?.maxValue?.toFixed(2) || (displayPrice * 1.05).toFixed(2)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-gray-500 mb-1">24h 最低</div>
+                      <div className="font-semibold">
+                        ${statsData?.minValue?.toFixed(2) || (displayPrice * 0.95).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Timeframe Selector */}
+            <div className="border-b border-gray-200 bg-white px-6 py-3">
+              <div className="flex items-center gap-2">
+                {timeframes.map((tf) => (
+                  <button
+                    key={tf}
+                    onClick={() => setActiveTimeframe(tf)}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTimeframe === tf
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                      }`}
+                  >
+                    {tf}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Chart */}
+            <div className="flex-1 bg-white p-6 relative">
+              {loading.history ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
+                  <Loader2 size={40} className="animate-spin text-gray-400 mb-3" />
+                  <p className="text-sm text-gray-500">加载图表数据...</p>
+                </div>
+              ) : chartData.length === 0 ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white">
+                  <AlertCircle size={40} className="text-gray-400 mb-3" />
+                  <p className="text-sm text-gray-500">暂无数据</p>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis
+                      dataKey="time"
+                      stroke="#9ca3af"
+                      style={{ fontSize: '12px' }}
+                    />
+                    <YAxis
+                      yAxisId="price"
+                      stroke="#9ca3af"
+                      style={{ fontSize: '12px' }}
+                      domain={['auto', 'auto']}
+                      tickFormatter={(value) => `$${value.toFixed(0)}`}
+                    />
+                    <YAxis
+                      yAxisId="volume"
+                      orientation="right"
+                      stroke="#9ca3af"
+                      style={{ fontSize: '12px' }}
+                      domain={[0, 'auto']}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+
+                    {/* 成交量柱状图 */}
+                    <Bar
+                      dataKey="volume"
+                      fill="#e5e7eb"
+                      opacity={0.3}
+                      yAxisId="volume"
+                    />
+
+                    {/* K线图 - 用线条模拟 */}
+                    <Line
+                      yAxisId="price"
+                      type="monotone"
+                      dataKey="high"
+                      stroke="#10b981"
+                      strokeWidth={1}
+                      dot={false}
+                    />
+                    <Line
+                      yAxisId="price"
+                      type="monotone"
+                      dataKey="low"
+                      stroke="#ef4444"
+                      strokeWidth={1}
+                      dot={false}
+                    />
+                    <Line
+                      yAxisId="price"
+                      type="monotone"
+                      dataKey="close"
+                      stroke="#6b7280"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </main>
+
+          {/* Right Sidebar - Info & Analysis Panel */}
+          <aside className="w-96 border-l border-gray-200 bg-gray-50 overflow-y-auto flex-shrink-0">
+            <div className="p-6 pb-8">
+              {/* 收藏按钮 */}
+              <div className="mb-6">
+                <button
+                  onClick={() => toggleFavorite(selectedCrypto)}
+                  className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${favorites.includes(selectedCrypto)
+                    ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    }`}
+                >
+                  <Star
+                    size={20}
+                    fill={favorites.includes(selectedCrypto) ? 'currentColor' : 'none'}
+                  />
+                  {favorites.includes(selectedCrypto) ? '已收藏' : '收藏'}
+                </button>
+              </div>
+
+              {/* 市场统计 */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <BarChart3 size={18} className="text-gray-600" />
+                  <h3 className="text-sm font-semibold text-gray-900">市场统计</h3>
+                </div>
+                {loading.stats ? (
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 flex items-center justify-center">
+                    <Loader2 size={20} className="animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <div className="space-y-3 text-sm bg-white rounded-lg p-4 border border-gray-200">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">最高价</span>
+                      <span className="font-semibold">
+                        ${statsData?.maxValue?.toFixed(2) || 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">最低价</span>
+                      <span className="font-semibold">
+                        ${statsData?.minValue?.toFixed(2) || 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">平均价</span>
+                      <span className="font-semibold">
+                        ${statsData?.avgValue?.toFixed(2) || 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">价格变动</span>
+                      <span className={`font-semibold ${(statsData?.priceChange || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {statsData?.priceChangePercent || 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">24h 成交量</span>
+                      <span className="font-semibold">{currentCrypto.volume24h}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 价格变化指标 */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Activity size={18} className="text-gray-600" />
+                  <h3 className="text-sm font-semibold text-gray-900">价格变化</h3>
+                </div>
+                <div className="space-y-3 text-sm bg-white rounded-lg p-4 border border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">7天</span>
+                    <span className="font-semibold text-green-600">+12.5%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">30天</span>
+                    <span className="font-semibold text-green-600">+28.3%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">90天</span>
+                    <span className="font-semibold text-red-600">-5.2%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">1年</span>
+                    <span className="font-semibold text-green-600">+145.8%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* AI 分析 */}
+              <div className="mb-6">
+                <button
+                  onClick={loadAiAnalysis}
+                  disabled={loading.analysis}
+                  className="w-full mb-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading.analysis ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      加载中...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={20} />
+                      AI 市场分析
+                    </>
+                  )}
+                </button>
+
+                {showAiAnalysis && aiAnalysis && (
+                  <div className="bg-white rounded-lg p-4 border border-gray-200 space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Sparkles size={16} className="text-purple-600 mt-1 flex-shrink-0" />
+                      <div className="text-sm">
+                        <p className="font-semibold text-gray-900 mb-2">AI 分析报告</p>
+                        <p className="text-gray-600 leading-relaxed">
+                          {aiAnalysis}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-gray-200 text-xs text-gray-500">
+                      * AI 分析仅供参考，不构成投资建议
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 我的收藏列表 */}
+              {favorites.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Star size={18} className="text-gray-600" fill="currentColor" />
+                    <h3 className="text-sm font-semibold text-gray-900">我的收藏</h3>
+                    <span className="text-xs text-gray-500">({favorites.length})</span>
+                  </div>
+                  <div className="space-y-2">
+                    {favorites.map(symbol => {
+                      const crypto = cryptoConfig[symbol];
+                      const rate = latestRates[symbol] || crypto.basePrice;
+                      const change = (Math.random() - 0.3) * 5;
+                      const isPositive = change >= 0;
+
+                      return (
+                        <button
+                          key={symbol}
+                          onClick={() => setSelectedCrypto(symbol)}
+                          className={`w-full p-3 rounded-lg text-left transition-colors ${selectedCrypto === symbol
+                            ? 'bg-white border border-gray-300 shadow-sm'
+                            : 'bg-white border border-gray-200 hover:border-gray-300'
+                            }`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{crypto.icon}</span>
+                              <div>
+                                <div className="text-sm font-semibold">{symbol}</div>
+                                <div className="text-xs text-gray-500">{crypto.name}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-semibold">
+                              ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            <div className={`text-xs font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                              {isPositive ? '+' : ''}{change.toFixed(2)}%
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+        </>}
       </div>
     </div>
   );

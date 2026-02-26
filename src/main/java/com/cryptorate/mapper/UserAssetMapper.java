@@ -33,6 +33,15 @@ public interface UserAssetMapper {
     int deleteById(@Param("id") Long id);
 
     /**
+     * 根据 ID 和用户 ID 删除资产记录（防越权）
+     *
+     * @param id     资产ID
+     * @param userId 用户ID
+     * @return 影响的行数
+     */
+    int deleteByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
+    /**
      * 更新资产数量
      *
      * @param userAsset 用户资产

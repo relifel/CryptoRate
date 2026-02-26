@@ -1,25 +1,27 @@
 package com.cryptorate.service;
 
 import com.cryptorate.dto.AssetDTO;
-import com.cryptorate.entity.RateHistory;
 import com.cryptorate.entity.UserAsset;
-import com.cryptorate.mapper.RateHistoryMapper;
 import com.cryptorate.mapper.UserAssetMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * 用户资产管理服务
- * 
+ *
+ * <p>
+ * 管理用户的加密货币持仓记录（数量和成本）。
+ * 当前版本为脱机模式，不调用外部 API 进行实时估值。
+ * </p>
+ *
  * @author CryptoRate Team
- * @version 1.0
+ * @version 1.1
  * @since 2026-02-14
  */
 @Slf4j
@@ -27,18 +29,20 @@ import java.util.stream.Collectors;
 public class AssetService {
 
     private final UserAssetMapper userAssetMapper;
-    private final RateHistoryMapper rateHistoryMapper;
 
     @Autowired
-    public AssetService(UserAssetMapper userAssetMapper, RateHistoryMapper rateHistoryMapper) {
+    public AssetService(UserAssetMapper userAssetMapper) {
         this.userAssetMapper = userAssetMapper;
-        this.rateHistoryMapper = rateHistoryMapper;
     }
 
     /**
-     * 查询个人资产记录
+     * 查询用户的所有资产记录
      *
-     * @param userId 用户ID
+     * <p>
+     * 当前版本不查询实时价格，currentPrice 和 totalValue 为 null。
+     * </p>
+     *
+     * @param userId 用户ID（从 JWT 获取）
      * @return 资产列表
      */
     public List<AssetDTO> getAssets(Long userId) {
@@ -46,22 +50,15 @@ public class AssetService {
 
         List<UserAsset> assets = userAssetMapper.selectByUserId(userId);
 
-        // 转换为 DTO 并计算当前价值
         return assets.stream().map(asset -> {
             AssetDTO dto = new AssetDTO();
             dto.setId(asset.getId());
             dto.setSymbol(asset.getSymbol());
             dto.setAmount(asset.getAmount());
-
-            // 获取当前价格
-            RateHistory latestRate = rateHistoryMapper.selectLatestBySymbol(asset.getSymbol());
-            BigDecimal currentPrice = latestRate != null ? latestRate.getRate() : BigDecimal.ZERO;
-            dto.setCurrentPrice(currentPrice);
-
-            // 计算总价值
-            BigDecimal totalValue = asset.getAmount().multiply(currentPrice).setScale(2, RoundingMode.HALF_UP);
-            dto.setTotalValue(totalValue);
-
+            dto.setCost(asset.getCost());
+            // 暂不对接实时行情，currentPrice / totalValue 留空
+            dto.setCurrentPrice(null);
+            dto.setTotalValue(null);
             return dto;
         }).collect(Collectors.toList());
     }
@@ -69,30 +66,40 @@ public class AssetService {
     /**
      * 添加或修改资产
      *
-     * @param userId 用户ID
+     * <p>
+     * 如果用户已持有该币种，则更新数量和成本；否则新建记录。
+     * </p>
+     *
+     * @param userId 用户ID（从 JWT 获取）
      * @param symbol 币种代码
-     * @param amount 数量
+     * @param amount 持有数量
+     * @param cost   持仓总成本
      * @return 资产对象
      */
-    public UserAsset saveAsset(Long userId, String symbol, BigDecimal amount) {
-        log.info("保存资产，用户ID: {}, 币种: {}, 数量: {}", userId, symbol, amount);
+    public UserAsset saveAsset(Long userId, String symbol, BigDecimal amount, BigDecimal cost) {
+        log.info("保存资产，用户ID: {}, 币种: {}, 数量: {}, 成本: {}", userId, symbol, amount, cost);
+
+        // 币种代码统一大写
+        String upperSymbol = symbol.toUpperCase();
 
         // 检查是否已存在
-        UserAsset existingAsset = userAssetMapper.selectByUserIdAndSymbol(userId, symbol);
+        UserAsset existingAsset = userAssetMapper.selectByUserIdAndSymbol(userId, upperSymbol);
 
         if (existingAsset != null) {
-            // 更新数量
+            // 更新数量和成本
             existingAsset.setAmount(amount);
+            existingAsset.setCost(cost != null ? cost : BigDecimal.ZERO);
             existingAsset.setUpdatedAt(LocalDateTime.now());
             userAssetMapper.update(existingAsset);
-            log.info("更新资产成功");
+            log.info("更新资产成功，ID: {}", existingAsset.getId());
             return existingAsset;
         } else {
             // 新增资产
             UserAsset newAsset = new UserAsset();
             newAsset.setUserId(userId);
-            newAsset.setSymbol(symbol);
+            newAsset.setSymbol(upperSymbol);
             newAsset.setAmount(amount);
+            newAsset.setCost(cost != null ? cost : BigDecimal.ZERO);
             newAsset.setCreatedAt(LocalDateTime.now());
             newAsset.setUpdatedAt(LocalDateTime.now());
             userAssetMapper.insert(newAsset);
@@ -102,25 +109,20 @@ public class AssetService {
     }
 
     /**
-     * 删除资产记录
+     * 删除资产记录（防越权：必须校验 userId）
      *
-     * @param id 资产ID
+     * @param assetId 资产ID
+     * @param userId  当前用户ID（从 JWT 获取）
      */
-    public void deleteAsset(Long id) {
-        log.info("删除资产，ID: {}", id);
+    public void deleteAsset(Long assetId, Long userId) {
+        log.info("删除资产，ID: {}, 用户ID: {}", assetId, userId);
 
-        UserAsset asset = userAssetMapper.selectById(id);
-        if (asset == null) {
-            log.warn("资产不存在，ID: {}", id);
-            throw new RuntimeException("资产不存在");
-        }
-
-        int rows = userAssetMapper.deleteById(id);
+        int rows = userAssetMapper.deleteByIdAndUserId(assetId, userId);
         if (rows > 0) {
             log.info("删除资产成功");
         } else {
-            log.error("删除资产失败");
-            throw new RuntimeException("删除资产失败");
+            log.warn("删除资产失败（资产不存在或不属于当前用户），ID: {}, 用户ID: {}", assetId, userId);
+            throw new RuntimeException("资产不存在或无权删除");
         }
     }
 }

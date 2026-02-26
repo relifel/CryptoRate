@@ -151,7 +151,7 @@ export const rateAPI = {
    * @param {string} symbol - 币种代码（可选）
    */
   getLatest: (symbol = null) => {
-    const url = symbol 
+    const url = symbol
       ? `${API_CONFIG.BASE_URL_V1}/rates/latest?symbol=${symbol}`
       : `${API_CONFIG.BASE_URL_V1}/rates/latest`;
     return request(url);
@@ -333,3 +333,36 @@ export const userAPI = {
 
 // 导出配置供外部使用
 export { API_CONFIG };
+
+/**
+ * 用户收藏接口（需登录，自动携带 JWT Token）
+ */
+export const favoriteAPI = {
+  /**
+   * 获取当前用户的收藏列表
+   * @returns {Promise<{ data: string[] }>} 已收藏的币种代码列表
+   */
+  getList: () => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/list`);
+  },
+
+  /**
+   * 添加收藏
+   * @param {string} symbol - 币种代码
+   */
+  add: (symbol) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, {
+      method: 'POST',
+    });
+  },
+
+  /**
+   * 取消收藏
+   * @param {string} symbol - 币种代码
+   */
+  remove: (symbol) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, {
+      method: 'DELETE',
+    });
+  },
+};

@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 /**
  * 用户资产实体类
  * 
- * <p>映射数据库中的 user_asset 表</p>
+ * <p>
+ * 映射数据库中的 user_asset 表
+ * </p>
  * 
  * @author CryptoRate Team
  * @version 1.0
@@ -40,6 +42,11 @@ public class UserAsset implements Serializable {
      * 持有数量
      */
     private BigDecimal amount;
+
+    /**
+     * 持仓总成本（USD）
+     */
+    private BigDecimal cost;
 
     /**
      * 创建时间

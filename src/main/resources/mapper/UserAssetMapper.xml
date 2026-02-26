@@ -6,7 +6,7 @@
     用户资产 MyBatis Mapper XML 配置文件
     
     @author CryptoRate Team
-    @version 1.0
+    @version 1.1
     @since 2026-02-14
 -->
 <mapper namespace="com.cryptorate.mapper.UserAssetMapper">
@@ -17,30 +17,23 @@
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
         <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="cost" property="cost" jdbcType="DECIMAL"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
         <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!-- 基础字段列表 -->
     <sql id="Base_Column_List">
-        id, user_id, symbol, amount, created_at, updated_at
+        id, user_id, symbol, amount, cost, created_at, updated_at
     </sql>
 
     <!-- 插入资产记录 -->
     <insert id="insert" parameterType="com.cryptorate.entity.UserAsset" 
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user_asset (
-            user_id,
-            symbol,
-            amount,
-            created_at,
-            updated_at
+            user_id, symbol, amount, cost, created_at, updated_at
         ) VALUES (
-            #{userId},
-            #{symbol},
-            #{amount},
-            #{createdAt},
-            #{updatedAt}
+            #{userId}, #{symbol}, #{amount}, #{cost}, #{createdAt}, #{updatedAt}
         )
     </insert>
 
@@ -50,10 +43,17 @@
         WHERE id = #{id}
     </delete>
 
-    <!-- 更新资产数量 -->
+    <!-- 根据用户ID和资产ID删除（防越权） -->
+    <delete id="deleteByIdAndUserId">
+        DELETE FROM user_asset
+        WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+    <!-- 更新资产数量和成本 -->
     <update id="update" parameterType="com.cryptorate.entity.UserAsset">
         UPDATE user_asset
         SET amount = #{amount},
+            cost = #{cost},
             updated_at = #{updatedAt}
         WHERE id = #{id}
     </update>
@@ -61,8 +61,7 @@
     <!-- 根据 ID 查询资产记录 -->
     <select id="selectById" parameterType="java.lang.Long" 
             resultMap="BaseResultMap">
-        SELECT
-            <include refid="Base_Column_List"/>
+        SELECT <include refid="Base_Column_List"/>
         FROM user_asset
         WHERE id = #{id}
     </select>
@@ -70,8 +69,7 @@
     <!-- 查询指定用户的所有资产记录 -->
     <select id="selectByUserId" parameterType="java.lang.Long" 
             resultMap="BaseResultMap">
-        SELECT
-            <include refid="Base_Column_List"/>
+        SELECT <include refid="Base_Column_List"/>
         FROM user_asset
         WHERE user_id = #{userId}
         ORDER BY created_at DESC
@@ -79,8 +77,7 @@
 
     <!-- 查询指定用户的指定币种资产 -->
     <select id="selectByUserIdAndSymbol" resultMap="BaseResultMap">
-        SELECT
-            <include refid="Base_Column_List"/>
+        SELECT <include refid="Base_Column_List"/>
         FROM user_asset
         WHERE user_id = #{userId} AND symbol = #{symbol}
     </select>

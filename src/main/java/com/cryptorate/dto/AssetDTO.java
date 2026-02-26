@@ -30,12 +30,17 @@ public class AssetDTO {
     private BigDecimal amount;
 
     /**
-     * 当前价格
+     * 持仓总成本（USD）
+     */
+    private BigDecimal cost;
+
+    /**
+     * 当前价格（暂未对接实时行情时为 null）
      */
     private BigDecimal currentPrice;
 
     /**
-     * 总价值
+     * 总价值（暂未对接实时行情时为 null）
      */
     private BigDecimal totalValue;
 }
