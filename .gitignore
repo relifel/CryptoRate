@@ -1,0 +1,40 @@
+# =============================================
+# Python AI 模块
+# =============================================
+CryptoRate_ai_python/.env
+CryptoRate_ai_python/.venv/
+CryptoRate_ai_python/venv/
+CryptoRate_ai_python/__pycache__/
+CryptoRate_ai_python/*.pyc
+CryptoRate_ai_python/milvus_local.db
+
+# =============================================
+# Java 后端
+# =============================================
+CryptoRate_backend_java/target/
+CryptoRate_backend_java/logs/
+CryptoRate_backend_java/*.log
+CryptoRate_backend_java/.mvn/wrapper/maven-wrapper.jar
+
+# =============================================
+# React 前端
+# =============================================
+CryptoRate_front/node_modules/
+CryptoRate_front/dist/
+CryptoRate_front/.env.local
+
+# =============================================
+# 公共
+# =============================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.txt
+
+# 根目录下的临时文件
+compile_fav.txt
+compile_output.txt
+compile_output2.txt
+git_status.txt
+md_files.txt

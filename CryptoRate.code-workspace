@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "CryptoRate_backend_java"
+		},
+		{
+			"path": "CryptoRate_front"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}

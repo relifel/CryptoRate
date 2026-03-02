@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    汇率历史记录 MyBatis Mapper XML 配置文件
+    
+    @author CryptoRate Team
+    @version 1.0
+    @since 2026-02-14
+-->
+<mapper namespace="com.cryptorate.mapper.RateHistoryMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.cryptorate.entity.RateHistory">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="rate" property="rate" jdbcType="DECIMAL"/>
+        <result column="timestamp" property="timestamp" jdbcType="BIGINT"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 基础字段列表 -->
+    <sql id="Base_Column_List">
+        id, symbol, rate, timestamp, created_at
+    </sql>
+
+    <!-- 插入汇率历史记录 -->
+    <insert id="insert" parameterType="com.cryptorate.entity.RateHistory" 
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO rate_history (
+            symbol,
+            rate,
+            timestamp,
+            created_at
+        ) VALUES (
+            #{symbol},
+            #{rate},
+            #{timestamp},
+            #{createdAt}
+        )
+    </insert>
+
+    <!-- 批量插入汇率历史记录 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO rate_history (symbol, rate, timestamp, created_at)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.symbol}, #{item.rate}, #{item.timestamp}, #{item.createdAt})
+        </foreach>
+    </insert>
+
+    <!-- 获取所有支持的币种代码 -->
+    <select id="selectAllSymbols" resultType="java.lang.String">
+        SELECT DISTINCT symbol
+        FROM rate_history
+        ORDER BY symbol
+    </select>
+
+    <!-- 获取指定币种的最新汇率记录 -->
+    <select id="selectLatestBySymbol" parameterType="java.lang.String" 
+            resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM rate_history
+        WHERE symbol = #{symbol}
+        ORDER BY timestamp DESC
+        LIMIT 1
+    </select>
+
+    <!-- 获取所有币种的最新汇率记录 -->
+    <select id="selectAllLatestRates" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM rate_history r1
+        WHERE timestamp = (
+            SELECT MAX(timestamp)
+            FROM rate_history r2
+            WHERE r1.symbol = r2.symbol
+        )
+        ORDER BY symbol
+    </select>
+
+    <!-- 查询指定币种在指定时间范围内的历史汇率 -->
+    <select id="selectBySymbolAndTimeRange" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM rate_history
+        WHERE symbol = #{symbol}
+          AND timestamp BETWEEN #{startTime} AND #{endTime}
+        ORDER BY timestamp ASC
+    </select>
+
+    <!-- 获取指定币种在指定时间范围内的最大值 -->
+    <select id="selectMaxRate" resultType="java.math.BigDecimal">
+        SELECT MAX(rate)
+        FROM rate_history
+        WHERE symbol = #{symbol}
+          AND timestamp BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <!-- 获取指定币种在指定时间范围内的最小值 -->
+    <select id="selectMinRate" resultType="java.math.BigDecimal">
+        SELECT MIN(rate)
+        FROM rate_history
+        WHERE symbol = #{symbol}
+          AND timestamp BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+    <!-- 获取指定币种在指定时间范围内的平均值 -->
+    <select id="selectAvgRate" resultType="java.math.BigDecimal">
+        SELECT AVG(rate)
+        FROM rate_history
+        WHERE symbol = #{symbol}
+          AND timestamp BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+</mapper>
