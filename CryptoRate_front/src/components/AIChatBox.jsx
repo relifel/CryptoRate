@@ -41,16 +41,40 @@ export default function AIChatBox() {
         setInputValue('');
         setIsTyping(true);
 
-        // 模拟网络请求和 AI 处理时间（2秒）
-        setTimeout(() => {
-            const newAiMsg = {
-                id: Date.now() + 1,
-                sender: 'ai',
-                text: '这是一个模拟回复。当您需要分析特定代币（如比特币）的趋势时，我将结合 RAG 技术和最新数据为您解答。'
-            };
-            setMessages(prev => [...prev, newAiMsg]);
-            setIsTyping(false);
-        }, 2000);
+        // 调用 Java 后端 AI 接口，Java 再转发给 Python AI 服务
+        const token = localStorage.getItem('cryptorate_token');
+
+        fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 携带 JWT 鉴权 Token
+                'Authorization': token ? `Bearer ${token}` : '',
+            },
+            body: JSON.stringify({ question: newUserMsg.text }),
+        })
+            .then(res => res.json())
+            .then(data => {
+                const aiText = (data.code === 200 && data.data)
+                    ? data.data
+                    : (data.msg || 'AI 服务暂时不可用，请稍后重试。');
+                const newAiMsg = {
+                    id: Date.now() + 1,
+                    sender: 'ai',
+                    text: aiText,
+                };
+                setMessages(prev => [...prev, newAiMsg]);
+            })
+            .catch(() => {
+                setMessages(prev => [...prev, {
+                    id: Date.now() + 1,
+                    sender: 'ai',
+                    text: '❌ 无法连接到 AI 服务，请确认后端和 Python AI 服务均已启动。',
+                }]);
+            })
+            .finally(() => {
+                setIsTyping(false);
+            });
     };
 
     const handleKeyDown = (e) => {
