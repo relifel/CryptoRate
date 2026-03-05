@@ -16,7 +16,7 @@ MILVUS_URI = os.getenv("MILVUS_URI")
 MILVUS_TOKEN = os.getenv("MILVUS_TOKEN")
 DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
 
-COLLECTION_NAME = "crypto_knowledge_base"
+COLLECTION_NAME = "crypto_knowledge"
 
 # --------- 2. RAG 服务类封装 ---------
 class CryptoRAGService:

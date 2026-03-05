@@ -24,7 +24,7 @@ load_dotenv()
 MILVUS_URI: Optional[str] = os.getenv("MILVUS_URI")
 MILVUS_TOKEN: Optional[str] = os.getenv("MILVUS_TOKEN")
 DASHSCOPE_API_KEY: Optional[str] = os.getenv("DASHSCOPE_API_KEY")
-COLLECTION_NAME = "crypto_knowledge_base"
+COLLECTION_NAME = "crypto_knowledge"
 
 # =============================================
 # 2. Pydantic 数据模型 (DTO)
