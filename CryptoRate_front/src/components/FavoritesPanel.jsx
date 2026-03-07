@@ -196,8 +196,11 @@ const FavoritesPanel = ({ favorites, latestRates, getCryptoDisplay, onRefresh, s
                         const change = (Math.random() - 0.5) * 5;
                         const isPositive = change >= 0;
 
+                        // Ensure fav is an object with a symbol
+                        if (typeof fav !== 'object' || !fav.symbol) return null;
+
                         return (
-                            <div key={fav.symbol} className="group flex items-center bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer" onClick={() => { if (!isSelectionMode) { setSelectedCrypto(fav.symbol); setActiveTab('market'); } }}>
+                            <div key={fav.symbol} className="group flex items-center bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer" onClick={() => { if (!isSelectionMode && setSelectedCrypto) { setSelectedCrypto(fav.symbol); setActiveTab('market'); } }}>
                                 {/* 批量选择模式 Checkbox */}
                                 {isSelectionMode && (
                                     <div className="pr-4 pl-2" onClick={(e) => e.stopPropagation()}>
@@ -231,7 +234,7 @@ const FavoritesPanel = ({ favorites, latestRates, getCryptoDisplay, onRefresh, s
                                     <div className="flex flex-col">
                                         <span className="text-sm text-gray-500 mb-0.5">当前价格</span>
                                         <span className="text-lg font-bold text-gray-900 font-mono">
-                                            ${typeof rate === 'number' ? rate.toLocaleString('en-US', { minimumFractionDigits: 2 }) : (rate.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                            ${typeof rate === 'number' ? rate.toLocaleString('en-US', { minimumFractionDigits: 2 }) : ((rate && rate.price) ? rate.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) : '0.00')}
                                         </span>
                                     </div>
                                     <div className="flex flex-col content-end text-right">
