@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Bell, TrendingUp, TrendingDown, Search, Star, Activity, BarChart3, Sparkles, AlertCircle, Loader2, Wallet, Plus, Trash2, Edit2 } from 'lucide-react';
+import { Bell, TrendingUp, TrendingDown, Search, Star, Activity, BarChart3, Sparkles, AlertCircle, Loader2, Wallet, Plus, Trash2, Edit2, User } from 'lucide-react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { rateAPI, statsAPI, analysisAPI, clearAuth, favoriteAPI, assetAPI } from './api';
 import { getDateRangeByTimeframe } from './utils/dateUtils';
 import Login from './pages/Login';
 import AIChatBox from './components/AIChatBox';
+import UserProfile from './components/UserProfile';
+import FavoritesPanel from './components/FavoritesPanel';
 
 // 加密货币配置
 const cryptoConfig = {
@@ -165,6 +167,19 @@ function App() {
 
   const timeframes = ['15M', '1H', '4H', '1D', '1W', '1M'];
 
+  // 加载收藏列表
+  const loadFavorites = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await favoriteAPI.getList();
+      if (res && res.data && Array.isArray(res.data)) {
+        setFavorites(res.data);
+      }
+    } catch (err) {
+      console.error('加载收藏列表失败:', err);
+    }
+  }, [user]);
+
   // 登录后从后端加载收藏列表和资产列表
   useEffect(() => {
     if (!user) {
@@ -172,16 +187,6 @@ function App() {
       setAssetsList([]);
       return;
     }
-    const loadFavorites = async () => {
-      try {
-        const res = await favoriteAPI.getList();
-        if (res && res.data && Array.isArray(res.data)) {
-          setFavorites(res.data);
-        }
-      } catch (err) {
-        console.error('加载收藏列表失败:', err);
-      }
-    };
     const loadAssets = async () => {
       try {
         const res = await assetAPI.getAssets();
@@ -194,7 +199,7 @@ function App() {
     };
     loadFavorites();
     loadAssets();
-  }, [user]);
+  }, [user, loadFavorites]);
 
   // 重新加载资产（保存/删除后调用）
   const refreshAssets = async () => {
@@ -251,6 +256,11 @@ function App() {
     setShowAssetModal(true);
   };
 
+  // 检查是否已收藏
+  const isFavorited = (symbol) => {
+    return favorites.some(f => (typeof f === 'string' ? f : f.symbol) === symbol);
+  };
+
   // 切换收藏（对接后端 API）
   const toggleFavorite = async (symbol) => {
     // 未登录时引导用户登录
@@ -258,14 +268,14 @@ function App() {
       setShowLoginPage(true);
       return;
     }
-    const isFav = favorites.includes(symbol);
+    const isFav = isFavorited(symbol);
     try {
       if (isFav) {
         await favoriteAPI.remove(symbol);
-        setFavorites(prev => prev.filter(s => s !== symbol));
+        setFavorites(prev => prev.filter(f => (typeof f === 'string' ? f : f.symbol) !== symbol));
       } else {
         await favoriteAPI.add(symbol);
-        setFavorites(prev => [...prev, symbol]);
+        setFavorites(prev => [...prev, { symbol, sortOrder: 0, createdAt: new Date().toISOString() }]);
       }
     } catch (err) {
       console.error('收藏操作失败:', err);
@@ -535,7 +545,13 @@ function App() {
           <div className="flex items-center gap-8">
             <h1 className="text-2xl font-bold text-gray-900">CryptoRate</h1>
             <nav className="flex gap-6">
-              {[{ key: 'market', label: '市场' }, { key: 'favorites', label: '收藏' }, { key: 'assets', label: '资产' }, { key: 'analysis', label: '分析' }].map(tab => (
+              {[
+                { key: 'market', label: '市场' },
+                { key: 'favorites', label: '收藏' },
+                { key: 'assets', label: '资产' },
+                { key: 'analysis', label: '分析' },
+                ...(user ? [{ key: 'profile', label: '个人中心' }] : [])
+              ].map(tab => (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
@@ -585,71 +601,23 @@ function App() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden h-full">
 
+        {/* ========== 个人中心 Tab ========== */}
+        {activeTab === 'profile' && (
+          <div className="flex-1 overflow-y-auto bg-gray-50">
+            <UserProfile />
+          </div>
+        )}
+
         {/* ========== 收藏 Tab ========== */}
         {activeTab === 'favorites' && (
-          <div className="flex-1 overflow-y-auto p-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center gap-3 mb-6">
-                <Star size={24} className="text-yellow-500" fill="currentColor" />
-                <h2 className="text-xl font-bold text-gray-900">我的收藏</h2>
-                <span className="text-sm text-gray-500">({favorites.length} 个币种)</span>
-              </div>
-              {!user ? (
-                <div className="text-center py-16">
-                  <Star size={48} className="mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500 mb-4">登录后可收藏关注的币种</p>
-                  <button
-                    onClick={() => setShowLoginPage(true)}
-                    className="px-6 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800"
-                  >去登录</button>
-                </div>
-              ) : favorites.length === 0 ? (
-                <div className="text-center py-16">
-                  <Star size={48} className="mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500">还没有收藏任何币种</p>
-                  <p className="text-gray-400 text-sm mt-2">在市场页面点击 ★ 收藏感兴趣的币种</p>
-                  <button
-                    onClick={() => setActiveTab('market')}
-                    className="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800"
-                  >去市场看看</button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {favorites.map(symbol => {
-                    const crypto = getCryptoDisplay(symbol);
-                    const rate = latestRates[symbol];
-                    return (
-                      <div
-                        key={symbol}
-                        className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer"
-                        onClick={() => { setSelectedCrypto(symbol); setActiveTab('market'); }}
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl">{crypto.icon}</span>
-                            <div>
-                              <div className="font-bold text-gray-900">{symbol}</div>
-                              <div className="text-xs text-gray-500">{crypto.name}</div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleFavorite(symbol); }}
-                            className="p-1.5 hover:bg-red-50 rounded-full transition-colors"
-                            title="取消收藏"
-                          >
-                            <Star size={18} className="text-yellow-500" fill="currentColor" />
-                          </button>
-                        </div>
-                        <div className="text-lg font-bold text-gray-900">
-                          {rate ? `$${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '加载中...'}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
+          <FavoritesPanel
+            favorites={favorites}
+            latestRates={latestRates}
+            getCryptoDisplay={getCryptoDisplay}
+            onRefresh={loadFavorites}
+            setActiveTab={setActiveTab}
+            setSelectedCrypto={setSelectedCrypto}
+          />
         )}
 
         {/* ========== 资产 Tab ========== */}
@@ -1056,16 +1024,16 @@ function App() {
               <div className="mb-6">
                 <button
                   onClick={() => toggleFavorite(selectedCrypto)}
-                  className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${favorites.includes(selectedCrypto)
+                  className={`w-full py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${isFavorited(selectedCrypto)
                     ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                 >
                   <Star
                     size={20}
-                    fill={favorites.includes(selectedCrypto) ? 'currentColor' : 'none'}
+                    fill={isFavorited(selectedCrypto) ? 'currentColor' : 'none'}
                   />
-                  {favorites.includes(selectedCrypto) ? '已收藏' : '收藏'}
+                  {isFavorited(selectedCrypto) ? '已收藏' : '收藏'}
                 </button>
               </div>
 
@@ -1149,7 +1117,8 @@ function App() {
                     <span className="text-xs text-gray-500">({favorites.length})</span>
                   </div>
                   <div className="space-y-2">
-                    {favorites.map(symbol => {
+                    {favorites.map(favItem => {
+                      const symbol = typeof favItem === 'string' ? favItem : favItem.symbol;
                       const crypto = cryptoConfig[symbol];
                       const rate = latestRates[symbol] || crypto.basePrice;
                       const change = (Math.random() - 0.3) * 5;

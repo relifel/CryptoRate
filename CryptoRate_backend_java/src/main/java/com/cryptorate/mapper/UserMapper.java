@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 /**
  * 用户数据访问接口
  * 
- * <p>MyBatis Mapper 接口，对应 UserMapper.xml</p>
+ * <p>
+ * MyBatis Mapper 接口，对应 UserMapper.xml
+ * </p>
  * 
  * @author CryptoRate Team
  * @version 1.0
@@ -33,12 +35,29 @@ public interface UserMapper {
     int deleteById(@Param("id") Long id);
 
     /**
-     * 更新用户信息
+     * 更新用户信息（通用，支持所有字段）
      * 
      * @param user 用户对象
      * @return 影响的行数
      */
     int update(User user);
+
+    /**
+     * 更新个人资料字段（昵称、邮箱、手机、头像、简介），不涉及密码
+     *
+     * @param user 用户对象（含需更新的资料字段和 id）
+     * @return 影响的行数
+     */
+    int updateProfile(User user);
+
+    /**
+     * 仅更新密码字段
+     *
+     * @param id       用户ID
+     * @param password 已加密的新密码
+     * @return 影响的行数
+     */
+    int updatePassword(@Param("id") Long id, @Param("password") String password);
 
     /**
      * 根据 ID 查询用户

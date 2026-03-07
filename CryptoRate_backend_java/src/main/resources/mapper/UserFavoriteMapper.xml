@@ -3,10 +3,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!--
-    用户收藏 MyBatis Mapper XML 配置文件
+    用户收藏 MyBatis Mapper XML 配置文件 (v2)
 
     @author CryptoRate Team
-    @version 1.0
+    @version 2.0
     @since 2026-02-27
 -->
 <mapper namespace="com.cryptorate.mapper.UserFavoriteMapper">
@@ -16,19 +16,23 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="user_id" property="userId" jdbcType="BIGINT"/>
         <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="price_upper" property="priceUpper" jdbcType="DECIMAL"/>
+        <result column="price_lower" property="priceLower" jdbcType="DECIMAL"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!-- 基础字段列表 -->
     <sql id="Base_Column_List">
-        id, user_id, symbol, created_at
+        id, user_id, symbol, sort_order, note, price_upper, price_lower, created_at
     </sql>
 
     <!-- 插入收藏记录 -->
     <insert id="insert" parameterType="com.cryptorate.entity.UserFavorite"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_favorite (user_id, symbol, created_at)
-        VALUES (#{userId}, #{symbol}, #{createdAt})
+        INSERT INTO user_favorite (user_id, symbol, sort_order, created_at)
+        VALUES (#{userId}, #{symbol}, #{sortOrder}, #{createdAt})
     </insert>
 
     <!-- 根据用户ID和币种删除收藏 -->
@@ -37,13 +41,23 @@
         WHERE user_id = #{userId} AND symbol = #{symbol}
     </delete>
 
-    <!-- 查询用户的所有收藏记录 -->
+    <!-- 批量删除收藏 -->
+    <delete id="batchDeleteBySymbols">
+        DELETE FROM user_favorite
+        WHERE user_id = #{userId}
+        AND symbol IN
+        <foreach collection="symbols" item="sym" open="(" separator="," close=")">
+            #{sym}
+        </foreach>
+    </delete>
+
+    <!-- 查询用户的所有收藏记录（按排序权重升序，同权重按时间倒序） -->
     <select id="selectByUserId" parameterType="java.lang.Long"
             resultMap="BaseResultMap">
         SELECT <include refid="Base_Column_List"/>
         FROM user_favorite
         WHERE user_id = #{userId}
-        ORDER BY created_at DESC
+        ORDER BY sort_order ASC, created_at DESC
     </select>
 
     <!-- 查询用户是否已收藏某币种 -->
@@ -59,7 +73,28 @@
         SELECT symbol
         FROM user_favorite
         WHERE user_id = #{userId}
-        ORDER BY created_at DESC
+        ORDER BY sort_order ASC, created_at DESC
     </select>
+
+    <!-- 更新备注 -->
+    <update id="updateNote">
+        UPDATE user_favorite
+        SET note = #{note}
+        WHERE user_id = #{userId} AND symbol = #{symbol}
+    </update>
+
+    <!-- 更新价格提醒阈值 -->
+    <update id="updatePriceAlert">
+        UPDATE user_favorite
+        SET price_upper = #{priceUpper}, price_lower = #{priceLower}
+        WHERE user_id = #{userId} AND symbol = #{symbol}
+    </update>
+
+    <!-- 更新排序权重 -->
+    <update id="updateSortOrder">
+        UPDATE user_favorite
+        SET sort_order = #{sortOrder}
+        WHERE user_id = #{userId} AND symbol = #{symbol}
+    </update>
 
 </mapper>

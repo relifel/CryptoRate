@@ -339,30 +339,93 @@ export { API_CONFIG };
  */
 export const favoriteAPI = {
   /**
-   * 获取当前用户的收藏列表
-   * @returns {Promise<{ data: string[] }>} 已收藏的币种代码列表
+   * 获取当前用户的完整收藏列表（含备注、提醒等）
+   * @returns {Promise<{ data: UserFavorite[] }>}
    */
   getList: () => {
     return request(`${API_CONFIG.BASE_URL_V1}/favorites/list`);
   },
 
-  /**
-   * 添加收藏
-   * @param {string} symbol - 币种代码
-   */
+  /** 添加收藏 */
   add: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, {
-      method: 'POST',
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'POST' });
+  },
+
+  /** 取消收藏 */
+  remove: (symbol) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'DELETE' });
+  },
+
+  /** 批量取消收藏 */
+  batchRemove: (symbols) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/batch`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbols }),
+    });
+  },
+
+  /** 更新备注 */
+  updateNote: (symbol, note) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/note`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note }),
+    });
+  },
+
+  /** 设置价格提醒 */
+  updateAlert: (symbol, priceUpper, priceLower) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/alert`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceUpper, priceLower }),
+    });
+  },
+
+  /** 持久化排序 */
+  updateSort: (sortList) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/favorites/sort`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sortList),
+    });
+  },
+};
+
+/**
+ * 用户个人中心接口（需登录，自动携带 JWT Token）
+ */
+export const profileAPI = {
+  /**
+   * 获取当前登录用户的个人资料
+   * @returns {Promise<{ data: User }>}
+   */
+  getProfile: () => {
+    return request(`${API_CONFIG.BASE_URL}/user/profile`);
+  },
+
+  /**
+   * 更新个人资料（昵称、邮箱、手机、头像、简介）
+   * @param {object} dto - { nickname, email, phone, avatar, bio }
+   * @returns {Promise<{ data: User }>}
+   */
+  updateProfile: (dto) => {
+    return request(`${API_CONFIG.BASE_URL}/user/profile`, {
+      method: 'PUT',
+      body: dto,
     });
   },
 
   /**
-   * 取消收藏
-   * @param {string} symbol - 币种代码
+   * 修改密码
+   * @param {object} dto - { oldPassword, newPassword, confirmPassword }
+   * @returns {Promise<{ data: null }>}
    */
-  remove: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, {
-      method: 'DELETE',
+  changePassword: (dto) => {
+    return request(`${API_CONFIG.BASE_URL}/user/password`, {
+      method: 'PUT',
+      body: dto,
     });
   },
 };
