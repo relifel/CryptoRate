@@ -9,27 +9,28 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #ffffff;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  width: 100%;
 }
 
 html {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #root {
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -53,11 +54,32 @@ html {
   background: #9ca3af;
 }
 
-/* 移除所有发光效果和赛博风格 */
 button:focus {
   outline: none;
 }
 
 input:focus {
   outline: none;
+}
+
+@layer utilities {
+  /* 极简坐标纸网格背景 */
+  .bg-graph-paper {
+    background-color: #f8fafc; /* slate-50 */
+    background-image: 
+      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* 核心组件：物理切角效果 */
+  .chamfer-card {
+    clip-path: polygon(
+      12px 0%, /* 左上切角起始点 */
+      100% 0%, 
+      100% 100%, 
+      0% 100%, 
+      0% 12px   /* 左上切角结束点 */
+    );
+  }
 }

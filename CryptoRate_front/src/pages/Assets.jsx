@@ -1,226 +1,250 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Plus, Trash2, Edit2 } from 'lucide-react';
+import { useOutletContext, Link } from 'react-router-dom';
 import { assetAPI } from '../api';
-import { getCryptoDisplay } from '../utils/cryptoHelper';
-import { useOutletContext } from 'react-router-dom';
+import '../home.css';
 
 export default function Assets() {
-    const { user, setShowLoginPage, setError } = useOutletContext();
+    const context = useOutletContext() || {};
+    const { user, setShowLoginPage, latestRates, error, setError } = context;
 
-    const [assetsList, setAssetsList] = useState([]);
-    const [showAssetModal, setShowAssetModal] = useState(false);
-    const [assetForm, setAssetForm] = useState({ symbol: '', amount: '', cost: '' });
+    const [assets, setAssets] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const loadAssets = async () => {
-        if (!user) {
-            setAssetsList([]);
-            return;
-        }
+    // 模态框状态
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({ symbol: '', amount: '', cost: '' });
+    const [isSaving, setIsSaving] = useState(false);
+
+    // 获取资产列表
+    const fetchAssets = async () => {
+        if (!user) return;
+        setIsLoading(true);
         try {
             const res = await assetAPI.getAssets();
             if (res && res.data) {
-                setAssetsList(res.data);
+                setAssets(res.data);
             }
         } catch (err) {
-            console.error('加载资产列表失败:', err);
+            console.error('获取资产失败:', err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        loadAssets();
+        if (user) {
+            fetchAssets();
+        } else {
+            setAssets([]);
+        }
     }, [user]);
 
-    const refreshAssets = () => loadAssets();
+    // 计算总资产
+    let totalValue = 0;
+    let totalCost = 0;
 
-    const handleSaveAsset = async () => {
+    const processedAssets = assets.map(asset => {
+        const rate = latestRates && latestRates[asset.symbol] ? latestRates[asset.symbol] : 0;
+        const currentValue = rate * asset.amount;
+        const profit = currentValue - asset.cost;
+        const roi = asset.cost > 0 ? (profit / asset.cost) * 100 : 0;
+
+        totalValue += currentValue;
+        totalCost += asset.cost;
+
+        return {
+            ...asset,
+            currentValue,
+            profit,
+            roi,
+            currentPrice: rate
+        };
+    });
+
+    const totalProfit = totalValue - totalCost;
+    const totalRoi = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSaving(true);
         try {
-            if (!assetForm.symbol || !assetForm.amount || !assetForm.cost) {
-                setError('请填写完整资产信息');
-                return;
-            }
-            await assetAPI.saveAsset({
-                symbol: assetForm.symbol.trim().toUpperCase(),
-                amount: parseFloat(assetForm.amount),
-                cost: parseFloat(assetForm.cost)
-            });
-            setShowAssetModal(false);
-            setAssetForm({ symbol: '', amount: '', cost: '' });
-            refreshAssets();
+            const payload = {
+                symbol: formData.symbol.toUpperCase().trim(),
+                amount: parseFloat(formData.amount),
+                cost: parseFloat(formData.cost)
+            };
+            await assetAPI.saveAsset(payload);
+            setIsModalOpen(false);
+            setFormData({ symbol: '', amount: '', cost: '' });
+            fetchAssets(); // 重新加载
         } catch (err) {
-            console.error('保存资产失败:', err);
-            setError('保存资产失败，请重试');
+            alert('保存失败，请检查填写内容');
+        } finally {
+            setIsSaving(false);
         }
     };
 
-    const handleDeleteAsset = async (id, e) => {
-        e.stopPropagation();
+    const handleDelete = async (id) => {
+        if (!window.confirm('确定要删除这条资产记录吗？')) return;
         try {
-            if (window.confirm('确定要删除该条资产记录吗？')) {
-                await assetAPI.deleteAsset(id);
-                refreshAssets();
-            }
+            await assetAPI.deleteAsset(id);
+            fetchAssets();
         } catch (err) {
-            console.error('删除资产失败:', err);
-            setError('删除失败，请重试');
+            alert('删除失败');
         }
-    };
-
-    const handleEditAsset = (asset, e) => {
-        e.stopPropagation();
-        setAssetForm({ symbol: asset.symbol, amount: asset.amount, cost: asset.cost });
-        setShowAssetModal(true);
     };
 
     return (
-        <div className="flex-1 overflow-y-auto p-8 bg-gray-50 relative">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <Wallet size={24} className="text-blue-600" />
-                        <h2 className="text-xl font-bold text-gray-900">个人资产管理</h2>
-                    </div>
-                    <button
-                        onClick={() => {
-                            if (!user) {
-                                setShowLoginPage(true);
-                                return;
-                            }
-                            setAssetForm({ symbol: '', amount: '', cost: '' });
-                            setShowAssetModal(true);
-                        }}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
-                    >
-                        <Plus size={16} /> 添加资产
-                    </button>
-                </div>
+        <div className="home-container overflow-y-auto w-full min-h-screen relative">
+            {/* 修复：统一使用 w-full max-w-[1400px] mx-auto px-6 实现大气且居中的布局 */}
+            <div className="w-full max-w-[1400px] mx-auto px-6 pt-24 pb-12">
+                <main>
+                    <section className="market-overview mb-12">
+                        <div className="stat-block">
+                            <div className="stat-label">总资产估值 (USD)</div>
+                            <div className="stat-value">${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div className={`stat-change ${totalProfit >= 0 ? 'trend-up' : 'trend-down'}`}>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {totalProfit >= 0
+                                        ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path>
+                                    }
+                                </svg>
+                                {Math.abs(totalRoi).toFixed(2)}% <span style={{ color: 'var(--text-muted)', fontWeight: 400, marginLeft: '6px' }}>总收益: ${totalProfit.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </section>
 
-                {!user ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-16 text-center">
-                        <Wallet size={48} className="mx-auto text-gray-300 mb-4" />
-                        <p className="text-gray-500 mb-4">登录后可手动管理个人的加密货币资产与持仓成本</p>
+                    <section className="toolbar">
+                        <h2 className="text-xl font-bold">资产列表</h2>
                         <button
-                            onClick={() => setShowLoginPage(true)}
-                            className="px-6 py-2 bg-gray-900 text-white rounded-lg text-sm hover:bg-gray-800"
-                        >去登录</button>
-                    </div>
-                ) : assetsList.length === 0 ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-16 text-center">
-                        <Wallet size={48} className="mx-auto text-gray-300 mb-4" />
-                        <p className="text-gray-500">当前没有录入任何资产</p>
-                        <button
-                            onClick={() => setShowAssetModal(true)}
-                            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                        >开始添加资产</button>
-                    </div>
-                ) : (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-semibold border-b border-gray-200">
+                            onClick={() => {
+                                if (!user) return setShowLoginPage(true);
+                                setIsModalOpen(true);
+                            }}
+                            className="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-slate-800 transition-colors"
+                        >
+                            + 记录新资产
+                        </button>
+                    </section>
+
+                    <section className="table-container">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <th className="px-6 py-4">币种</th>
-                                    <th className="px-6 py-4">持有数量</th>
-                                    <th className="px-6 py-4">持仓总成本(USD)</th>
-                                    <th className="px-6 py-4">均价成本</th>
-                                    <th className="px-6 py-4 text-right">操作</th>
+                                    <th>币种 (Asset)</th>
+                                    <th className="text-right">持有数量 (Amount)</th>
+                                    <th className="text-right">当前单价 (Price)</th>
+                                    <th className="text-right">总成本 (Cost)</th>
+                                    <th className="text-right">当前估值 (Value)</th>
+                                    <th className="text-right">未实现盈亏 (PNL)</th>
+                                    <th className="text-center">操作</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {assetsList.map((asset) => {
-                                    const crypto = getCryptoDisplay(asset.symbol);
-                                    const avgCost = asset.amount > 0 ? (asset.cost / asset.amount).toFixed(2) : '0.00';
-                                    return (
-                                        <tr key={asset.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-xl">{crypto.icon}</span>
-                                                    <span className="font-bold text-gray-900">{asset.symbol}</span>
-                                                </div>
+                            <tbody>
+                                {!user ? (
+                                    <tr>
+                                        <td colSpan="7" className="text-center py-20 text-slate-500 font-medium tracking-wide">
+                                            请先登录查看资产详情
+                                        </td>
+                                    </tr>
+                                ) : isLoading ? (
+                                    <tr>
+                                        <td colSpan="7" className="text-center py-20">
+                                            <div className="w-8 h-8 rounded-full border-[3px] border-slate-200 border-t-slate-800 animate-spin mx-auto"></div>
+                                        </td>
+                                    </tr>
+                                ) : processedAssets.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="7" className="text-center py-20 text-slate-500 font-medium">
+                                            暂无资产记录，点击右上角添加
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    processedAssets.map((asset) => (
+                                        <tr key={asset.id}>
+                                            <td className="font-semibold text-slate-900">{asset.symbol}</td>
+                                            <td className="text-right font-medium">{asset.amount.toLocaleString()}</td>
+                                            <td className="text-right">${asset.currentPrice.toLocaleString(undefined, { maximumFractionDigits: 4 })}</td>
+                                            <td className="text-right text-slate-600">${asset.cost.toLocaleString()}</td>
+                                            <td className="text-right font-bold text-slate-900">${asset.currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td className={`text-right font-medium ${asset.profit >= 0 ? 'trend-up' : 'trend-down'}`}>
+                                                {asset.profit >= 0 ? '+' : ''}{asset.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<br />
+                                                <span className="text-xs opacity-80">{asset.roi >= 0 ? '+' : ''}{asset.roi.toFixed(2)}%</span>
                                             </td>
-                                            <td className="px-6 py-4 font-medium text-gray-900">{asset.amount}</td>
-                                            <td className="px-6 py-4 font-medium text-gray-900">${asset.cost?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                            <td className="px-6 py-4 text-gray-500">${avgCost}</td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={(e) => handleEditAsset(asset, e)}
-                                                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                                                        title="编辑信息 (重新录入会覆盖原记录)"
-                                                    >
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={(e) => handleDeleteAsset(asset.id, e)}
-                                                        className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                                                        title="删除记录"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
+                                            <td className="text-center">
+                                                <button
+                                                    onClick={() => handleDelete(asset.id)}
+                                                    className="text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
+                                                >
+                                                    删除
+                                                </button>
                                             </td>
                                         </tr>
-                                    );
-                                })}
+                                    ))
+                                )}
                             </tbody>
                         </table>
-                    </div>
-                )}
+                    </section>
+                </main>
             </div>
 
-            {showAssetModal && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-6">编辑资产状况</h3>
-                        <div className="space-y-4">
+            {/* 添加资产 Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white rounded-[24px] p-8 w-full max-w-md shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500">记录加密资产</h3>
+                            <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">币种代码 (例如: BTC, ETH)</label>
+                                <label className="block text-sm font-semibold text-slate-700 mb-2">代币名称 (Symbol)</label>
                                 <input
                                     type="text"
-                                    value={assetForm.symbol}
-                                    onChange={(e) => setAssetForm(prev => ({ ...prev, symbol: e.target.value.toUpperCase() }))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="BTC"
+                                    required
+                                    placeholder="例如: BTC"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-slate-400 focus:bg-white outline-none transition-all uppercase"
+                                    value={formData.symbol}
+                                    onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">持有数量</label>
+                                <label className="block text-sm font-semibold text-slate-700 mb-2">持有数量 (Amount)</label>
                                 <input
                                     type="number"
-                                    min="0"
-                                    step="0.0001"
-                                    value={assetForm.amount}
-                                    onChange={(e) => setAssetForm(prev => ({ ...prev, amount: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    step="any"
+                                    required
                                     placeholder="0.00"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-slate-400 focus:bg-white outline-none transition-all"
+                                    value={formData.amount}
+                                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">持仓总成本 (USD)</label>
+                                <label className="block text-sm font-semibold text-slate-700 mb-2">持仓总成本 (Total Cost in USD)</label>
                                 <input
                                     type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={assetForm.cost}
-                                    onChange={(e) => setAssetForm(prev => ({ ...prev, cost: e.target.value }))}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    placeholder="投资的总金额 USD"
+                                    step="any"
+                                    required
+                                    placeholder="0.00"
+                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-slate-400 focus:bg-white outline-none transition-all"
+                                    value={formData.cost}
+                                    onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
                                 />
                             </div>
-                        </div>
-                        <div className="mt-8 flex gap-3 justify-end">
                             <button
-                                onClick={() => setShowAssetModal(false)}
-                                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-50"
+                                type="submit"
+                                disabled={isSaving}
+                                className="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl mt-6 hover:bg-slate-800 transition-colors flex justify-center items-center disabled:opacity-70"
                             >
-                                取消
+                                {isSaving ? '保存中...' : '保存资产记录'}
                             </button>
-                            <button
-                                onClick={handleSaveAsset}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
-                            >
-                                保存记录
-                            </button>
-                        </div>
-                        <p className="mt-3 text-xs text-gray-400 opacity-80">* 提示: 同一币种多次保存将直接覆盖最新数值。</p>
+                        </form>
                     </div>
                 </div>
             )}

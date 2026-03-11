@@ -1,33 +1,54 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle } from 'lucide-react';
-import Header from './components/Header';
-import AIChatBox from './components/AIChatBox';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import Favorites from './pages/Favorites';
 import Assets from './pages/Assets';
-import Analysis from './pages/Analysis';
-import UserProfile from './components/UserProfile';
-import { favoriteAPI, rateAPI } from './api';
+import Favorites from './pages/Favorites';
+import AiAnalysis from './pages/AiAnalysis';
+import UserCenter from './pages/UserCenter';
+import Navbar from './components/Navbar';
+import FloatingAiChat from './components/FloatingAiChat';
+import { favoriteAPI, rateAPI, profileAPI } from './api';
 
 const USER_STORAGE_KEY = 'cryptorate_user';
 
 function Layout() {
-  const [user, setUser] = useState(() => {
-    try {
-      const raw = localStorage.getItem(USER_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === '/';
+
+  const [user, setUser] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const [showLoginPage, setShowLoginPage] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [latestRates, setLatestRates] = useState({});
   const [errorGlobal, setErrorGlobal] = useState(null);
   const [loadingGlobal, setLoadingGlobal] = useState({ latest: false });
+
+  // 0. 初始化：尝试根据 Token 拉取用户信息
+  useEffect(() => {
+    const initUser = async () => {
+      const token = localStorage.getItem('cryptorate_token');
+      if (token) {
+        try {
+          const res = await profileAPI.getProfile();
+          if (res && res.data) {
+            setUser(res.data);
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(res.data));
+          }
+        } catch (err) {
+          console.error('初始化用户信息失败:', err);
+          // 如果 Token 失效，清除本地状态
+          localStorage.removeItem('cryptorate_token');
+          localStorage.removeItem(USER_STORAGE_KEY);
+        }
+      }
+      setIsInitializing(false);
+    };
+    initUser();
+  }, []);
 
   // 1. 加载收藏列表
   const loadFavorites = useCallback(async () => {
@@ -101,23 +122,55 @@ function Layout() {
     }
   };
 
-  if (showLoginPage) {
+  const handleLogout = () => {
+    setUser(null);
+    setFavorites([]);
+    try {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      localStorage.removeItem('cryptorate_token');
+    } catch (_) { }
+  };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+          <p className="text-sm font-bold text-slate-400">正在加载智库核心...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showLoginPage || location.pathname === '/login') {
     return (
       <Login
-        onSuccess={(userData) => {
-          setUser({ username: userData.username });
+        onSuccess={async (userData) => {
+          // 登录成功后立刻拉取完整资料
           try {
+            const res = await profileAPI.getProfile();
+            if (res && res.data) {
+              setUser(res.data);
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(res.data));
+              setShowLoginPage(false);
+              navigate('/');
+            }
+          } catch (err) {
+            console.error('登录后拉取资料失败:', err);
+            // 降级使用传入的基本信息
+            setUser({ username: userData.username });
             localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ username: userData.username }));
-          } catch (_) { }
-          setShowLoginPage(false);
+            setShowLoginPage(false);
+            navigate('/');
+          }
         }}
-        onCancel={() => setShowLoginPage(false)}
+        onCancel={() => { setShowLoginPage(false); navigate('/'); }}
       />
     );
   }
 
   return (
-    <div className="h-screen bg-white text-gray-900 flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       {/* 全局错误提示 */}
       {errorGlobal && (
         <div className="bg-red-50 border-b border-red-200 px-6 py-3 flex items-center gap-3 relative z-50">
@@ -134,19 +187,21 @@ function Layout() {
         </div>
       )}
 
-      {/* Header */}
-      <Header
-        user={user}
-        setUser={setUser}
-        setShowLoginPage={setShowLoginPage}
-        favoritesCount={favorites.length}
-      />
+
 
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden h-full relative">
+      {/* 修复：移除 overflow-hidden + h-full，改为 overflow-y-auto 让内容区可以正常滚动 */}
+      <div className="flex flex-1 relative">
+        <div className="absolute top-0 left-0 w-full z-50">
+          <div className="w-full max-w-[1400px] mx-auto px-6">
+            <Navbar user={user} setShowLoginPage={setShowLoginPage} onLogout={handleLogout} />
+          </div>
+        </div>
+
         <Outlet
           context={{
             user,
+            setUser,
             setShowLoginPage,
             favorites,
             setFavorites,
@@ -157,10 +212,12 @@ function Layout() {
             setError: setErrorGlobal
           }}
         />
+
+        {/* 全局悬浮 AI 聊天助手 */}
+        <FloatingAiChat />
       </div>
 
-      {/* AI Bot */}
-      <AIChatBox />
+
     </div>
   );
 }
@@ -171,11 +228,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="favorites" element={<Favorites />} />
           <Route path="assets" element={<Assets />} />
-          <Route path="analysis" element={<Analysis />} />
-          {/* Profile wrapped in standard container style from old App */}
-          <Route path="profile" element={<div className="flex-1 overflow-y-auto bg-gray-50"><UserProfile /></div>} />
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="analysis" element={<AiAnalysis />} />
+          <Route path="user-center" element={<UserCenter />} />
+          <Route path="login" element={null} />
         </Route>
       </Routes>
     </BrowserRouter>
