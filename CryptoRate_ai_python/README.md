@@ -8,9 +8,11 @@
 
 ```
 CryptoRate_ai_python/
-├── main.py              # FastAPI 服务入口 + /ai/ask 接口
-├── rag_service.py       # RAG 检索问答逻辑（独立运行测试用）
+├── main.py              # FastAPI 服务入口 + /ai/ask (问答) & /ai/alert (告警)
+├── rag_service.py       # RAG 检索问答逻辑
+├── alert_agent.py       # 基于 MCP 协议的智能告警 Agent 🤖
 ├── insert_test_data.py  # 向 Milvus 插入测试知识库数据
+├── test_alert.py        # 飞书告警功能独立测试脚本
 ├── requirements.txt     # Python 依赖列表
 ├── .env.example         # 环境变量模板（复制为 .env 并填入真实值）
 └── .gitignore           # 排除 .env、.venv 等敏感文件
@@ -60,6 +62,7 @@ pip install -r requirements.txt
 |---|---|---|
 | `GET` | `/health` | 健康检查 |
 | `POST` | `/ai/ask` | RAG 智能问答 |
+| `POST` | `/ai/alert` | **MCP 智能行情异动播报** |
 
 ### POST `/ai/ask` 示例
 
@@ -101,10 +104,26 @@ ChatTongyi (qwen3-max)     ← 结合上下文生成分析回答
 
 ---
 
+## 🛠️ 核心功能：MCP 智能播报
+
+本模块集成了 **Model Context Protocol (MCP)** 协议，使 AI 不仅能回答问题，还能主动指挥飞书机器人发送消息。
+
+- **流程**：发现异动 -> AI 深度分析原因 -> 通过 MCP 调用飞书工具 -> 发送交互式卡片。
+- **交互式卡片**：支持飞书标准的 UI 卡片，包含涨跌颜色区分、Markdown 排版及免责声明。
+
+## 🏗️ 文档指南
+
+- [飞书 MCP 集成技术指南](../Feishu_MCP_Integration_Guide.md)
+- [如何获取飞书 Webhook 教程](../How_to_get_Feishu_Webhook.md)
+- [MCP 协议深度拆解](../MCP_Implementation_DeepDive.md)
+
+---
+
 ## 🛠️ 依赖说明
 
 | 包 | 作用 |
 |---|---|
+| `mcp` | Model Context Protocol 官方 SDK |
 | `fastapi` / `uvicorn` | Web 框架和 ASGI 服务器 |
 | `langchain-classic` | LCEL 检索链（create_retrieval_chain） |
 | `langchain-milvus` | 官方 Milvus 向量存储集成 |

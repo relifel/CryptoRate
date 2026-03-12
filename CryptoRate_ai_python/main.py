@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from alert_agent import FeishuAlertAgent
 
 # LangChain 相关依赖
 from langchain_community.embeddings import DashScopeEmbeddings
@@ -37,6 +38,12 @@ class AskResponse(BaseModel):
     """POST /ai/ask 响应体"""
     answer: str
     code: int = 200
+
+class AlertRequest(BaseModel):
+    """POST /ai/alert 请求体"""
+    symbol: str
+    price: float
+    change: float
 
 # =============================================
 # 3. 生命周期管理 (Lifespan)
@@ -100,8 +107,12 @@ async def lifespan(app: FastAPI):
         question_answer_chain
     )
 
-    # 将构建好的链挂载到 app.state，供所有路由函数共享访问
+    # f. 初始化飞书告警 Agent (MCP Client)
+    print("[*] 初始化飞书告警 Agent...")
+    alert_agent = FeishuAlertAgent()
+    app.state.alert_agent = alert_agent
     app.state.rag_chain = rag_chain
+
     print("✅ RAG 服务初始化完成！监听中...\n")
 
     yield  # 从 startup 切换到应用运行
@@ -169,6 +180,24 @@ async def ask_question(body: AskRequest, request: Request):
         return JSONResponse(
             status_code=500,
             content={"answer": f"服务内部错误: {str(e)}", "code": 500}
+        )
+
+@app.post("/ai/alert")
+async def trigger_ai_alert(body: AlertRequest, request: Request):
+    """
+    触发智能告警。接收行情异动数据，由 Agent 分析并调用 MCP 飞书工具播报。
+    """
+    agent: FeishuAlertAgent = request.app.state.alert_agent
+    
+    try:
+        print(f"[*] 收到告警指令: {body.symbol} 波动 {body.change}%")
+        content = await agent.run_alert_workflow(body.symbol, body.price, body.change)
+        return {"code": 200, "msg": "告警分析并发送成功", "data": content}
+    except Exception as e:
+        print(f"[!] /ai/alert 接口异常: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"code": 500, "msg": f"告警发送失败: {str(e)}"}
         )
 
 # =============================================

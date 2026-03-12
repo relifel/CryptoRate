@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { aiAPI } from '../api';
 
 /**
  * 沉浸式居中布局 AI 独立对话页 (Gemini/ChatGPT Style)
@@ -7,6 +8,7 @@ export default function AiAnalysis() {
     const [inputValue, setInputValue] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [messages, setMessages] = useState([]); // store messages history
+    const [isLoadingAI, setIsLoadingAI] = useState(false);
     const textareaRef = useRef(null);
     const messagesEndRef = useRef(null);
 
@@ -29,32 +31,43 @@ export default function AiAnalysis() {
     };
 
     // Simulate sending message
-    const handleSend = () => {
-        if (!inputValue.trim()) return;
+    const handleSend = async () => {
+        const question = inputValue.trim();
+        if (!question || isLoadingAI) return;
         
-        const newMsg = { id: Date.now(), text: inputValue, sender: 'user' };
-        setMessages(prev => [...prev, newMsg]);
+        const userMsg = { id: Date.now(), text: question, sender: 'user' };
+        setMessages(prev => [...prev, userMsg]);
         setInputValue('');
-        if (textareaRef.current) textareaRef.current.style.height = '60px'; // reset height
+        setIsLoadingAI(true);
 
-        // Mock AI response
-        setTimeout(() => {
+        if (textareaRef.current) textareaRef.current.style.height = '60px'; 
+
+        try {
+            const res = await aiAPI.chat(question);
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
-                text: "✨ 这是一个模拟的 CryptoRate AI 回复。智能分析引擎目前正在深度解读该资产的链上异动和市场趋势...",
+                text: res.data || "抱歉，我未能生成有效回答。",
                 sender: 'ai'
             }]);
-        }, 1200);
+        } catch (err) {
+            setMessages(prev => [...prev, {
+                id: Date.now() + 1,
+                text: `❌ 服务暂时不可用: ${err.message}`,
+                sender: 'ai'
+            }]);
+        } finally {
+            setIsLoadingAI(false);
+        }
     };
 
     return (
         <div className="w-full min-h-screen bg-slate-50 font-sans flex flex-col relative">
             
             {/* Top Spacer to clear Absolute Navbar */}
-            <div className="h-24 shrink-0 pointer-events-none"></div>
+            <div className="h-20 shrink-0"></div>
 
             {/* 发消息区居中的 Scrollable Chat Area */}
-            <div className="flex-1 overflow-y-auto w-full px-6 scroll-smooth pb-40">
+            <div className="flex-1 overflow-y-auto w-full px-6 scroll-smooth pb-32">
                 {messages.length === 0 ? (
                     
                     /* 空状态：极简居中问候区 */
@@ -95,6 +108,15 @@ export default function AiAnalysis() {
                                 </div>
                             </div>
                         ))}
+                        {isLoadingAI && (
+                            <div className="flex justify-start">
+                                <div className="bg-white text-slate-400 border border-slate-100 rounded-[28px] rounded-bl-sm px-6 py-4 flex items-center gap-3">
+                                    <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce"></div>
+                                    <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                    <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                                </div>
+                            </div>
+                        )}
                         <div ref={messagesEndRef} className="h-4 shrink-0" />
                     </div>
                     

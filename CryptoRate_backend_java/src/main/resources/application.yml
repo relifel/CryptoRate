@@ -124,3 +124,10 @@ jwt:
   secret: "CryptoRate@2026!SecretKey#ForJWT$Generation&Validation*SafeKey"
   # Token 过期时间：24 小时（单位：毫秒）
   expiration: 86400000
+
+# 业务告警配置
+cryptorate:
+  alert:
+    # 飞书机器人 Webhook 地址（请替换为真实的机器人 Webhook URL）
+    # 建议生产环境通过环境变量设置: ${FEISHU_WEBHOOK_URL}
+    feishu-webhook-url: ${FEISHU_WEBHOOK_URL:https://open.feishu.cn/open-apis/bot/v2/hook/your-actual-webhook-id}

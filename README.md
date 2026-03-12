@@ -57,6 +57,7 @@ CryptoRate/ (Monorepo)
 - 👤 用户注册 / 登录 / 管理
 - 💰 加密资产管理（持仓查看、成本记录）
 - 📈 加密货币实时行情（Coinlayer API）
+- 🚨 **飞书机器人告警播报**：支持手动模板告警及 AI 智能深度分析播报（MCP 驱动）
 
 **运行：**
 ```bash
@@ -103,6 +104,13 @@ python main.py
 # 服务监听 http://localhost:8000
 # 接口文档: http://localhost:8000/docs
 ```
+
+### 4. MCP 辅助说明文档 📚
+为了方便理解和配置飞书 AI 告警功能，请参考以下文档：
+- [飞书 MCP 集成全流程指南](./Feishu_MCP_Integration_Guide.md)
+- [获取飞书 Webhook 详尽教程](./How_to_get_Feishu_Webhook.md)
+- [MCP 实现原理深度拆解](./MCP_Implementation_DeepDive.md)
+- [给小白的 MCP 通俗原理解析](./MCP_Explainer_Simplified.md)
 
 详细说明见 [`CryptoRate_ai_python/README.md`](./CryptoRate_ai_python/README.md)。
 
@@ -155,7 +163,8 @@ python main.py
 1. **风格巨变**：成功将 UI 从早期的“科幻赛博”风格平滑迁移至“Hyper-Minimalism”极简金融实验室风格，视觉质感提升显著。
 2. **交互升级**：实现了行情列表的独立卡片流布局及丝滑的 Accordion 展开动效，解决了传统表格数据展示单调且局促的问题。
 3. **链路连通**：完成了前端登录系统与 Spring Boot 后端的深度联通，支持 JWT 持久化会话以及个人资料同步。
-4. **细节打磨**：修复了 CSS 编译错误，统一了 Token 与用户信息的本地存储逻辑，增加了物理切角（Chamfer）等高级设计元素。
+4. **AI 播报集成**：成功接入了基于 MCP 协议的飞书智能播报 Agent，实现了从行情异动到 AI 自动深度分析并推送精美卡片的全流程。
+5. **体验优化**：解决了 AI 回复中夹带代码/JSON 的问题，通过 Interactive Card 提升了告警消息的视觉品质。
 
 ### 项目潜在问题与改进方向
 - **[改进] 实时图表接入**：当前展开面板中的 K 线图为占位组件，后续计划接入 `Lightweight Charts` 或 `ECharts` 实现真实数据渲染。

@@ -231,6 +231,22 @@ export const analysisAPI = {
 };
 
 /**
+ * AI 智能问答接口
+ */
+export const aiAPI = {
+  /**
+   * 发送 AI 聊天问题
+   * @param {string} question - 用户问题
+   */
+  chat: (question) => {
+    return request(`/api/ai/chat`, {
+      method: 'POST',
+      body: { question },
+    });
+  },
+};
+
+/**
  * 管理后台接口
  */
 export const adminAPI = {
