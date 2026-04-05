@@ -40,7 +40,7 @@ public class RateController {
      */
     @GetMapping("/symbols")
     public R<List<String>> getSymbols() {
-        log.info("接收到获取币种列表请求");
+        log.debug("接收到获取币种列表请求");
         List<String> symbols = rateService.getSupportedSymbols();
         return R.ok(symbols);
     }
@@ -56,7 +56,7 @@ public class RateController {
      */
     @GetMapping("/search")
     public R<List<String>> searchSymbols(@RequestParam(required = false) String keyword) {
-        log.info("接收到搜索币种请求，关键词: {}", keyword);
+        log.debug("接收到搜索币种请求，关键词: {}", keyword);
         List<String> symbols = rateService.searchSymbols(keyword);
         return R.ok(symbols);
     }
@@ -72,7 +72,7 @@ public class RateController {
      */
     @GetMapping("/latest")
     public R<List<LatestRateDTO>> getLatestRates(@RequestParam(required = false) String symbol) {
-        log.info("接收到获取最新汇率请求，筛选币种: {}", symbol);
+        log.debug("接收到获取最新汇率请求，筛选币种: {}", symbol);
         List<LatestRateDTO> rates = rateService.getLatestRates(symbol);
         return R.ok(rates);
     }
@@ -93,7 +93,7 @@ public class RateController {
             @RequestParam String symbol,
             @RequestParam String start,
             @RequestParam String end) {
-        log.info("接收到查询历史汇率请求，币种: {}, 时间范围: {} - {}", symbol, start, end);
+        log.debug("接收到查询历史汇率请求，币种: {}, 时间范围: {} - {}", symbol, start, end);
         List<HistoryRateDTO> history = rateService.getHistoryRates(symbol, start, end);
         return R.ok(history);
     }

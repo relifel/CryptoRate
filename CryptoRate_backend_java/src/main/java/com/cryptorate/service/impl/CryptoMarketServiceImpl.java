@@ -177,6 +177,66 @@ public class CryptoMarketServiceImpl implements CryptoMarketService {
         }
     }
 
+    @Override
+    public int syncHistoricalRates(List<String> symbols, int days) {
+        log.info("开始执行历史数据智能采样同步，币种: {}, 回溯天数: {}", symbols, days);
+        int totalRows = 0;
+        java.time.LocalDate today = java.time.LocalDate.now();
+        
+        // 智能采样策略：
+        // 1. 最近 7 天：每天一个点
+        // 2. 1个月内：每 2 天一个点
+        // 3. 3个月内：每 7 天一个点
+        // 4. 1年内：每 30 天一个点
+        List<java.time.LocalDate> targetDates = new ArrayList<>();
+        for (int i = 0; i <= days; i++) {
+            if (i <= 7 || (i <= 30 && i % 2 == 0) || (i <= 90 && i % 7 == 0) || (i % 30 == 0)) {
+                targetDates.add(today.minusDays(i));
+            }
+        }
+
+        log.info("计算得出共需同步 {} 个日期的采样数据", targetDates.size());
+
+        for (java.time.LocalDate date : targetDates) {
+            String dateStr = date.toString();
+            String url = String.format("%s/%s?access_key=%s&symbols=%s",
+                    coinlayerConfig.getBaseUrl(),
+                    dateStr,
+                    coinlayerConfig.getAccessKey(),
+                    String.join(",", symbols));
+
+            Request request = new Request.Builder().url(url).get().build();
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    CoinlayerResponse res = objectMapper.readValue(response.body().string(), CoinlayerResponse.class);
+                    if (res != null && res.getSuccess() && res.getRates() != null) {
+                        List<RateHistory> batch = new ArrayList<>();
+                        long timestamp = res.getTimestamp() != null ? res.getTimestamp() : 
+                                       date.atStartOfDay(java.time.ZoneId.systemDefault()).toEpochSecond();
+                        
+                        for (Map.Entry<String, BigDecimal> entry : res.getRates().entrySet()) {
+                            RateHistory rh = new RateHistory();
+                            rh.setSymbol(entry.getKey());
+                            rh.setRate(entry.getValue());
+                            rh.setTimestamp(timestamp);
+                            rh.setCreatedAt(LocalDateTime.now());
+                            batch.add(rh);
+                        }
+                        if (!batch.isEmpty()) {
+                            totalRows += rateHistoryMapper.batchInsert(batch);
+                        }
+                    }
+                }
+                // 频率限制保护
+                Thread.sleep(300); 
+            } catch (Exception e) {
+                log.error("同步日期 {} 数据失败: {}", dateStr, e.getMessage());
+            }
+        }
+        log.info("同步完成，共计入库 {} 条记录", totalRows);
+        return totalRows;
+    }
+
     /**
      * 带重试机制的获取汇率数据（首次失败后等待 2 秒重试一次）
      */

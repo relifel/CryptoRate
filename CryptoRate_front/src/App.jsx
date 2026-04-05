@@ -94,8 +94,10 @@ function Layout() {
     };
 
     fetchLatestRates();
-    const interval = setInterval(fetchLatestRates, 30000);
-    return () => clearInterval(interval);
+    // 已根据用户要求禁用前端自动轮询 (setInterval)，
+    // 以防止后端控制台在演示期间持续刷新日志。
+    // const interval = setInterval(fetchLatestRates, 30000);
+    // return () => clearInterval(interval);
   }, []);
 
   // 每一路径变化，重置滚动位置且强制刷新内部渲染

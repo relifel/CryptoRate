@@ -47,7 +47,7 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public List<String> getSupportedSymbols() {
-        log.info("获取系统支持的币种");
+        log.debug("获取系统支持的币种");
         List<String> symbols = rateHistoryMapper.selectAllSymbols();
         if (symbols == null || symbols.isEmpty()) {
             log.info("数据库暂无币种数据，使用默认币种列表（共 {} 个）", DEFAULT_SYMBOLS.size());
@@ -59,7 +59,7 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public List<String> searchSymbols(String keyword) {
-        log.info("搜索币种，关键词: {}", keyword);
+        log.debug("搜索币种，关键词: {}", keyword);
         List<String> allSymbols = rateHistoryMapper.selectAllSymbols();
         if (allSymbols == null || allSymbols.isEmpty()) {
             allSymbols = new ArrayList<>(DEFAULT_SYMBOLS);
@@ -79,7 +79,7 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public List<LatestRateDTO> getLatestRates(String symbol) {
-        log.info("获取最新实时汇率，筛选币种: {}", symbol);
+        log.debug("获取最新实时汇率，筛选币种: {}", symbol);
 
         List<RateHistory> historyList;
 
@@ -95,7 +95,7 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public List<HistoryRateDTO> getHistoryRates(String symbol, String start, String end) {
-        log.info("查询历史汇率，币种: {}, 开始: {}, 结束: {}", symbol, start, end);
+        log.debug("查询历史汇率，币种: {}, 开始: {}, 结束: {}", symbol, start, end);
 
         Long startTime = parseDate(start);
         Long endTime = parseDate(end);

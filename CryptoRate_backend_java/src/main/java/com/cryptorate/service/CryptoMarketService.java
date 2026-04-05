@@ -33,4 +33,12 @@ public interface CryptoMarketService {
      * @return 同步的记录数
      */
     int syncRatesToDatabase();
+
+    /**
+     * 同步历史汇率数据到数据库（采样同步）
+     * @param symbols 币种列表
+     * @param days 回溯天数
+     * @return 同步的记录数
+     */
+    int syncHistoricalRates(java.util.List<String> symbols, int days);
 }

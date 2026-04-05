@@ -3,7 +3,6 @@ package com.cryptorate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * CryptoRate 加密货币追踪系统 - 启动类
@@ -14,7 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication
 @MapperScan("com.cryptorate.mapper")  // 扫描 MyBatis Mapper 接口
-@EnableScheduling                      // 开启 Spring 定时任务支持
 public class CryptoRateApplication {
 
     public static void main(String[] args) {

@@ -330,6 +330,16 @@ export const adminAPI = {
       method: 'POST',
     });
   },
+
+  /**
+   * 手动触发历史数据采样同步
+   * @param {number} days - 回溯天数
+   */
+  syncHistory: (days = 365) => {
+    return request(`${API_CONFIG.BASE_URL_V1}/admin/sync-history?days=${days}`, {
+      method: 'POST',
+    });
+  },
 };
 
 /**

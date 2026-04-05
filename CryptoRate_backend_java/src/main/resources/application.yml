@@ -67,8 +67,8 @@ mybatis:
     lazy-loading-enabled: true
     # 开启二级缓存
     cache-enabled: true
-    # 日志实现
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 日志实现 (Slf4j 将受 logging.level 控制，不会强制输出到控制台)
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 
 # Coinlayer API 配置
 coinlayer:
@@ -102,10 +102,10 @@ logging:
   level:
     # 根日志级别
     root: INFO
-    # 项目日志级别
-    com.cryptorate: DEBUG
-    # MyBatis 日志级别
-    com.cryptorate.mapper: DEBUG
+    # 项目日志级别 (改为 INFO 以减少非必要输出)
+    com.cryptorate: INFO
+    # MyBatis 日志级别 (改为 INFO/WARN 隐藏 SQL 详情)
+    com.cryptorate.mapper: INFO
     # OkHttp 日志级别（需要开启 HttpLoggingInterceptor）
     okhttp3: DEBUG
   # 日志输出格式

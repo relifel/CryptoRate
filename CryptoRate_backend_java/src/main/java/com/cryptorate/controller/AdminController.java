@@ -49,4 +49,26 @@ public class AdminController {
             return R.error("同步数据失败: " + e.getMessage());
         }
     }
+
+    /**
+     * 手动进行历史行情数据同步（采样同步）
+     * 
+     * <p>接口: POST /api/v1/admin/sync-history</p>
+     * 
+     * @param days 回溯天数（默认 365 天）
+     * @return 同步结果
+     */
+    @PostMapping("/sync-history")
+    public R<String> syncHistoryData(@RequestParam(defaultValue = "365") int days) {
+        log.info("接收到手动同步历史数据请求，天数: {}", days);
+        java.util.List<String> coreSymbols = java.util.List.of("BTC", "ETH", "USDT", "SOL", "BNB");
+        try {
+            int count = cryptoMarketService.syncHistoricalRates(coreSymbols, days);
+            String message = String.format("成功同步 %d 条历史汇率记录", count);
+            return R.ok(message);
+        } catch (Exception e) {
+            log.error("同步历史数据失败: {}", e.getMessage(), e);
+            return R.error("同步历史数据失败: " + e.getMessage());
+        }
+    }
 }
