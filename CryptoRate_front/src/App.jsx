@@ -195,37 +195,28 @@ function Layout() {
 
 
       {/* Main Content Area */}
-      {/* 修复：移除 overflow-hidden + h-full，改为 overflow-y-auto 让内容区可以正常滚动 */}
-      <div className="flex flex-1 flex-col relative">
-        <div className="w-full sticky top-0 z-40">
-          <div className="w-full max-w-[1400px] mx-auto px-6">
-            <Navbar user={user} setShowLoginPage={setShowLoginPage} onLogout={handleLogout} />
-          </div>
-        </div>
+      <Navbar user={user} setShowLoginPage={setShowLoginPage} onLogout={handleLogout} />
 
+      <div className="flex flex-1 flex-col relative">
         <main className="flex-1 flex flex-col items-stretch">
           <Outlet
-            key={location.pathname}
             context={{
-            user,
-            setUser,
-            setShowLoginPage,
-            favorites,
-            setFavorites,
-            toggleFavorite,
-            latestRates,
-            loadFavorites,
-            error: errorGlobal,
-            setError: setErrorGlobal
-          }}
-        />
-
+              user,
+              setUser,
+              setShowLoginPage,
+              favorites,
+              setFavorites,
+              toggleFavorite,
+              latestRates,
+              loadFavorites,
+              error: errorGlobal,
+              setError: setErrorGlobal
+            }}
+          />
         </main>
         {/* 全局悬浮 AI 聊天助手 */}
         <FloatingAiChat />
       </div>
-
-
     </div>
   );
 }

@@ -5,11 +5,13 @@ from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+import json
 from pydantic import BaseModel
 from alert_agent import FeishuAlertAgent
 
-# LangChain 相关依赖
+# LangChain 及数据库相关依赖
+from pymilvus import connections
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_community.chat_models import ChatTongyi
 from langchain_milvus.vectorstores import Milvus as MilvusVectorStore
@@ -53,7 +55,7 @@ class AlertRequest(BaseModel):
 async def lifespan(app: FastAPI):
     """FastAPI 生命周期：startup 时初始化 RAG 链，shutdown 时释放资源"""
     print("="*50)
-    print("  [Startup] 正在初始化 CryptoMonitor AI Service...")
+    print("  [Startup] Initializing CryptoMonitor AI Service...")
     print("="*50)
 
     # 验证环境变量
@@ -67,10 +69,14 @@ async def lifespan(app: FastAPI):
     embeddings = DashScopeEmbeddings(dashscope_api_key=DASHSCOPE_API_KEY)
 
     # b. 连接 Zilliz Cloud / Milvus 向量数据库
-    print(f"[*] 连接 Milvus 集合: {COLLECTION_NAME}...")
+    print(f"[*] Connecting to Milvus collection: {COLLECTION_NAME}...")
+    
+    # 显式建立全局默认连接 (解决 'should create connection first' 错误)
+    connections.connect(alias="default", uri=MILVUS_URI, token=MILVUS_TOKEN, secure=True)
+    
     vectorstore = MilvusVectorStore(
         embedding_function=embeddings,
-        connection_args={"uri": MILVUS_URI, "token": MILVUS_TOKEN},
+        connection_args={"uri": MILVUS_URI, "token": MILVUS_TOKEN, "secure": True, "alias": "default"},
         collection_name=COLLECTION_NAME,
         auto_id=True
     )
@@ -80,7 +86,8 @@ async def lifespan(app: FastAPI):
     llm = ChatTongyi(
         model="qwen3-max",
         dashscope_api_key=DASHSCOPE_API_KEY,
-        temperature=0.3
+        temperature=0.3,
+        streaming=True
     )
 
     # d. 构建 Prompt 模板（加密货币分析师设定）
@@ -113,7 +120,7 @@ async def lifespan(app: FastAPI):
     app.state.alert_agent = alert_agent
     app.state.rag_chain = rag_chain
 
-    print("✅ RAG 服务初始化完成！监听中...\n")
+    print("[OK] RAG 服务初始化完成！监听中...\n")
 
     yield  # 从 startup 切换到应用运行
 
@@ -181,6 +188,34 @@ async def ask_question(body: AskRequest, request: Request):
             status_code=500,
             content={"answer": f"服务内部错误: {str(e)}", "code": 500}
         )
+
+@app.post("/ai/ask_stream")
+async def ask_question_stream(body: AskRequest, request: Request):
+    """
+    RAG 问答流式接口 (SSE打字机效果)。
+    """
+    rag_chain = request.app.state.rag_chain
+
+    if not body.question or not body.question.strip():
+        return JSONResponse(
+            status_code=400,
+            content={"answer": "问题不能为空", "code": 400}
+        )
+        
+    print(f"[*] 收到流式问题: {body.question}")
+
+    def stream_generator():
+        try:
+            for chunk in rag_chain.stream({"input": body.question}):
+                if "answer" in chunk:
+                    # chunk["answer"] 增量字符
+                    yield f"data: {json.dumps({'answer': chunk['answer']}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            print(f"[!] 流生出异常: {e}")
+            yield f"data: {json.dumps({'answer': f' [流读取中断: {str(e)}]', 'code': 500}, ensure_ascii=False)}\n\n"
+            
+    return StreamingResponse(stream_generator(), media_type="text/event-stream")
+
 
 @app.post("/ai/alert")
 async def trigger_ai_alert(body: AlertRequest, request: Request):

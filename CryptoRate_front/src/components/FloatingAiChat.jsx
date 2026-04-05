@@ -16,12 +16,7 @@ export default function FloatingAiChat() {
     const scrollRef = useRef(null);
     const location = useLocation();
 
-    // 智能隐藏逻辑
-    if (location.pathname === '/analysis') {
-        return null;
-    }
-
-    // 自动滚动到最新消息
+    // 自动滚动到最新消息（必须在所有条件判断之前调用 Hook）
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -43,29 +38,40 @@ export default function FloatingAiChat() {
         if (!question || isLoading) return;
 
         const userMsg = { id: Date.now(), text: question, sender: 'user' };
-        setMessages(prev => [...prev, userMsg]);
+        // 占位
+        const aiMsgId = Date.now() + 1;
+        const aiMsg = { id: aiMsgId, text: "", sender: 'ai' };
+        
+        setMessages(prev => [...prev, userMsg, aiMsg]);
         setInputValue('');
         setIsLoading(true);
 
         if (textareaRef.current) textareaRef.current.style.height = '50px';
 
-        try {
-            const res = await aiAPI.chat(question);
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: res.data || "AI 忙碌中，请稍后再试。",
-                sender: 'ai'
-            }]);
-        } catch (err) {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: `连接服务失败: ${err.message}`,
-                sender: 'ai'
-            }]);
-        } finally {
-            setIsLoading(false);
-        }
+        aiAPI.chatStream(
+            question,
+            (chunkText) => {
+                setIsLoading(false);
+                setMessages(prev => prev.map(msg => 
+                    msg.id === aiMsgId ? { ...msg, text: msg.text + chunkText } : msg
+                ));
+            },
+            (err) => {
+                setMessages(prev => prev.map(msg => 
+                    msg.id === aiMsgId ? { ...msg, text: `连接服务失败: ${err.message}` } : msg
+                ));
+                setIsLoading(false);
+            },
+            () => {
+                setIsLoading(false);
+            }
+        );
     };
+
+    // 智能隐藏逻辑：在 AI 分析页面隐藏悬浮助手（必须放在所有 Hooks 之后）
+    if (location.pathname === '/analysis') {
+        return null;
+    }
 
     return (
         <div className="fixed bottom-6 right-6 z-50 font-sans">

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cryptorate.mapper.PriceAlertMapper">
+
+    <resultMap id="BaseResultMap" type="com.cryptorate.entity.PriceAlert">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="alert_type" property="alertType" jdbcType="VARCHAR"/>
+        <result column="target_value" property="targetValue" jdbcType="DECIMAL"/>
+        <result column="cooldown_minutes" property="cooldownMinutes" jdbcType="INTEGER"/>
+        <result column="last_triggered_at" property="lastTriggeredAt" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, symbol, alert_type, target_value, cooldown_minutes, last_triggered_at, status, created_at, updated_at
+    </sql>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.cryptorate.entity.PriceAlert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO crypto_price_alert (user_id, symbol, alert_type, target_value, cooldown_minutes)
+        VALUES (#{userId}, #{symbol}, #{alertType}, #{targetValue}, #{cooldownMinutes})
+    </insert>
+
+    <!-- 更新全部状态 -->
+    <update id="update" parameterType="com.cryptorate.entity.PriceAlert">
+        UPDATE crypto_price_alert
+        <set>
+            <if test="alertType != null">alert_type = #{alertType},</if>
+            <if test="targetValue != null">target_value = #{targetValue},</if>
+            <if test="cooldownMinutes != null">cooldown_minutes = #{cooldownMinutes},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="lastTriggeredAt != null">last_triggered_at = #{lastTriggeredAt},</if>
+        </set>
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <!-- 触发成功后更新触发时间 -->
+    <update id="updateLastTriggered">
+        UPDATE crypto_price_alert
+        SET last_triggered_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 单条查询 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM crypto_price_alert
+        WHERE id = #{id}
+    </select>
+
+    <!-- 用户列表查询 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM crypto_price_alert
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 核心监控查询：通过币种捞出活跃规则 -->
+    <select id="findActiveAlertsBySymbol" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM crypto_price_alert
+        WHERE symbol = #{symbol} AND status = 'ACTIVE'
+    </select>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM crypto_price_alert
+        WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+</mapper>

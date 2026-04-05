@@ -244,6 +244,78 @@ export const aiAPI = {
       body: { question },
     });
   },
+
+  /**
+   * 发送 AI 聊天问题（SSE流式）
+   * @param {string} question - 用户问题
+   * @param {Function} onMessage - 接收到消息切片的回调
+   * @param {Function} onError - 发生错误的回调
+   * @param {Function} onComplete - 结束流的回调
+   */
+  chatStream: async (question, onMessage, onError, onComplete) => {
+    const token = getToken();
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    try {
+      const response = await fetch('/api/ai/chat/stream', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ question }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        buffer += decoder.decode(value, { stream: !done });
+        
+        // 基于双指针寻找完全到达的 \n 作为分界，防止切割造成残包丢失
+        let position = 0;
+        while (true) {
+          const newlineIndex = buffer.indexOf('\n', position);
+          if (newlineIndex === -1) {
+            break;
+          }
+          
+          const line = buffer.substring(position, newlineIndex);
+          position = newlineIndex + 1;
+          
+          if (line.startsWith('data:')) {
+             try {
+                const jsonStr = line.substring(5).trim();
+                if (jsonStr) {
+                   const data = JSON.parse(jsonStr);
+                   if (data.code === 500) {
+                      onError(new Error(data.answer));
+                   } else if (data.answer) {
+                      onMessage(data.answer);
+                   }
+                }
+             } catch (e) {
+                // 如果恰好截断在不合法 JSON 中间（理论上极少，因为由 \n 包裹）
+             }
+          }
+        }
+        
+        // 裁剪掉已经处理的行，把未拿到 \n 的零碎尾部留作下次 decode 合并
+        buffer = buffer.substring(position);
+
+        if (done) break;
+      }
+      onComplete();
+    } catch (e) {
+      onError(e);
+    }
+  },
 };
 
 /**

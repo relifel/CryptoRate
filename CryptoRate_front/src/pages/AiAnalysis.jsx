@@ -30,38 +30,46 @@ export default function AiAnalysis() {
         }
     };
 
-    // Simulate sending message
+    // Send message and handle stream
     const handleSend = async () => {
         const question = inputValue.trim();
         if (!question || isLoadingAI) return;
         
         const userMsg = { id: Date.now(), text: question, sender: 'user' };
-        setMessages(prev => [...prev, userMsg]);
+        // 创建一个空内容的 AI 占位消息，供流式拼接
+        const aiMsgId = Date.now() + 1;
+        const aiMsg = { id: aiMsgId, text: "", sender: 'ai' };
+        
+        setMessages(prev => [...prev, userMsg, aiMsg]);
         setInputValue('');
         setIsLoadingAI(true);
 
         if (textareaRef.current) textareaRef.current.style.height = '60px'; 
 
-        try {
-            const res = await aiAPI.chat(question);
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: res.data || "抱歉，我未能生成有效回答。",
-                sender: 'ai'
-            }]);
-        } catch (err) {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: `❌ 服务暂时不可用: ${err.message}`,
-                sender: 'ai'
-            }]);
-        } finally {
-            setIsLoadingAI(false);
-        }
+        aiAPI.chatStream(
+            question,
+            (chunkText) => {
+                // 每次接收到新的 chunk 时，追加到对应的 AI 消息上
+                setIsLoadingAI(false); // 收到首包后隐藏加载动画
+                setMessages(prev => prev.map(msg => 
+                    msg.id === aiMsgId ? { ...msg, text: msg.text + chunkText } : msg
+                ));
+            },
+            (err) => {
+                setMessages(prev => prev.map(msg => 
+                    msg.id === aiMsgId ? { ...msg, text: `❌ 服务暂时不可用: ${err.message}` } : msg
+                ));
+                setIsLoadingAI(false);
+            },
+            () => {
+                // 流结束
+                setIsLoadingAI(false);
+            }
+        );
     };
 
     return (
-        <div className="w-full min-h-screen bg-slate-50 font-sans flex flex-col relative">
+        <div id="ai-analysis-page" className="w-full flex-1 flex flex-col bg-slate-50 font-sans relative">
             
             {/* Top Spacer to clear Absolute Navbar */}
             <div className="h-20 shrink-0"></div>
@@ -71,7 +79,7 @@ export default function AiAnalysis() {
                 {messages.length === 0 ? (
                     
                     /* 空状态：极简居中问候区 */
-                    <div className="h-full w-full flex flex-col justify-center items-center animate-in fade-in slide-in-from-bottom-8 duration-700 pb-16">
+                    <div className="flex-1 w-full flex flex-col justify-center items-center pb-24">
                         <div className="text-center max-w-3xl">
                             <p className="flex items-center justify-center gap-2 text-[15px] font-medium text-slate-500 mb-4">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-amber-400">

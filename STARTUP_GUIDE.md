@@ -22,13 +22,12 @@
 *负责 RAG 知识问答、行情深度分析及飞书 MCP 告警。*
 
 - **目录**: `CryptoRate_ai_python`
-- **启动命令**:
-  ```bash
+- **启动命令** (推荐):
+  ```powershell
   cd CryptoRate_ai_python
-  .\.venv\Scripts\Activate.ps1  # 激活虚拟环境
-  python main.py
+  .\.venv\Scripts\python.exe main.py
   ```
-- **验证**: 端口 `8000` 启动，看到 "✅ RAG 服务初始化完成" 字样。
+- **验证**: 终端输出 `INFO: Application startup complete` 表示 RAG 链及 Milvus 连接已就绪。
 
 ---
 
@@ -46,9 +45,16 @@
 ---
 
 ## 🛠️ 辅助功能测试 (可选)
+### 知识库数据同步 (首次使用必运行)
+如果你更新了 `data/knowledge_base` 中的 Markdown 文件，运行以下脚本同步到 Zilliz Cloud 云端：
+```powershell
+cd CryptoRate_ai_python
+.\.venv\Scripts\python.exe insert_zilliz.py
+```
+
 ### 飞书智能告警测试
 在 Python 服务启动后，运行以下脚本模拟一个行情异动，验证飞书机器人是否能收到 AI 分析卡片：
-```bash
+```powershell
 cd CryptoRate_ai_python
 .\.venv\Scripts\python.exe test_alert.py
 ```

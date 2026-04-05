@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useSearchParams } from 'react-router-dom';
 
 /**
  * 极简骨架屏
@@ -196,8 +196,9 @@ const DetailMetaItem = ({ label, value }) => (
 );
 
 export default function Home() {
+    const { favorites, toggleFavorite } = useOutletContext();
+    const [searchParams] = useSearchParams();
     const [isLoading, setIsLoading] = useState(true);
-    const [watched, setWatched] = useState({ 'BTC': true });
     const [expandedCoinId, setExpandedCoinId] = useState(null); // 展开状态管理
 
     useEffect(() => {
@@ -205,8 +206,23 @@ export default function Home() {
         return () => clearTimeout(timer);
     }, []);
 
-    const toggleWatch = (id) => setWatched(prev => ({ ...prev, [id]: !prev[id] }));
+    const isWatched = (symbol) => favorites.some(f => (typeof f === 'string' ? f : f.symbol) === symbol);
     const handleToggleExpand = (id) => setExpandedCoinId(prev => prev === id ? null : id);
+
+    // 监听搜索参数并自动展开/定位
+    useEffect(() => {
+        const searchSymbol = searchParams.get('search');
+        if (searchSymbol) {
+            setExpandedCoinId(searchSymbol.toUpperCase());
+            // 延迟一会等组件渲染完毕后滚动
+            setTimeout(() => {
+                const element = document.getElementById(`coin-row-${searchSymbol.toUpperCase()}`);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 500);
+        }
+    }, [searchParams]);
 
     return (
         <div className="relative w-full min-h-screen bg-slate-50 font-sans pb-24">
@@ -255,14 +271,15 @@ export default function Home() {
                         <MinimalSkeleton />
                     ) : (
                         MOCK_COINS.map(coin => (
-                            <CoinTableRow 
-                                key={coin.id} 
-                                coin={coin} 
-                                isExpanded={expandedCoinId === coin.id}
-                                onToggle={() => handleToggleExpand(coin.id)}
-                                isWatched={watched[coin.id]} 
-                                onToggleWatch={toggleWatch}
-                            />
+                            <div key={coin.id} id={`coin-row-${coin.id}`}>
+                                <CoinTableRow 
+                                    coin={coin} 
+                                    isExpanded={expandedCoinId === coin.id}
+                                    onToggle={() => handleToggleExpand(coin.id)}
+                                    isWatched={isWatched(coin.id)} 
+                                    onToggleWatch={toggleFavorite}
+                                />
+                            </div>
                         ))
                     )}
                 </div>

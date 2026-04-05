@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import { favoriteAPI } from '../api';
+import NoteEditorModal from '../components/NoteEditorModal';
 import '../home.css';
 
 export default function Favorites() {
     const context = useOutletContext() || {};
     const { user, setShowLoginPage, favorites, loadFavorites, latestRates, toggleFavorite } = context;
 
-    const [editingNoteId, setEditingNoteId] = useState(null);
+    // 状态管理
+    const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+    const [currentSymbol, setCurrentSymbol] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [isSavingNote, setIsSavingNote] = useState(false);
 
@@ -17,14 +20,23 @@ export default function Favorites() {
         }
     }, [user, loadFavorites]);
 
-    const handleSaveNote = async (symbol) => {
+    // 打开编辑器
+    const openNoteEditor = (symbol, currentNote) => {
+        setCurrentSymbol(symbol);
+        setNoteText(currentNote || '');
+        setIsNoteModalOpen(true);
+    };
+
+    // 保存笔记
+    const handleSaveNote = async (newNote) => {
         setIsSavingNote(true);
         try {
-            await favoriteAPI.updateNote(symbol, noteText);
-            setEditingNoteId(null);
-            loadFavorites();
+            await favoriteAPI.updateNote(currentSymbol, newNote);
+            setIsNoteModalOpen(false);
+            loadFavorites(); // 刷新列表数据
         } catch (err) {
-            alert('更新备注失败');
+            console.error('更新备注失败:', err);
+            alert('更新备注失败，请检查网络');
         } finally {
             setIsSavingNote(false);
         }
@@ -32,7 +44,6 @@ export default function Favorites() {
 
     return (
         <div className="home-container overflow-y-auto w-full min-h-screen relative">
-            {/* 修复：统一使用 w-full max-w-[1400px] mx-auto px-6 实现大气且居中的布局 */}
             <div className="w-full max-w-[1400px] mx-auto px-6 pt-24 pb-12">
 
                 <main>
@@ -70,14 +81,12 @@ export default function Favorites() {
                                     </tr>
                                 ) : (
                                     favorites.map((fav) => {
-                                        // Handle backward compatibility (string vs object)
                                         const symbol = typeof fav === 'string' ? fav : fav.symbol;
                                         const note = typeof fav === 'string' ? '' : fav.note;
-                                        const pUpper = typeof fav === 'string' ? null : fav.priceUpperAlert;
-                                        const pLower = typeof fav === 'string' ? null : fav.priceLowerAlert;
+                                        const pUpper = typeof fav === 'string' ? null : fav.priceUpper;
+                                        const pLower = typeof fav === 'string' ? null : fav.priceLower;
 
                                         const rate = latestRates && latestRates[symbol] ? latestRates[symbol] : 0;
-                                        const isEditing = editingNoteId === symbol;
 
                                         return (
                                             <tr key={symbol}>
@@ -105,43 +114,19 @@ export default function Favorites() {
                                                     )}
                                                 </td>
                                                 <td className="w-[30%]">
-                                                    {isEditing ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <input
-                                                                type="text"
-                                                                value={noteText}
-                                                                onChange={(e) => setNoteText(e.target.value)}
-                                                                className="w-full px-3 py-1.5 text-sm border border-slate-300 rounded focus:border-slate-500 focus:outline-none"
-                                                                placeholder="添加买入理由或预备操作..."
-                                                                autoFocus
-                                                            />
-                                                            <button
-                                                                onClick={() => handleSaveNote(symbol)}
-                                                                disabled={isSavingNote}
-                                                                className="text-xs bg-slate-800 text-white px-3 py-1.5 rounded hover:bg-slate-700 whitespace-nowrap"
-                                                            >
-                                                                {isSavingNote ? '...' : '保存'}
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setEditingNoteId(null)}
-                                                                className="text-xs text-slate-500 hover:text-slate-800"
-                                                            >
-                                                                取消
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex items-center gap-2 group cursor-pointer" onClick={() => {
-                                                            setNoteText(note || '');
-                                                            setEditingNoteId(symbol);
-                                                        }}>
-                                                            <span className={`text-sm ${note ? 'text-slate-700' : 'text-slate-400 italic'}`}>
-                                                                {note || '双击或点击编辑笔记...'}
-                                                            </span>
-                                                            <svg className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                                            </svg>
-                                                        </div>
-                                                    )}
+                                                    <div 
+                                                        className="flex items-center gap-2 group cursor-pointer" 
+                                                        onClick={() => openNoteEditor(symbol, note)}
+                                                    >
+                                                        <span className={`text-sm leading-relaxed ${note ? 'text-slate-600' : 'text-slate-400 italic'}`}>
+                                                            {note 
+                                                                ? (note.length > 30 ? note.substring(0, 30) + '...' : note) 
+                                                                : '写下建仓逻辑...'}
+                                                        </span>
+                                                        <svg className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                                        </svg>
+                                                    </div>
                                                 </td>
                                                 <td className="text-center">
                                                     <button
@@ -166,6 +151,14 @@ export default function Favorites() {
                     </section>
                 </main>
             </div>
+            <NoteEditorModal 
+                isOpen={isNoteModalOpen}
+                symbol={currentSymbol}
+                initialNote={noteText}
+                onSave={handleSaveNote}
+                onClose={() => setIsNoteModalOpen(false)}
+                isSaving={isSavingNote}
+            />
         </div>
     );
 }

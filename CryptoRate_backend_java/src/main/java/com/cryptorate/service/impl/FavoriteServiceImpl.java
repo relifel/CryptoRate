@@ -38,28 +38,38 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public void addFavorite(Long userId, String symbol) {
-        log.info("用户 {} 添加收藏: {}", userId, symbol);
+        if (userId == null) {
+            log.error("添加收藏失败：userId 为空");
+            throw new ApiException(401, "请登录后再进行操作");
+        }
+        
+        log.info("用户 {} 尝试添加收藏: {}", userId, symbol);
         String upperSymbol = symbol.toUpperCase();
 
-        // 幂等：重复收藏不报错
+        // 幂等校验：如果库中已存在，则记录并返回，不报错
         UserFavorite existing = favoriteMapper.selectByUserIdAndSymbol(userId, upperSymbol);
         if (existing != null) {
-            log.info("用户 {} 已收藏 {}，跳过", userId, upperSymbol);
+            log.info("用户 {} 已收藏过 {}，忽略重复操作", userId, upperSymbol);
             return;
         }
 
         UserFavorite favorite = new UserFavorite();
         favorite.setUserId(userId);
         favorite.setSymbol(upperSymbol);
-        favorite.setSortOrder(0);
+        favorite.setSortOrder(0); // 显式设为默认值 0
         favorite.setCreatedAt(LocalDateTime.now());
 
-        int rows = favoriteMapper.insert(favorite);
-        if (rows <= 0) {
-            log.error("收藏插入失败，userId={}, symbol={}", userId, upperSymbol);
-            throw new ApiException(500, "收藏失败");
+        try {
+            int rows = favoriteMapper.insert(favorite);
+            if (rows <= 0) {
+                log.error("数据库插入失败，可能由于并发或其他原因：userId={}, symbol={}", userId, upperSymbol);
+                throw new ApiException(500, "系统繁忙，收藏失败");
+            }
+            log.info("收藏成功：userId={}, symbol={}", userId, upperSymbol);
+        } catch (Exception e) {
+            log.error("执行收藏插入 SQL 时发生异常: {}", e.getMessage(), e);
+            throw new ApiException(500, "服务异常，请稍后再试");
         }
-        log.info("收藏成功，userId={}, symbol={}", userId, upperSymbol);
     }
 
     @Override

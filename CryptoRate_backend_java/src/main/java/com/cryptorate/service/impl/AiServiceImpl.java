@@ -107,4 +107,53 @@ public class AiServiceImpl implements AiService {
             return errorResponse;
         }
     }
+
+    @Override
+    public void askStream(String question, org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter) {
+        log.info("[AI Service] 正在向 Python 发起流式请求，问题: {}", question);
+        okhttp3.OkHttpClient streamClient = new okhttp3.OkHttpClient.Builder()
+                .readTimeout(0, java.util.concurrent.TimeUnit.SECONDS) // SSE 长连接不能有读超时
+                .build();
+        
+        String jsonPayload = "{\"question\":\"" + question.replace("\"", "\\\"") + "\"}";
+        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(jsonPayload, okhttp3.MediaType.parse("application/json"));
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://127.0.0.1:8000/ai/ask_stream")
+                .post(requestBody)
+                .build();
+
+        streamClient.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                log.error("[AI Service] 流式调用异常", e);
+                try {
+                    emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().data("{\"code\":500, \"answer\":\"[网络异常: Python服务中断]\"}"));
+                    emitter.complete();
+                } catch (Exception ignored) {}
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                if (!response.isSuccessful()) {
+                    log.error("[AI Service] 流式请求失败代码: " + response.code());
+                    emitter.completeWithError(new RuntimeException("Python返回错误: " + response.code()));
+                    return;
+                }
+                try (okhttp3.ResponseBody body = response.body()) {
+                    okio.BufferedSource source = body.source();
+                    while (!source.exhausted()) {
+                        String line = source.readUtf8Line();
+                        if (line != null && line.startsWith("data:")) {
+                            String data = line.substring(5).trim();
+                            emitter.send(data);
+                        }
+                    }
+                    emitter.complete();
+                } catch (Exception e) {
+                    log.error("[AI Service] 流式传输被阻断", e);
+                    emitter.completeWithError(e);
+                }
+            }
+        });
+    }
 }

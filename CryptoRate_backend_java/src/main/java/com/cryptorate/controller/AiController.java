@@ -90,4 +90,21 @@ public class AiController {
         log.info("[AI Controller] 问答成功，回答长度: {} 字", aiResponse.getAnswer().length());
         return R.ok(aiResponse.getAnswer());
     }
+
+    /**
+     * AI 智能问答接口 (SSE 流式输出)
+     *
+     * <p>
+     * 接口路径：{@code POST /api/ai/chat/stream}
+     * 返回 text/event-stream
+     * </p>
+     */
+    @PostMapping(value = "/chat/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter chatStream(@Valid @RequestBody AiAskRequest request) {
+        log.info("[AI Controller] 收到流式问答请求: {}", request.getQuestion());
+        // 60秒超时，如果模型比较慢可以再加大
+        org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter = new org.springframework.web.servlet.mvc.method.annotation.SseEmitter(60000L);
+        aiService.askStream(request.getQuestion(), emitter);
+        return emitter;
+    }
 }

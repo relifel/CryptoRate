@@ -1,166 +1,163 @@
 r"""
 insert_zilliz.py
 ================
-加密货币知识库数据灌入流水线
+CryptoRate Knowledge Base Ingestion Pipeline (Official SDK Edition)
 
-功能：
-  1. 从 data/knowledge_base/ 目录递归加载所有 .md 文件
-  2. 使用 MarkdownHeaderTextSplitter 按标题结构做语义初步切分
-  3. 使用 RecursiveCharacterTextSplitter 做二次精细切分
-  4. 通过 DashScopeEmbeddings 将文本块向量化
-  5. 调用 langchain_milvus 将向量批量写入 Zilliz Cloud
-
-运行方式：
-  .venv\Scripts\python.exe insert_zilliz.py
+This version uses the official Pymilvus MilvusClient directly for data ingestion,
+which is the most reliable way to connect to Zilliz Cloud and avoids the
+'should create connection first' error found in some LangChain integrations.
 """
 
 import os
 import pathlib
+import time
 from dotenv import load_dotenv
 
-# ── LangChain 文档加载
+# -- Official Milvus SDK
+from pymilvus import MilvusClient, DataType
+
+# -- LangChain for processing
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
-
-# ── LangChain 文本切分器
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
-
-# ── Embedding 模型（阿里云百炼通义千问）
 from langchain_community.embeddings import DashScopeEmbeddings
 
-# ── Milvus / Zilliz Cloud 向量库（使用官方最新包）
-from langchain_milvus.vectorstores import Milvus as MilvusVectorStore
-
-# ─────────────────────────────────────────────
-# 1. 加载环境变量
-# ─────────────────────────────────────────────
+# 1. Load Environment
 load_dotenv()
-
 ZILLIZ_URI     = os.getenv("ZILLIZ_CLOUD_URI")
 ZILLIZ_TOKEN   = os.getenv("ZILLIZ_CLOUD_API_KEY")
 DASHSCOPE_KEY  = os.getenv("DASHSCOPE_API_KEY")
-
-# 安全检查：缺少任何一个关键配置都提前报错，避免运行到一半才失败
-if not ZILLIZ_URI or not ZILLIZ_TOKEN:
-    raise ValueError("[!] 缺少 ZILLIZ_CLOUD_URI 或 ZILLIZ_CLOUD_API_KEY，请检查 .env 文件！")
-if not DASHSCOPE_KEY:
-    raise ValueError("[!] 缺少 DASHSCOPE_API_KEY，请检查 .env 文件！")
-
-# 集合名称（Zilliz Cloud 中的 Collection）
 COLLECTION_NAME = "crypto_knowledge"
 
-# 知识库根目录（相对于本脚本所在目录）
+if not all([ZILLIZ_URI, ZILLIZ_TOKEN, DASHSCOPE_KEY]):
+    print("[!] Error: Missing environment variables in .env")
+    exit(1)
+
+print("=" * 60)
+print("  [START] CryptoRate Knowledge Base Ingestion (Direct SDK)")
+print("=" * 60)
+
+# 2. Document Loading & Splitting
 KNOWLEDGE_BASE_DIR = pathlib.Path(__file__).parent / "data" / "knowledge_base"
+print(f"\n[1/4] Loading documents from: {KNOWLEDGE_BASE_DIR}")
 
-# ─────────────────────────────────────────────
-# 2. 文档加载
-# ─────────────────────────────────────────────
-print("=" * 55)
-print("  🚀 CryptoRate 知识库数据灌入流水线 启动")
-print("=" * 55)
-
-if not KNOWLEDGE_BASE_DIR.exists():
-    raise FileNotFoundError(
-        f"[!] 知识库目录不存在: {KNOWLEDGE_BASE_DIR}\n"
-        "    请在该目录下放置 .md 格式的知识库文件后重新运行。"
-    )
-
-print(f"\n[1/4] 📂 正在加载目录: {KNOWLEDGE_BASE_DIR}")
-
-# DirectoryLoader 递归扫描所有 .md 文件，强制 UTF-8 编码读取
 loader = DirectoryLoader(
     path=str(KNOWLEDGE_BASE_DIR),
-    glob="**/*.md",                                    # 递归匹配子目录下的 .md
+    glob="**/*.md",
     loader_cls=TextLoader,
-    loader_kwargs={"encoding": "utf-8"},               # 强制 UTF-8，避免乱码
-    use_multithreading=True,                           # 多线程加速大批量加载
+    loader_kwargs={"encoding": "utf-8"},
     show_progress=True,
 )
-
 raw_docs = loader.load()
-print(f"    ✅ 共加载 {len(raw_docs)} 个文档文件")
+print(f"    [OK] Loaded {len(raw_docs)} files.")
 
-if not raw_docs:
-    print("[!] 未加载到任何文档，请检查知识库目录内是否存在 .md 文件。")
-    exit(0)
-
-# ─────────────────────────────────────────────
-# 3. 智能切片（两阶段）
-# ─────────────────────────────────────────────
-print(f"\n[2/4] ✂️  正在执行智能切片（Markdown 结构 + 递归字符）...")
-
-# ── 阶段一：按 Markdown 标题结构做语义切分
-#    H1 (#) 和 H2 (##) 作为分割点，元数据保留标题信息
-markdown_header_splitter = MarkdownHeaderTextSplitter(
-    headers_to_split_on=[
-        ("#",  "标题一"),
-        ("##", "标题二"),
-        ("###","标题三"),
-    ],
-    strip_headers=False,   # 保留标题内容在文本中，便于检索理解
+print(f"\n[2/4] Splitting and cleaning data...")
+markdown_splitter = MarkdownHeaderTextSplitter(
+    headers_to_split_on=[("#", "head1"), ("##", "head2"), ("###", "head3")]
 )
+recursive_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
 
-header_split_docs = []
+final_data = [] # List of dicts for MilvusClient
+all_texts = []  # For batch embedding
+
 for doc in raw_docs:
-    splits = markdown_header_splitter.split_text(doc.page_content)
-    # 将原始文档的 source 元数据传递给每个切片
-    for split in splits:
-        split.metadata.update({"source": doc.metadata.get("source", "unknown")})
-    header_split_docs.extend(splits)
+    header_splits = markdown_splitter.split_text(doc.page_content)
+    for hsplit in header_splits:
+        hsplit.metadata.update({"source": doc.metadata.get("source", "unknown")})
+        chunks = recursive_splitter.split_documents([hsplit])
+        for chunk in chunks:
+            # Prepare clean metadata
+            cleaned_meta = {}
+            for k, v in chunk.metadata.items():
+                safe_key = "".join(c for c in k if c.isalnum() or c == "_")
+                if not safe_key or not safe_key[0].isalpha(): safe_key = "meta_" + safe_key
+                cleaned_meta[safe_key] = str(v)
+            
+            all_texts.append(chunk.page_content)
+            final_data.append({
+                "text": chunk.page_content,
+                "metadata": cleaned_meta # Store as a nested dict (enabled via dynamic fields)
+            })
 
-print(f"    第一阶段（Markdown 标题切分）：{len(header_split_docs)} 个语义块")
+print(f"    [OK] Prepared {len(final_data)} chunks.")
 
-# ── 阶段二：对已按标题拆分的块，再按字符数做精细切分
-#    避免单个标题下内容过长，超出 Embedding 模型 Token 限制
-recursive_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=800,         # 每块最大字符数（中文约 400 字）
-    chunk_overlap=100,      # 块间重叠，保留上下文连贯性
-    separators=["\n\n", "\n", "。", "；", "，", " ", ""],  # 优先按段落/句子切
-)
+# 3. Embedding Generation (DashScope)
+print(f"\n[3/4] Generating Embeddings via DashScope (text-embedding-v1)...")
+embeddings_model = DashScopeEmbeddings(dashscope_api_key=DASHSCOPE_KEY)
 
-final_chunks = recursive_splitter.split_documents(header_split_docs)
-print(f"    第二阶段（递归字符切分）：最终 {len(final_chunks)} 个数据块")
+# Batch embedding with retry logic
+BATCH_SIZE = 25  # Smaller batches to reduce timeout risk
+MAX_RETRIES = 3
+all_vectors = []
+total_batches = (len(all_texts) - 1) // BATCH_SIZE + 1
 
-# 打印首块内容预览（调试用）
-if final_chunks:
-    print(f"\n    ── 首块内容预览（前 120 字）──")
-    print(f"    {final_chunks[0].page_content[:120].replace(chr(10), ' ')}...")
-    print(f"    Metadata: {final_chunks[0].metadata}")
+for i in range(0, len(all_texts), BATCH_SIZE):
+    batch = all_texts[i : i + BATCH_SIZE]
+    batch_num = i // BATCH_SIZE + 1
+    
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            print(f"    [*] Embedding batch {batch_num}/{total_batches} (attempt {attempt})...")
+            vectors = embeddings_model.embed_documents(batch)
+            all_vectors.extend(vectors)
+            break  # Success
+        except Exception as e:
+            print(f"    [!] Batch {batch_num} failed (attempt {attempt}): {type(e).__name__}")
+            if attempt == MAX_RETRIES:
+                print(f"    [FATAL] Failed after {MAX_RETRIES} retries. Aborting.")
+                raise
+            import time as _t
+            _t.sleep(3)  # Wait before retry
+    
+    import time as _t
+    _t.sleep(1)  # Rate limit protection
 
-# ─────────────────────────────────────────────
-# 4. 初始化 Embedding 模型
-# ─────────────────────────────────────────────
-print(f"\n[3/4] 🧠 正在初始化 DashScope Embedding 模型（text-embedding-v1）...")
+# Merge vectors into final_data
+for item, vector in zip(final_data, all_vectors):
+    item["vector"] = vector
 
-embeddings = DashScopeEmbeddings(
-    dashscope_api_key=DASHSCOPE_KEY
-    # 不指定 model 参数，默认使用 text-embedding-v1（1536 维）
-)
+print(f"    [OK] Successfully generated {len(all_vectors)} vectors.")
 
-print("    ✅ Embedding 模型初始化完成")
 
-# ─────────────────────────────────────────────
-# 5. 向量化并写入 Zilliz Cloud
-# ─────────────────────────────────────────────
-print(f"\n[4/4] ☁️  正在向量化并写入 Zilliz Cloud...")
-print(f"    集合名称 : {COLLECTION_NAME}")
-print(f"    目标地址 : {ZILLIZ_URI}")
-print(f"    数据块总数: {len(final_chunks)}")
-print(f"    ⏳ 请稍候，此过程涉及 API 向量化和云端入库，预计需要一段时间...\n")
+# 4. Ingestion to Zilliz Cloud
+print(f"\n[4/4] Syncing to Zilliz Cloud via MilvusClient...")
 
-vector_store = MilvusVectorStore.from_documents(
-    documents=final_chunks,
-    embedding=embeddings,
-    connection_args={
-        "uri":   ZILLIZ_URI,
-        "token": ZILLIZ_TOKEN,
-    },
+# Initialize Client
+client = MilvusClient(uri=ZILLIZ_URI, token=ZILLIZ_TOKEN)
+
+# Drop old collection
+if client.has_collection(COLLECTION_NAME):
+    print(f"    [*] Dropping old collection: {COLLECTION_NAME}")
+    client.drop_collection(COLLECTION_NAME)
+
+# Create new collection with explicit schema
+print(f"    [*] Creating collection: {COLLECTION_NAME}")
+
+schema = MilvusClient.create_schema(auto_id=True, enable_dynamic_field=True)
+schema.add_field(field_name="id", datatype=DataType.INT64, is_primary=True)
+schema.add_field(field_name="vector", datatype=DataType.FLOAT_VECTOR, dim=1536)
+schema.add_field(field_name="text", datatype=DataType.VARCHAR, max_length=65535)
+
+# Prepare index params (required for Zilliz Cloud)
+index_params = client.prepare_index_params()
+index_params.add_index(field_name="vector", metric_type="COSINE", index_type="AUTOINDEX")
+
+client.create_collection(
     collection_name=COLLECTION_NAME,
-    auto_id=True,
-    drop_old=True,   # 每次运行前清空旧数据，方便反复测试
+    schema=schema,
+    index_params=index_params,
 )
 
-print("\n" + "=" * 55)
-print(f"  🎉 数据灌入完成！")
-print(f"     共写入 {len(final_chunks)} 个文档块")
-print(f"     集合：{COLLECTION_NAME} @ Zilliz Cloud")
-print("=" * 55 + "\n")
+# Insert data in batches
+print(f"    [*] Inserting {len(final_data)} chunks...")
+BATCH = 100
+for i in range(0, len(final_data), BATCH):
+    batch = final_data[i:i+BATCH]
+    client.insert(collection_name=COLLECTION_NAME, data=batch)
+    print(f"    [*] Inserted batch {i//BATCH+1}/{(len(final_data)-1)//BATCH+1}")
+
+
+print("\n" + "=" * 60)
+print(f"  [DONE] Ingestion Complete!")
+print(f"  Total chunks: {len(final_data)}")
+print(f"  Collection: {COLLECTION_NAME} @ Zilliz Cloud")
+print("=" * 60 + "\n")
