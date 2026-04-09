@@ -46,6 +46,7 @@ class AlertRequest(BaseModel):
     symbol: str
     price: float
     change: float
+    reason: Optional[str] = None  # 允许后端传入特定的异动原因
 
 # =============================================
 # 3. 生命周期管理 (Lifespan)
@@ -226,7 +227,8 @@ async def trigger_ai_alert(body: AlertRequest, request: Request):
     
     try:
         print(f"[*] 收到告警指令: {body.symbol} 波动 {body.change}%")
-        content = await agent.run_alert_workflow(body.symbol, body.price, body.change)
+        # 传入可选的 reason
+        content = await agent.run_alert_workflow(body.symbol, body.price, body.change, body.reason)
         return {"code": 200, "msg": "告警分析并发送成功", "data": content}
     except Exception as e:
         print(f"[!] /ai/alert 接口异常: {e}")

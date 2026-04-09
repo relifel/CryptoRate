@@ -219,7 +219,7 @@ const DataParticleCanvas = () => {
 
 export default function Login({ onSuccess, onCancel }) {
   const [isRegister, setIsRegister] = useState(false);
-  const [formData, setFormData] = useState({ username: '', password: '', email: '' });
+  const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '', email: '' });
   const [loading, setLoading] = useState(false);
 
   const [toast, setToast] = useState({ visible: false, message: '', type: 'default' });
@@ -278,6 +278,10 @@ export default function Login({ onSuccess, onCancel }) {
       showToast('请输入完整的用户名和密码', 'error');
       return;
     }
+    if (formData.password !== formData.confirmPassword) {
+      showToast('两次输入的密码不一致，请重新输入', 'error');
+      return;
+    }
     setLoading(true);
     try {
       showToast('正在为您配置智库架构...', 'default');
@@ -289,7 +293,7 @@ export default function Login({ onSuccess, onCancel }) {
       showToast('配置成功！为您跳转至验证页', 'default');
       setTimeout(() => {
         setIsRegister(false);
-        setFormData(prev => ({ ...prev, password: '' }));
+        setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
       }, 1000);
     } catch (err) {
       showToast(err.message || '注册失败，用户名可能已存在', 'error');
@@ -300,7 +304,7 @@ export default function Login({ onSuccess, onCancel }) {
 
   const switchMode = () => {
     setIsRegister(!isRegister);
-    setFormData(prev => ({ ...prev, password: '', email: '' }));
+    setFormData(prev => ({ ...prev, password: '', confirmPassword: '', email: '' }));
   };
 
   const navigate = useNavigate();
@@ -402,6 +406,19 @@ export default function Login({ onSuccess, onCancel }) {
                 onChange={handleChange}
                 disabled={loading}
               />
+
+              {isRegister && (
+                <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                  <FloatingInput
+                    id="confirmPassword"
+                    type="password"
+                    label="确认密码"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                </div>
+              )}
 
               <div className="pt-6 relative w-full h-[52px]">
                 {/* 主操作按钮：极简点缀色 slate-800 */}

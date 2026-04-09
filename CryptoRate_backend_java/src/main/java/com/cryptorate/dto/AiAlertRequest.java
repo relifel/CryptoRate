@@ -25,4 +25,7 @@ public class AiAlertRequest {
     
     /** 变化比例 (如 5.5 代表 5.5%) */
     private BigDecimal change;
+
+    /** 异动深度原因 (Mock/Real Reason) */
+    private String reason;
 }

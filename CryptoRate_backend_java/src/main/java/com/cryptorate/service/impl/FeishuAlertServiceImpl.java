@@ -41,15 +41,16 @@ public class FeishuAlertServiceImpl implements FeishuAlertService {
      * 
      * @param coinSymbol   币种
      * @param currentPrice 当前价
-     * @param triggerPrice 触发价 (此处作为参考传入 Agent)
+     * @param triggerPrice 触发价
      * @param trend        趋势 (up/down)
+     * @param reason       异动深度原因 (情报描述)
      */
     @Override
-    public void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend) {
-        log.info("[System] 检测到行情异动，正在启动 AI 智能告警流程: {}", coinSymbol);
+    public void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason) {
+        log.info("[System] 检测到行情异动，正在启动 AI 智能告警流程: {}, 原因: {}", coinSymbol, reason);
 
         try {
-            // 1. 计算波动百分比 (简单演示：(当前-触发)/触发)
+            // 1. 计算波动百分比
             BigDecimal change = currentPrice.subtract(triggerPrice)
                     .divide(triggerPrice, 4, RoundingMode.HALF_UP)
                     .multiply(new BigDecimal("100"));
@@ -59,6 +60,7 @@ public class FeishuAlertServiceImpl implements FeishuAlertService {
                     .symbol(coinSymbol)
                     .price(currentPrice)
                     .change(change)
+                    .reason(reason) // 注入原因
                     .build();
 
             // 3. 构造 Http Header

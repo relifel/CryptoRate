@@ -22,6 +22,7 @@ export default function Login({ onSuccess, onCancel }) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -65,6 +66,10 @@ export default function Login({ onSuccess, onCancel }) {
       setError('请输入用户名和密码');
       return;
     }
+    if (password !== confirmPassword) {
+      setError('两次输入的密码不一致，请重新输入');
+      return;
+    }
     setLoading(true);
     try {
       await userAPI.register({ username: u, password, email: email.trim() || undefined });
@@ -72,6 +77,7 @@ export default function Login({ onSuccess, onCancel }) {
       setSuccessMsg('注册成功！请使用新账号登录');
       setIsRegister(false);
       setPassword('');
+      setConfirmPassword('');
     } catch (err) {
       setError(err.message || '注册失败，请重试');
     } finally {
@@ -85,6 +91,7 @@ export default function Login({ onSuccess, onCancel }) {
     setIsRegister(!isRegister);
     setError('');
     setSuccessMsg('');
+    setConfirmPassword('');
   };
 
   return (
@@ -143,21 +150,38 @@ export default function Login({ onSuccess, onCancel }) {
               />
             </div>
             {isRegister && (
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  邮箱 <span className="text-gray-400">（选填）</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="请输入邮箱"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
-                  autoComplete="email"
-                  disabled={loading}
-                />
-              </div>
+              <>
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    确认密码
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="请再次输入密码"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    autoComplete="new-password"
+                    disabled={loading}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    邮箱 <span className="text-gray-400">（选填）</span>
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="请输入邮箱"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    autoComplete="email"
+                    disabled={loading}
+                  />
+                </div>
+              </>
             )}
           </div>
 

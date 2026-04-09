@@ -96,6 +96,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        // 演示：强制放行模拟接口
+        if (requestURI.contains("/sim-feishu-alert") || requestURI.contains("/test-alert")) {
+            return true;
+        }
+
         // 1. 从请求头中获取 Authorization
         String authHeader = request.getHeader(AUTHORIZATION_HEADER);
 

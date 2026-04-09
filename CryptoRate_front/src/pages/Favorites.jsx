@@ -2,17 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext, Link } from 'react-router-dom';
 import { favoriteAPI } from '../api';
 import NoteEditorModal from '../components/NoteEditorModal';
+import PriceAlertModal from '../components/PriceAlertModal';
 import '../home.css';
 
 export default function Favorites() {
     const context = useOutletContext() || {};
     const { user, setShowLoginPage, favorites, loadFavorites, latestRates, toggleFavorite } = context;
 
-    // 状态管理
+    // 1. 备注弹窗状态
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [currentSymbol, setCurrentSymbol] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [isSavingNote, setIsSavingNote] = useState(false);
+
+    // 2. 价格预警弹窗状态 (New)
+    const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+    const [alertSymbol, setAlertSymbol] = useState(null);
+    const [alertUpper, setAlertUpper] = useState(null);
+    const [alertLower, setAlertLower] = useState(null);
+    const [isSavingAlert, setIsSavingAlert] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -20,25 +28,50 @@ export default function Favorites() {
         }
     }, [user, loadFavorites]);
 
-    // 打开编辑器
+    // 打开备注编辑器
     const openNoteEditor = (symbol, currentNote) => {
         setCurrentSymbol(symbol);
         setNoteText(currentNote || '');
         setIsNoteModalOpen(true);
     };
 
-    // 保存笔记
+    // 保存备注
     const handleSaveNote = async (newNote) => {
         setIsSavingNote(true);
         try {
             await favoriteAPI.updateNote(currentSymbol, newNote);
             setIsNoteModalOpen(false);
-            loadFavorites(); // 刷新列表数据
+            loadFavorites();
         } catch (err) {
             console.error('更新备注失败:', err);
-            alert('更新备注失败，请检查网络');
+            alert(err.message || '更新备注失败，请检查网络');
         } finally {
             setIsSavingNote(false);
+        }
+    };
+
+    // 打开价格预警编辑器 (New)
+    const openPriceAlert = (symbol, pUpper, pLower) => {
+        setAlertSymbol(symbol);
+        setAlertUpper(pUpper);
+        setAlertLower(pLower);
+        setIsAlertModalOpen(true);
+    };
+
+    // 保存价格预警 (New - Fixes Logout Bug)
+    const handleSaveAlert = async (upper, lower) => {
+        setIsSavingAlert(true);
+        try {
+            // 使用自定义 API 调用，确保数据格式正确
+            await favoriteAPI.updateAlert(alertSymbol, upper, lower);
+            setIsAlertModalOpen(false);
+            loadFavorites(); // 刷新列表
+        } catch (err) {
+            console.error('更新预警失败:', err);
+            // 显示具体错误原因
+            alert(err.message || '更新预警失败');
+        } finally {
+            setIsSavingAlert(false);
         }
     };
 
@@ -55,7 +88,7 @@ export default function Favorites() {
                     </section>
 
                     <section className="table-container mt-8 shadow-sm">
-                        <table>
+                        <table className="w-full">
                             <thead>
                                 <tr>
                                     <th style={{ width: '40px' }}></th>
@@ -106,11 +139,11 @@ export default function Favorites() {
                                                 <td className="text-right text-slate-500 text-sm">
                                                     {pUpper || pLower ? (
                                                         <div className="flex flex-col items-end gap-1">
-                                                            {pUpper && <span className="text-red-500">↑ ${pUpper}</span>}
-                                                            {pLower && <span className="text-green-500">↓ ${pLower}</span>}
+                                                            {pUpper && <span className="text-rose-500 font-mono font-bold">↑ ${parseFloat(pUpper).toLocaleString()}</span>}
+                                                            {pLower && <span className="text-emerald-500 font-mono font-bold">↓ ${parseFloat(pLower).toLocaleString()}</span>}
                                                         </div>
                                                     ) : (
-                                                        <span className="opacity-50">未设置</span>
+                                                        <span className="opacity-30 italic">未设置</span>
                                                     )}
                                                 </td>
                                                 <td className="w-[30%]">
@@ -121,7 +154,7 @@ export default function Favorites() {
                                                         <span className={`text-sm leading-relaxed ${note ? 'text-slate-600' : 'text-slate-400 italic'}`}>
                                                             {note 
                                                                 ? (note.length > 30 ? note.substring(0, 30) + '...' : note) 
-                                                                : '写下建仓逻辑...'}
+                                                                : '点此写下追踪逻辑...'}
                                                         </span>
                                                         <svg className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
@@ -130,14 +163,8 @@ export default function Favorites() {
                                                 </td>
                                                 <td className="text-center">
                                                     <button
-                                                        className="text-slate-500 hover:text-slate-800 text-sm font-medium transition-colors"
-                                                        onClick={() => {
-                                                            const up = prompt(`为 ${symbol} 设置阻力抛售预警价位 (USD)：`, pUpper || '');
-                                                            if (up === null) return;
-                                                            const down = prompt(`为 ${symbol} 设置底部抄底预警价位 (USD)：`, pLower || '');
-                                                            if (down === null) return;
-                                                            favoriteAPI.updateAlert(symbol, up ? parseFloat(up) : null, down ? parseFloat(down) : null).then(() => loadFavorites());
-                                                        }}
+                                                        className="bg-slate-50 text-slate-600 hover:bg-slate-900 hover:text-white px-4 py-2 rounded-xl text-[12px] font-bold transition-all duration-300 shadow-sm border border-slate-100"
+                                                        onClick={() => openPriceAlert(symbol, pUpper, pLower)}
                                                     >
                                                         设置价格预警
                                                     </button>
@@ -151,6 +178,8 @@ export default function Favorites() {
                     </section>
                 </main>
             </div>
+
+            {/* 备注弹窗 */}
             <NoteEditorModal 
                 isOpen={isNoteModalOpen}
                 symbol={currentSymbol}
@@ -158,6 +187,17 @@ export default function Favorites() {
                 onSave={handleSaveNote}
                 onClose={() => setIsNoteModalOpen(false)}
                 isSaving={isSavingNote}
+            />
+
+            {/* 价格预警弹窗 (New UI) */}
+            <PriceAlertModal 
+                isOpen={isAlertModalOpen}
+                symbol={alertSymbol}
+                initialUpper={alertUpper}
+                initialLower={alertLower}
+                onSave={handleSaveAlert}
+                onClose={() => setIsAlertModalOpen(false)}
+                isSaving={isSavingAlert}
             />
         </div>
     );

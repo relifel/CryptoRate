@@ -57,6 +57,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/v1/rates/**",
                         "/api/v1/stats/**",
                         "/api/v1/analysis/**",
+                        // 模拟测试接口 (临时放行用于演示)
+                        "/api/v1/admin/sim-feishu-alert",
                         // 前端页面路由
                         "/",
                         "/login",

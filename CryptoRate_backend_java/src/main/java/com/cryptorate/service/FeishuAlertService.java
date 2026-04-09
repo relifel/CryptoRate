@@ -21,6 +21,7 @@ public interface FeishuAlertService {
      * @param currentPrice 当前实时价格
      * @param triggerPrice 用户设定的触发阈值
      * @param trend        异动趋势 ("up" 为上涨, "down" 为下跌)
+     * @param reason       异动深度原因 (情报描述)
      */
-    void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend);
+    void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason);
 }

@@ -92,34 +92,54 @@ function handleResponseAuth(data) {
  * @param {object} options - 请求配置
  * @returns {Promise} 返回解析后的数据
  */
+/**
+ * 通用请求函数（标准化的请求、响应拦截器）
+ * @param {string} url - 请求地址
+ * @param {object} options - 请求配置 { method, body, headers, ... }
+ * @returns {Promise} 返回解析后的 JSON 数据
+ */
 async function request(url, options = {}) {
+  // 1. 数据序列化处理 (移交此层统一管控)
+  let body = options.body;
+  if (body && typeof body === 'object' && !(body instanceof FormData)) {
+    body = JSON.stringify(body);
+  }
+
+  // 2. 合并请求头
   const headers = attachAuthHeaders(url, {
     'Content-Type': 'application/json',
     ...options.headers,
   });
-  const config = {
-    method: options.method || 'GET',
-    headers,
-    ...options,
-  };
 
-  if (config.body && typeof config.body === 'object') {
-    config.body = JSON.stringify(config.body);
-  }
+  // 3. 构建完整的配置
+  const config = {
+    method: (options.method || 'GET').toUpperCase(),
+    ...options,
+    body,    // 使用本层生成的序列化 body
+    headers, // 使用本层增强后的 headers
+  };
 
   try {
     const response = await fetch(url, config);
+    
+    // 支持解析非 200 响应体 (通常是业务错误对象)
     const data = await response.json();
 
+    // 登录态拦截逻辑
     handleResponseAuth(data);
 
     if (data.code !== 200) {
-      throw new Error(data.msg || '请求失败');
+      // 抛出具体响应消息，便于前端捕获展现
+      throw new Error(data.msg || `请求失败 (${data.code})`);
     }
 
     return data;
   } catch (error) {
-    console.error('API请求失败:', error);
+    if (error.name === 'SyntaxError') {
+      console.error('解析响应 JSON 失败:', error);
+      throw new Error('服务器响应格式异常');
+    }
+    console.error('API请求执行异常:', error);
     throw error;
   }
 }
@@ -128,17 +148,8 @@ async function request(url, options = {}) {
  * 汇率数据接口
  */
 export const rateAPI = {
-  /**
-   * 获取系统支持的币种列表
-   */
-  getSymbols: () => {
-    return request(`${API_CONFIG.BASE_URL_V1}/rates/symbols`);
-  },
+  getSymbols: () => request(`${API_CONFIG.BASE_URL_V1}/rates/symbols`),
 
-  /**
-   * 搜索币种（按币种代码模糊匹配）
-   * @param {string} keyword - 搜索关键词（可选，为空时返回全部）
-   */
   searchSymbols: (keyword = '') => {
     const url = keyword.trim()
       ? `${API_CONFIG.BASE_URL_V1}/rates/search?keyword=${encodeURIComponent(keyword.trim())}`
@@ -146,10 +157,6 @@ export const rateAPI = {
     return request(url);
   },
 
-  /**
-   * 获取最新实时汇率
-   * @param {string} symbol - 币种代码（可选）
-   */
   getLatest: (symbol = null) => {
     const url = symbol
       ? `${API_CONFIG.BASE_URL_V1}/rates/latest?symbol=${symbol}`
@@ -157,12 +164,6 @@ export const rateAPI = {
     return request(url);
   },
 
-  /**
-   * 查询历史汇率
-   * @param {string} symbol - 币种代码
-   * @param {string} start - 开始日期 (yyyy-MM-dd)
-   * @param {string} end - 结束日期 (yyyy-MM-dd)
-   */
   getHistory: (symbol, start, end) => {
     const url = `${API_CONFIG.BASE_URL_V1}/rates/history?symbol=${symbol}&start=${start}&end=${end}`;
     return request(url);
@@ -173,11 +174,6 @@ export const rateAPI = {
  * 统计分析接口
  */
 export const statsAPI = {
-  /**
-   * 获取汇率统计摘要
-   * @param {string} symbol - 币种代码
-   * @param {string} range - 时间范围 (7d/30d)
-   */
   getSummary: (symbol, range = '7d') => {
     const url = `${API_CONFIG.BASE_URL_V1}/stats/summary/${symbol}?range=${range}`;
     return request(url);
@@ -188,75 +184,37 @@ export const statsAPI = {
  * 用户资产管理接口
  */
 export const assetAPI = {
-  /**
-   * 查询个人资产记录
-   */
-  getAssets: () => {
-    return request(`${API_CONFIG.BASE_URL_V1}/assets`);
-  },
+  getAssets: () => request(`${API_CONFIG.BASE_URL_V1}/assets`),
 
-  /**
-   * 添加/修改资产
-   * @param {object} asset - 资产信息 {symbol, amount}
-   */
-  saveAsset: (asset) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/assets`, {
-      method: 'POST',
-      body: asset,
-    });
-  },
+  saveAsset: (asset) => request(`${API_CONFIG.BASE_URL_V1}/assets`, {
+    method: 'POST',
+    body: asset,
+  }),
 
-  /**
-   * 删除资产记录
-   * @param {number} id - 资产ID
-   */
-  deleteAsset: (id) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/assets/${id}`, {
-      method: 'DELETE',
-    });
-  },
+  deleteAsset: (id) => request(`${API_CONFIG.BASE_URL_V1}/assets/${id}`, {
+    method: 'DELETE',
+  }),
 };
 
 /**
  * 智能分析接口
  */
 export const analysisAPI = {
-  /**
-   * 生成行情解读
-   * @param {string} symbol - 币种代码
-   */
-  getExplanation: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/analysis/explain/${symbol}`);
-  },
+  getExplanation: (symbol) => request(`${API_CONFIG.BASE_URL_V1}/analysis/explain/${symbol}`),
 };
 
 /**
  * AI 智能问答接口
  */
 export const aiAPI = {
-  /**
-   * 发送 AI 聊天问题
-   * @param {string} question - 用户问题
-   */
-  chat: (question) => {
-    return request(`/api/ai/chat`, {
-      method: 'POST',
-      body: { question },
-    });
-  },
+  chat: (question) => request(`/api/ai/chat`, {
+    method: 'POST',
+    body: { question },
+  }),
 
-  /**
-   * 发送 AI 聊天问题（SSE流式）
-   * @param {string} question - 用户问题
-   * @param {Function} onMessage - 接收到消息切片的回调
-   * @param {Function} onError - 发生错误的回调
-   * @param {Function} onComplete - 结束流的回调
-   */
   chatStream: async (question, onMessage, onError, onComplete) => {
     const token = getToken();
-    const headers = {
-      'Content-Type': 'application/json'
-    };
+    const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
     try {
@@ -265,10 +223,7 @@ export const aiAPI = {
         headers,
         body: JSON.stringify({ question }),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
@@ -277,44 +232,26 @@ export const aiAPI = {
       while (true) {
         const { done, value } = await reader.read();
         buffer += decoder.decode(value, { stream: !done });
-        
-        // 基于双指针寻找完全到达的 \n 作为分界，防止切割造成残包丢失
         let position = 0;
         while (true) {
           const newlineIndex = buffer.indexOf('\n', position);
-          if (newlineIndex === -1) {
-            break;
-          }
-          
+          if (newlineIndex === -1) break;
           const line = buffer.substring(position, newlineIndex);
           position = newlineIndex + 1;
-          
           if (line.startsWith('data:')) {
              try {
                 const jsonStr = line.substring(5).trim();
-                if (jsonStr) {
-                   const data = JSON.parse(jsonStr);
-                   if (data.code === 500) {
-                      onError(new Error(data.answer));
-                   } else if (data.answer) {
-                      onMessage(data.answer);
-                   }
-                }
-             } catch (e) {
-                // 如果恰好截断在不合法 JSON 中间（理论上极少，因为由 \n 包裹）
-             }
+                const data = JSON.parse(jsonStr);
+                if (data.code === 500) onError(new Error(data.answer));
+                else if (data.answer) onMessage(data.answer);
+             } catch (e) {}
           }
         }
-        
-        // 裁剪掉已经处理的行，把未拿到 \n 的零碎尾部留作下次 decode 合并
         buffer = buffer.substring(position);
-
         if (done) break;
       }
       onComplete();
-    } catch (e) {
-      onError(e);
-    }
+    } catch (e) { onError(e); }
   },
 };
 
@@ -322,208 +259,69 @@ export const aiAPI = {
  * 管理后台接口
  */
 export const adminAPI = {
-  /**
-   * 手动触发数据采集
-   */
-  syncData: () => {
-    return request(`${API_CONFIG.BASE_URL_V1}/admin/sync`, {
-      method: 'POST',
-    });
-  },
-
-  /**
-   * 手动触发历史数据采样同步
-   * @param {number} days - 回溯天数
-   */
-  syncHistory: (days = 365) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/admin/sync-history?days=${days}`, {
-      method: 'POST',
-    });
-  },
+  syncData: () => request(`${API_CONFIG.BASE_URL_V1}/admin/sync`, { method: 'POST' }),
+  syncHistory: (days = 365) => request(`${API_CONFIG.BASE_URL_V1}/admin/sync-history?days=${days}`, { method: 'POST' }),
 };
 
 /**
  * 原有市场数据接口（兼容）
  */
 export const marketAPI = {
-  /**
-   * 获取所有加密货币汇率
-   */
-  getAllRates: () => {
-    return request(`${API_CONFIG.BASE_URL}/market/rates`);
-  },
-
-  /**
-   * 获取单个加密货币汇率
-   * @param {string} symbol - 币种代码
-   */
-  getRate: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL}/market/rate/${symbol}`);
-  },
+  getAllRates: () => request(`${API_CONFIG.BASE_URL}/market/rates`),
+  getRate: (symbol) => request(`${API_CONFIG.BASE_URL}/market/rate/${symbol}`),
 };
 
 /**
  * 用户管理接口
  */
 export const userAPI = {
-  /**
-   * 用户登录
-   * @param {object} body - { username, password }
-   * @returns {Promise<{ data: { id, username, email, createdAt } }>}
-   */
-  login: (body) => {
-    return request(`${API_CONFIG.BASE_URL}/user/login`, {
-      method: 'POST',
-      body: { username: body.username, password: body.password },
-    });
-    // 注意：登录成功后需由调用方手动 saveToken(data.data) 保存 JWT Token
-  },
-
-  /**
-   * 用户注册
-   * @param {object} user - 用户信息 {username, password, email}
-   */
-  register: (user) => {
-    return request(`${API_CONFIG.BASE_URL}/user/register`, {
-      method: 'POST',
-      body: user,
-    });
-  },
-
-  /**
-   * 根据ID查询用户
-   * @param {number} id - 用户ID
-   */
-  getUserById: (id) => {
-    return request(`${API_CONFIG.BASE_URL}/user/${id}`);
-  },
-
-  /**
-   * 根据用户名查询用户
-   * @param {string} username - 用户名
-   */
-  getUserByUsername: (username) => {
-    return request(`${API_CONFIG.BASE_URL}/user/username/${username}`);
-  },
-
-  /**
-   * 更新用户信息
-   * @param {number} id - 用户ID
-   * @param {object} user - 更新的用户信息
-   */
-  updateUser: (id, user) => {
-    return request(`${API_CONFIG.BASE_URL}/user/${id}`, {
-      method: 'PUT',
-      body: user,
-    });
-  },
-
-  /**
-   * 删除用户
-   * @param {number} id - 用户ID
-   */
-  deleteUser: (id) => {
-    return request(`${API_CONFIG.BASE_URL}/user/${id}`, {
-      method: 'DELETE',
-    });
-  },
+  login: (body) => request(`${API_CONFIG.BASE_URL}/user/login`, {
+    method: 'POST',
+    body: { username: body.username, password: body.password },
+  }),
+  register: (user) => request(`${API_CONFIG.BASE_URL}/user/register`, { method: 'POST', body: user }),
+  getUserById: (id) => request(`${API_CONFIG.BASE_URL}/user/${id}`),
+  getUserByUsername: (username) => request(`${API_CONFIG.BASE_URL}/user/username/${username}`),
+  updateUser: (id, user) => request(`${API_CONFIG.BASE_URL}/user/${id}`, { method: 'PUT', body: user }),
+  deleteUser: (id) => request(`${API_CONFIG.BASE_URL}/user/${id}`, { method: 'DELETE' }),
 };
 
-// 导出配置供外部使用
 export { API_CONFIG };
 
 /**
- * 用户收藏接口（需登录，自动携带 JWT Token）
+ * 用户收藏接口（标准化调用）
  */
 export const favoriteAPI = {
-  /**
-   * 获取当前用户的完整收藏列表（含备注、提醒等）
-   * @returns {Promise<{ data: UserFavorite[] }>}
-   */
-  getList: () => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/list`);
-  },
+  getList: () => request(`${API_CONFIG.BASE_URL_V1}/favorites/list`),
+  add: (symbol) => request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'POST' }),
+  remove: (symbol) => request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'DELETE' }),
+  
+  batchRemove: (symbols) => request(`${API_CONFIG.BASE_URL_V1}/favorites/batch`, {
+    method: 'DELETE',
+    body: { symbols },
+  }),
 
-  /** 添加收藏 */
-  add: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'POST' });
-  },
+  updateNote: (symbol, note) => request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/note`, {
+    method: 'PUT',
+    body: { note },
+  }),
 
-  /** 取消收藏 */
-  remove: (symbol) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}`, { method: 'DELETE' });
-  },
+  updateAlert: (symbol, priceUpper, priceLower) => request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/alert`, {
+    method: 'PUT',
+    body: { priceUpper, priceLower },
+  }),
 
-  /** 批量取消收藏 */
-  batchRemove: (symbols) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/batch`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ symbols }),
-    });
-  },
-
-  /** 更新备注 */
-  updateNote: (symbol, note) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/note`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note }),
-    });
-  },
-
-  /** 设置价格提醒 */
-  updateAlert: (symbol, priceUpper, priceLower) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/${symbol}/alert`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceUpper, priceLower }),
-    });
-  },
-
-  /** 持久化排序 */
-  updateSort: (sortList) => {
-    return request(`${API_CONFIG.BASE_URL_V1}/favorites/sort`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sortList),
-    });
-  },
+  updateSort: (sortList) => request(`${API_CONFIG.BASE_URL_V1}/favorites/sort`, {
+    method: 'PUT',
+    body: sortList,
+  }),
 };
 
 /**
- * 用户个人中心接口（需登录，自动携带 JWT Token）
+ * 用户个人中心接口
  */
 export const profileAPI = {
-  /**
-   * 获取当前登录用户的个人资料
-   * @returns {Promise<{ data: User }>}
-   */
-  getProfile: () => {
-    return request(`${API_CONFIG.BASE_URL}/user/profile`);
-  },
-
-  /**
-   * 更新个人资料（昵称、邮箱、手机、头像、简介）
-   * @param {object} dto - { nickname, email, phone, avatar, bio }
-   * @returns {Promise<{ data: User }>}
-   */
-  updateProfile: (dto) => {
-    return request(`${API_CONFIG.BASE_URL}/user/profile`, {
-      method: 'PUT',
-      body: dto,
-    });
-  },
-
-  /**
-   * 修改密码
-   * @param {object} dto - { oldPassword, newPassword, confirmPassword }
-   * @returns {Promise<{ data: null }>}
-   */
-  changePassword: (dto) => {
-    return request(`${API_CONFIG.BASE_URL}/user/password`, {
-      method: 'PUT',
-      body: dto,
-    });
-  },
+  getProfile: () => request(`${API_CONFIG.BASE_URL}/user/profile`),
+  updateProfile: (dto) => request(`${API_CONFIG.BASE_URL}/user/profile`, { method: 'PUT', body: dto }),
+  changePassword: (dto) => request(`${API_CONFIG.BASE_URL}/user/password`, { method: 'PUT', body: dto }),
 };

@@ -1,4 +1,5 @@
 import os
+import sys
 import asyncio
 import json
 from typing import Dict, Any
@@ -72,14 +73,18 @@ class FeishuAlertAgent:
         lines = [line.strip() for line in text.split("\n") if line.strip()]
         return "\n".join(lines)
 
-    async def run_alert_workflow(self, symbol: str, price: float, change: float):
+    async def run_alert_workflow(self, symbol: str, price: float, change: float, reason: str = None):
         """
         Agentic Workflow: 思考 -> 清洗内容 -> 调用卡片接口
         """
-        prompt = f"当前异动数据：币种={symbol}, 当前价格={price}, 5分钟变化率={change}%。直接开始你的分析。"
+        prompt = f"当前异动数据：币种={symbol}, 当前价格={price}, 5分钟变化率={change}%。"
+        if reason:
+            prompt += f"\n背景参考事项：{reason}\n请结合以上背景，直接开始你的分析。"
+        else:
+            prompt += "直接开始你的分析。"
         
         server_params = StdioServerParameters(
-            command="python",
+            command=sys.executable,
             args=[self.mcp_path, "--webhook", self.webhook_url],
             env=os.environ.copy()
         )
