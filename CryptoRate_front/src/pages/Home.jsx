@@ -184,6 +184,12 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
     const [expandedCoinId, setExpandedCoinId] = useState(null);
     const [coins, setCoins] = useState([]);
+    const [activeTab, setActiveTab] = useState('all'); // 'all' 或 'favorites'
+
+    // 根据选项卡过滤显示的币种
+    const filteredCoins = activeTab === 'all' 
+        ? coins 
+        : coins.filter(coin => (favorites || []).some(f => (typeof f === 'string' ? f : f?.symbol) === coin.id));
 
     const fetchLatestRates = async () => {
         try {
@@ -281,8 +287,18 @@ export default function Home() {
 
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm">
-                        <button className="px-7 py-2.5 bg-slate-900 text-white shadow-lg shadow-slate-900/10 rounded-xl text-[12px] font-bold">全部</button>
-                        <button className="px-7 py-2.5 text-slate-400 hover:text-slate-600 rounded-xl text-[12px] font-bold transition-colors">自选收藏</button>
+                        <button 
+                            onClick={() => setActiveTab('all')}
+                            className={`px-7 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-300 ${activeTab === 'all' ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            全部
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('favorites')}
+                            className={`px-7 py-2.5 rounded-xl text-[12px] font-bold transition-all duration-300 ${activeTab === 'favorites' ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10' : 'text-slate-400 hover:text-slate-600'}`}
+                        >
+                            自选收藏
+                        </button>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -321,8 +337,8 @@ export default function Home() {
                     {isLoading ? (
                         <MinimalSkeleton />
                     ) : (
-                        (coins && coins.length > 0) ? (
-                            coins.map(coin => (
+                        (filteredCoins && filteredCoins.length > 0) ? (
+                            filteredCoins.map(coin => (
                                 <div key={coin.id} id={`coin-row-${coin.id}`}>
                                     <CoinTableRow 
                                         coin={coin} 
@@ -335,7 +351,9 @@ export default function Home() {
                             ))
                         ) : (
                             <div className="py-20 text-center bg-white rounded-3xl border border-slate-100">
-                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[13px]">未检测到行情数据，请检查 API 配置或手动同步</p>
+                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[13px]">
+                                    {activeTab === 'all' ? '未检测到行情数据，请检查 API 配置或手动同步' : '您的自选收藏为空，快去添加关注吧'}
+                                </p>
                             </div>
                         )
                     )}
