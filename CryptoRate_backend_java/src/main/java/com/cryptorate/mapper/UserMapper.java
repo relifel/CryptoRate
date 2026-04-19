@@ -51,6 +51,15 @@ public interface UserMapper {
     int updateProfile(User user);
 
     /**
+     * 更新用户状态（激活/禁用）
+     *
+     * @param id     用户ID
+     * @param status 状态 (ACTIVE/DISABLED)
+     * @return 影响行数
+     */
+    int updateStatus(@Param("id") Long id, @Param("status") String status);
+
+    /**
      * 仅更新密码字段
      *
      * @param id       用户ID
@@ -82,4 +91,12 @@ public interface UserMapper {
      * @return 存在返回 true，否则返回 false
      */
     boolean existsByUsername(@Param("username") String username);
+
+    /**
+     * 获取所有用户信息（支持关键字搜索）
+     *
+     * @param keyword 搜索关键字（用户名或邮箱）
+     * @return 用户列表
+     */
+    java.util.List<User> selectAll(@Param("keyword") String keyword);
 }

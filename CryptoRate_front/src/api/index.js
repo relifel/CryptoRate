@@ -261,6 +261,21 @@ export const aiAPI = {
 export const adminAPI = {
   syncData: () => request(`${API_CONFIG.BASE_URL_V1}/admin/sync`, { method: 'POST' }),
   syncHistory: (days = 365) => request(`${API_CONFIG.BASE_URL_V1}/admin/sync-history?days=${days}`, { method: 'POST' }),
+
+  /** 获取全平台用户列表 (支持关键字搜索) */
+  getUserList: (keyword) => request(`${API_CONFIG.BASE_URL_V1}/admin/user/list`, { params: { keyword } }),
+
+  /** 更新用户状态 (ACTIVE/DISABLED) */
+  updateStatus: (id, status) => request(`${API_CONFIG.BASE_URL_V1}/admin/user/status`, {
+    method: 'PUT',
+    body: { id, status },
+  }),
+
+  /** 重置用户密码为 123456 */
+  resetPassword: (id) => request(`${API_CONFIG.BASE_URL_V1}/admin/user/password/reset/${id}`, { method: 'PUT' }),
+
+  /** 删除用户账号 */
+  deleteUser: (id) => request(`${API_CONFIG.BASE_URL_V1}/admin/user/${id}`, { method: 'DELETE' }),
 };
 
 /**

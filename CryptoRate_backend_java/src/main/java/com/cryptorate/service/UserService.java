@@ -103,4 +103,31 @@ public interface UserService {
      * @param dto    修改密码 DTO（旧密码、新密码、确认密码）
      */
     void changePassword(Long userId, ChangePasswordDTO dto);
+
+    // ======================================================
+    // 管理员功能
+    // ======================================================
+
+    /**
+     * 管理员：全览用户（支持关键字搜索）
+     *
+     * @param keyword 搜索关键字（可选）
+     * @return 用户列表
+     */
+    java.util.List<User> getAllUsers(String keyword);
+
+    /**
+     * 管理员：更新用户状态
+     *
+     * @param id     用户 ID
+     * @param status 状态 (ACTIVE/DISABLED)
+     */
+    void updateUserStatus(Long id, String status);
+
+    /**
+     * 管理员：重置用户密码为初始密文 (123456)
+     *
+     * @param id 用户 ID
+     */
+    void resetUserPassword(Long id);
 }

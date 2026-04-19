@@ -117,6 +117,14 @@ export default function Navbar({ user, setShowLoginPage, onLogout }) {
                         <div className="relative w-1.5 h-1.5 bg-teal-500 rounded-full shadow-[0_0_5px_rgba(20,184,166,0.6)]"></div>
                     </div>
                 </Link>
+                {user?.role === 'ADMIN' && (
+                    <Link 
+                        to="/admin/accounts" 
+                        className={`text-[15px] font-bold transition-all ${isActive('/admin/accounts') ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                        账号管理
+                    </Link>
+                )}
             </nav>
 
             {/* Search and User Actions */}

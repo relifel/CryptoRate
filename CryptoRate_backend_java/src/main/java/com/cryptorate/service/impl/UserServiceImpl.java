@@ -84,6 +84,8 @@ public class UserServiceImpl implements UserService {
         user.setUsername(username);
         user.setPassword(encodedPassword);
         user.setEmail(dto.getEmail());
+        user.setRole("USER");      // 默认角色为普通用户
+        user.setStatus("ACTIVE");  // 默认状态为激活
         user.setCreatedAt(LocalDateTime.now());
 
         // 4. 插入数据库
@@ -115,18 +117,24 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectByUsername(dto.getUsername().trim());
         if (user == null) {
             log.warn("登录失败，用户不存在: {}", dto.getUsername());
-            throw new ApiException(401, "用户名或密码错误");
+            throw new ApiException(401, "账号或密码错误，请重新输入");
         }
 
-        // 2. BCrypt 比对密码（matches 方法自动处理 salt）
+        // 2. 检查账号状态
+        if ("DISABLED".equals(user.getStatus())) {
+            log.warn("登录失败，账号已被禁用，用户名: {}", dto.getUsername());
+            throw new ApiException(403, "您的账号已被禁用，请联系管理员");
+        }
+
+        // 3. BCrypt 比对密码（matches 方法自动处理 salt）
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             log.warn("登录失败，密码错误，用户名: {}", dto.getUsername());
-            throw new ApiException(401, "用户名或密码错误");
+            throw new ApiException(401, "账号或密码错误，请重新输入");
         }
 
-        // 3. 生成 JWT Token
-        String token = jwtUtils.generateToken(user.getId(), user.getUsername());
-        log.info("用户登录成功，生成 JWT Token，用户ID: {}", user.getId());
+        // 4. 生成 JWT Token (包含角色信息)
+        String token = jwtUtils.generateToken(user.getId(), user.getUsername(), user.getRole());
+        log.info("用户登录成功，生成 JWT Token，用户ID: {}, 角色: {}", user.getId(), user.getRole());
 
         return token;
     }
@@ -274,5 +282,35 @@ public class UserServiceImpl implements UserService {
         String encodedNewPassword = passwordEncoder.encode(dto.getNewPassword());
         userMapper.updatePassword(userId, encodedNewPassword);
         log.info("密码修改成功，ID: {}", userId);
+    }
+
+    // ======================================================
+    // 管理员功能实现
+    // ======================================================
+
+    @Override
+    public java.util.List<User> getAllUsers(String keyword) {
+        log.info("管理员：获取用户全览，关键字: {}", keyword);
+        java.util.List<User> users = userMapper.selectAll(keyword);
+        // 清除敏感字段
+        users.forEach(u -> u.setPassword(null));
+        return users;
+    }
+
+    @Override
+    public void updateUserStatus(Long id, String status) {
+        log.info("管理员：更新用户状态，ID: {}, 状态: {}", id, status);
+        int rows = userMapper.updateStatus(id, status);
+        if (rows <= 0) {
+            throw new ApiException(404, "用户不存在");
+        }
+    }
+
+    @Override
+    public void resetUserPassword(Long id) {
+        log.info("管理员：重置用户密码，ID: {}", id);
+        // 使用数据库设计文档中预设的核心密文 (123456)
+        String defaultHash = "$2a$10$6wS.kL/V/S8WJp8YgX6X7.8A0E4UjV7xGzS6Hk8S9G9/0fG/0gS6H";
+        userMapper.updatePassword(id, defaultHash);
     }
 }

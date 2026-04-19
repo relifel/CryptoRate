@@ -25,6 +25,8 @@ CREATE TABLE `user` (
   `password` varchar(100) NOT NULL COMMENT 'BCrypt加密密码',
   `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
   `nickname` varchar(50) DEFAULT NULL COMMENT '昵称',
+  `role` varchar(20) NOT NULL DEFAULT 'USER' COMMENT '角色: ADMIN, USER',
+  `status` varchar(20) NOT NULL DEFAULT 'ACTIVE' COMMENT '状态: ACTIVE, DISABLED',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -135,6 +137,22 @@ INSERT INTO `rate_history` (`symbol`, `rate`, `timestamp`) VALUES
 ('ID', 0.85000000, 1772342400);
 
 -- 如果您需要一个默认测试用户 (密码为 123456 的 BCrypt 加密值)
-INSERT INTO `user` (`username`, `password`, `email`, `nickname`) VALUES 
-('admin', '$2a$10$6wS.kL/V/S8WJp8YgX6X7.8A0E4UjV7xGzS6Hk8S9G9/0fG/0gS6H', 'admin@cryptorate.com', '系统管理员');
+INSERT INTO `user` (`username`, `password`, `email`, `nickname`, `role`, `status`) VALUES 
+('admin1', '$2a$10$6wS.kL/V/S8WJp8YgX6X7.8A0E4UjV7xGzS6Hk8S9G9/0fG/0gS6H', 'admin1@cryptorate.com', '系统管理员', 'ADMIN', 'ACTIVE');
+
+---
+
+## 🛠️ RBAC 功能补丁 (针对现有数据库)
+
+如果您已经运行过旧版 SQL，请执行以下补丁脚本：
+
+```sql
+-- 1. 为 user 表增加 role 和 status 字段
+ALTER TABLE `user` ADD COLUMN `role` varchar(20) NOT NULL DEFAULT 'USER' COMMENT '角色: ADMIN, USER' AFTER `nickname`;
+ALTER TABLE `user` ADD COLUMN `status` varchar(20) NOT NULL DEFAULT 'ACTIVE' COMMENT '状态: ACTIVE, DISABLED' AFTER `role`;
+
+-- 2. 将 admin1 账号提升为管理员权限，并彻底删除原 admin 账号
+UPDATE `user` SET `role` = 'ADMIN' WHERE `username` = 'admin1';
+DELETE FROM `user` WHERE `username` = 'admin';
+```
 ```

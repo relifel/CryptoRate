@@ -7,6 +7,7 @@ import Assets from './pages/Assets';
 import Favorites from './pages/Favorites';
 import AiAnalysis from './pages/AiAnalysis';
 import UserCenter from './pages/UserCenter';
+import AccountManagement from './pages/AccountManagement';
 import Navbar from './components/Navbar';
 import FloatingAiChat from './components/FloatingAiChat';
 import { favoriteAPI, rateAPI, profileAPI } from './api';
@@ -157,10 +158,17 @@ function Layout() {
           try {
             const res = await profileAPI.getProfile();
             if (res && res.data) {
-              setUser(res.data);
-              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(res.data));
+              const userData = res.data;
+              setUser(userData);
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
               setShowLoginPage(false);
-              navigate('/');
+              
+              // 角色路由分流
+              if (userData.role === 'ADMIN') {
+                navigate('/admin/accounts');
+              } else {
+                navigate('/');
+              }
             }
           } catch (err) {
             console.error('登录后拉取资料失败:', err);
@@ -233,6 +241,7 @@ export default function App() {
           <Route path="favorites" element={<Favorites />} />
           <Route path="analysis" element={<AiAnalysis />} />
           <Route path="user-center" element={<UserCenter />} />
+          <Route path="admin/accounts" element={<AccountManagement />} />
           <Route path="login" element={null} />
         </Route>
       </Routes>

@@ -1,5 +1,6 @@
 package com.cryptorate.interceptor;
 
+import com.cryptorate.mapper.UserMapper;
 import com.cryptorate.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,11 +62,13 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private final JwtUtils jwtUtils;
     private final ObjectMapper objectMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public JwtInterceptor(JwtUtils jwtUtils, ObjectMapper objectMapper) {
+    public JwtInterceptor(JwtUtils jwtUtils, ObjectMapper objectMapper, UserMapper userMapper) {
         this.jwtUtils = jwtUtils;
         this.objectMapper = objectMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -121,14 +124,48 @@ public class JwtInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 5. Token 有效：将用户信息存入 request 属性，供 Controller 层使用
+        // 5. Token 有效：提取用户信息
         Long userId = jwtUtils.getUserIdFromToken(token);
         String username = jwtUtils.getUsernameFromToken(token);
+        String role = jwtUtils.getRoleFromToken(token);
+
+        // 6. 管理员路径校验
+        if (requestURI.contains("/admin/") && !"ADMIN".equals(role)) {
+            log.warn("越权访问：用户 {} (角色: {}) 尝试访问管理员接口 {}", username, role, requestURI);
+            writeForbiddenResponse(response, "权限不足，仅管理员可访问");
+            return false;
+        }
+
+        // 7. 账号状态校验（实时拦截 DISABLED 用户）
+        com.cryptorate.entity.User user = userMapper.selectById(userId);
+        if (user == null || "DISABLED".equals(user.getStatus())) {
+            log.warn("拦截请求：账号 {} 已被禁用或不存在", username);
+            writeForbiddenResponse(response, "账号已被禁用或不存在，请联系管理员");
+            return false;
+        }
+
         request.setAttribute(CURRENT_USER_ID, userId);
         request.setAttribute(CURRENT_USERNAME, username);
-        log.debug("JWT 校验通过，当前用户: ID={}, username={}", userId, username);
+        log.debug("JWT 校验通过，当前用户: ID={}, username={}, role={}", userId, username, role);
 
         return true;
+    }
+
+    /**
+     * 向响应中写入 403 禁止访问的 JSON 错误信息
+     */
+    private void writeForbiddenResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("code", 403);
+        body.put("msg", message);
+        body.put("data", null);
+        body.put("timestamp", System.currentTimeMillis());
+
+        response.getWriter().write(objectMapper.writeValueAsString(body));
     }
 
     /**

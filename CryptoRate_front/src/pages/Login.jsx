@@ -265,9 +265,11 @@ export default function Login({ onSuccess, onCancel }) {
         showToast('登录失败，请验证凭证', 'error');
       }
     } catch (err) {
-      showToast(err.message || '登录失败，请检查密码是否正确', 'error');
+      showToast(err.message || '账号或密码错误，请重新输入', 'error');
     } finally {
-      if (!onSuccess) setLoading(false);
+      // 无论成功失败，都在此处尝试重置加载状态 
+      // 除非成功并触发了 onSuccess（跳转），否则应恢复按钮状态
+      setLoading(false);
     }
   };
 

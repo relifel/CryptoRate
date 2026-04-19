@@ -39,6 +39,12 @@ public class User implements Serializable {
     /** 昵称（展示名） */
     private String nickname;
 
+    /** 角色：ADMIN (管理员), USER (普通用户) */
+    private String role;
+
+    /** 状态：ACTIVE (正常), DISABLED (禁用) */
+    private String status;
+
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createdAt;

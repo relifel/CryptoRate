@@ -74,19 +74,20 @@ public class JwtUtils {
      * @param username 用户名（写入 claims，便于 Token 可读性调试）
      * @return 签名后的 JWT Token 字符串
      */
-    public String generateToken(Long userId, String username) {
+    public String generateToken(Long userId, String username, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
 
         String token = Jwts.builder()
                 .claim("userId", userId)
                 .claim("username", username)
+                .claim("role", role)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
 
-        log.debug("生成 JWT Token，用户ID: {}, 用户名: {}, 过期时间: {}", userId, username, expiryDate);
+        log.debug("生成 JWT Token，用户ID: {}, 用户名: {}, 角色: {}, 过期时间: {}", userId, username, role, expiryDate);
         return token;
     }
 
@@ -138,6 +139,17 @@ public class JwtUtils {
     public String getUsernameFromToken(String token) {
         Claims claims = parseToken(token);
         return claims.get("username", String.class);
+    }
+
+    /**
+     * 从 Token 中提取用户角色
+     *
+     * @param token JWT Token 字符串
+     * @return 角色 (ADMIN/USER)
+     */
+    public String getRoleFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.get("role", String.class);
     }
 
     /**
