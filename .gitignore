@@ -38,3 +38,6 @@ compile_output.txt
 compile_output2.txt
 git_status.txt
 md_files.txt
+
+# AI 助手临时文件
+.antigravity/

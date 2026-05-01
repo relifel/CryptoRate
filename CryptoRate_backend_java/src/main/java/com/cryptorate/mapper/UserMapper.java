@@ -99,4 +99,18 @@ public interface UserMapper {
      * @return 用户列表
      */
     java.util.List<User> selectAll(@Param("keyword") String keyword);
+
+    /**
+     * 获取所有开启了飞书预警的用户列表
+     *
+     * @return 开启预警的用户列表
+     */
+    java.util.List<User> selectUsersWithFeishuAlertEnabled();
+
+    /**
+     * 获取所有订阅了 AI 每日简报的用户列表
+     *
+     * @return 订阅简报的用户列表
+     */
+    java.util.List<User> selectUsersWithDailyBriefingEnabled();
 }

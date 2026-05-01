@@ -162,11 +162,7 @@ const CoinTableRow = ({ coin, isExpanded, onToggle, isWatched, onToggleWatch }) 
                         <DetailMetaItem label="24H 最低价" value={`$${(rawPrice * 0.92).toFixed(2)}`} />
                         <DetailMetaItem label="流通总量" value={`19.65M ${coin?.symbol}`} />
                         <DetailMetaItem label="总市值排名" value={`第 ${coin?.rank} 名`} />
-                        <div className="col-span-2 xl:col-span-1 pt-4">
-                            <button className="w-full py-4 bg-slate-900 text-white text-[13px] font-bold rounded-2xl shadow-lg shadow-slate-900/10 hover:bg-slate-800 hover:-translate-y-0.5 transition-all active:scale-95">
-                                进入资产详情中心 →
-                            </button>
-                        </div>
+
                     </div>
                 </div>
             </div>

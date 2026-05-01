@@ -4,18 +4,24 @@ import com.cryptorate.common.exception.ApiException;
 import com.cryptorate.config.CoinlayerConfig;
 import com.cryptorate.dto.CoinlayerResponse;
 import com.cryptorate.entity.RateHistory;
+import com.cryptorate.entity.User;
 import com.cryptorate.mapper.RateHistoryMapper;
+import com.cryptorate.mapper.UserFavoriteMapper;
+import com.cryptorate.mapper.UserMapper;
 import com.cryptorate.service.CryptoMarketService;
+import com.cryptorate.service.FeishuAlertService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +47,25 @@ public class CryptoMarketServiceImpl implements CryptoMarketService {
     private final ObjectMapper objectMapper;
     private final CoinlayerConfig coinlayerConfig;
     private final RateHistoryMapper rateHistoryMapper;
+    private final UserMapper userMapper;
+    private final UserFavoriteMapper userFavoriteMapper;
+    private final FeishuAlertService feishuAlertService;
 
     @Autowired
     public CryptoMarketServiceImpl(OkHttpClient okHttpClient,
             ObjectMapper objectMapper,
             CoinlayerConfig coinlayerConfig,
-            RateHistoryMapper rateHistoryMapper) {
+            RateHistoryMapper rateHistoryMapper,
+            UserMapper userMapper,
+            UserFavoriteMapper userFavoriteMapper,
+            @Lazy FeishuAlertService feishuAlertService) {
         this.okHttpClient = okHttpClient;
         this.objectMapper = objectMapper;
         this.coinlayerConfig = coinlayerConfig;
         this.rateHistoryMapper = rateHistoryMapper;
+        this.userMapper = userMapper;
+        this.userFavoriteMapper = userFavoriteMapper;
+        this.feishuAlertService = feishuAlertService;
     }
 
     @Override
@@ -137,18 +152,18 @@ public class CryptoMarketServiceImpl implements CryptoMarketService {
     @Override
     public int syncRatesToDatabase() {
         log.info("开始同步汇率数据到数据库...");
-
+ 
         try {
             Map<String, BigDecimal> rates = fetchRatesWithRetry();
-
+ 
             if (rates == null || rates.isEmpty()) {
                 log.warn("未获取到任何汇率数据，同步取消");
                 return 0;
             }
-
+ 
             long timestamp = System.currentTimeMillis() / 1000;
             LocalDateTime now = LocalDateTime.now();
-
+ 
             List<RateHistory> historyList = new ArrayList<>();
             for (Map.Entry<String, BigDecimal> entry : rates.entrySet()) {
                 RateHistory history = new RateHistory();
@@ -158,22 +173,82 @@ public class CryptoMarketServiceImpl implements CryptoMarketService {
                 history.setCreatedAt(now);
                 historyList.add(history);
             }
-
+ 
             if (!historyList.isEmpty()) {
                 try {
                     int rows = rateHistoryMapper.batchInsert(historyList);
                     log.info("成功同步 {} 条汇率数据到数据库", rows);
+                    
+                    // 触发异动预警检查
+                    checkMarketFluctuations(rates);
+                    
                     return rows;
                 } catch (Exception e) {
                     log.error("批量插入汇率数据失败: {}. 请确保数据库表已创建。", e.getMessage());
                     throw new ApiException("数据库写入失败: " + e.getMessage(), e);
                 }
             }
-
+ 
             return 0;
         } catch (Exception e) {
             log.error("同步汇率数据失败: {}", e.getMessage(), e);
             throw new ApiException("同步汇率数据失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 检查行情异动并发送告警
+     *
+     * @param currentRates 当前最新的汇率数据
+     */
+    private void checkMarketFluctuations(Map<String, BigDecimal> currentRates) {
+        log.info("开始执行行情异动预警检查...");
+
+        // 1. 获取所有开启了飞书预警的活跃用户
+        List<User> alertUsers = userMapper.selectUsersWithFeishuAlertEnabled();
+        if (alertUsers == null || alertUsers.isEmpty()) {
+            log.debug("当前没有用户开启飞书预警，跳过检查");
+            return;
+        }
+
+        for (User user : alertUsers) {
+            // 2. 获取该用户的自选币种
+            List<String> userSymbols = userFavoriteMapper.selectSymbolsByUserId(user.getId());
+            if (userSymbols == null || userSymbols.isEmpty()) {
+                continue;
+            }
+
+            for (String symbol : userSymbols) {
+                BigDecimal currentPrice = currentRates.get(symbol);
+                if (currentPrice == null) continue;
+
+                // 3. 获取该币种在数据库中的上一条记录（由于当前数据刚插入，最新一条是 currentPrice，所以找倒数第二条）
+                // 为了简化，我们直接取数据库中最近的一条记录（它是 currentPrice 插入之前的最后一条）
+                RateHistory lastHistory = rateHistoryMapper.selectLatestBySymbol(symbol);
+                if (lastHistory == null || lastHistory.getRate() == null) continue;
+
+                BigDecimal lastPrice = lastHistory.getRate();
+                
+                // 4. 计算波动幅度 ( (current - last) / last )
+                // 如果 lastPrice 为 0 则跳过防止除以 0
+                if (lastPrice.compareTo(BigDecimal.ZERO) == 0) continue;
+
+                BigDecimal diff = currentPrice.subtract(lastPrice);
+                BigDecimal changeRate = diff.divide(lastPrice, 4, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100"));
+
+                // 5. 判定阈值（绝对值是否 >= 5%）
+                if (changeRate.abs().compareTo(new BigDecimal("5")) >= 0) {
+                    String trend = changeRate.signum() >= 0 ? "up" : "down";
+                    String reason = String.format("行情剧烈波动：较上一次采样价格 (%s) %s 了 %s%%",
+                            lastPrice.toPlainString(),
+                            trend.equals("up") ? "上涨" : "下跌",
+                            changeRate.abs().setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+                    log.info("检测到异动！用户: {}, 币种: {}, 涨跌幅: {}%", user.getUsername(), symbol, changeRate);
+                    feishuAlertService.sendPriceAlert(symbol, currentPrice, lastPrice, trend, reason, user.getFeishuWebhook());
+                }
+            }
         }
     }
 

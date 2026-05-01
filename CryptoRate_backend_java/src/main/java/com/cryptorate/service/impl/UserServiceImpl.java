@@ -249,6 +249,8 @@ public class UserServiceImpl implements UserService {
         // 将 DTO 字段写入实体（null 字段由 XML 动态 SQL 忽略）
         user.setNickname(dto.getNickname());
         user.setEmail(dto.getEmail());
+        user.setFeishuAlertEnabled(dto.getFeishuAlertEnabled());
+        user.setFeishuWebhook(dto.getFeishuWebhook());
 
         // 使用专用的 updateProfile SQL，只更新资料字段，不影响密码
         userMapper.updateProfile(user);
@@ -309,8 +311,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetUserPassword(Long id) {
         log.info("管理员：重置用户密码，ID: {}", id);
-        // 使用数据库设计文档中预设的核心密文 (123456)
-        String defaultHash = "$2a$10$6wS.kL/V/S8WJp8YgX6X7.8A0E4UjV7xGzS6Hk8S9G9/0fG/0gS6H";
-        userMapper.updatePassword(id, defaultHash);
+        
+        // 1. 动态生成密文，确保与当前系统的加密逻辑 100% 一致
+        String defaultPassword = "123456";
+        String encodedPassword = passwordEncoder.encode(defaultPassword);
+        
+        // 2. 更新数据库
+        int rows = userMapper.updatePassword(id, encodedPassword);
+        
+        // 3. 校验执行结果
+        if (rows > 0) {
+            log.info("密码重置成功，ID: {}, 默认密码: {}", id, defaultPassword);
+        } else {
+            log.error("密码重置失败，未找到该用户，ID: {}", id);
+            throw new ApiException(404, "重置失败，用户不存在");
+        }
     }
 }

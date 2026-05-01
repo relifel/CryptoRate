@@ -12,6 +12,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 智能飞书告警服务实现类 (Agentic MCP 版)
@@ -44,10 +47,11 @@ public class FeishuAlertServiceImpl implements FeishuAlertService {
      * @param triggerPrice 触发价
      * @param trend        趋势 (up/down)
      * @param reason       异动深度原因 (情报描述)
+     * @param webhookUrl   用户特定 Webhook 地址 (可选)
      */
     @Override
-    public void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason) {
-        log.info("[System] 检测到行情异动，正在启动 AI 智能告警流程: {}, 原因: {}", coinSymbol, reason);
+    public void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason, String webhookUrl) {
+        log.info("[System] 检测到行情异动，正在启动 AI 智能告警流程: {}, Webhook: {}", coinSymbol, webhookUrl != null ? "User-Specific" : "Default");
 
         try {
             // 1. 计算波动百分比
@@ -60,7 +64,8 @@ public class FeishuAlertServiceImpl implements FeishuAlertService {
                     .symbol(coinSymbol)
                     .price(currentPrice)
                     .change(change)
-                    .reason(reason) // 注入原因
+                    .reason(reason) 
+                    .webhookUrl(webhookUrl) // 填充 Webhook
                     .build();
 
             // 3. 构造 Http Header
@@ -69,14 +74,61 @@ public class FeishuAlertServiceImpl implements FeishuAlertService {
             HttpEntity<AiAlertRequest> entity = new HttpEntity<>(alertRequest, headers);
 
             // 4. 调用 Python AI Alert 接口 (触发 Agent + MCP 流程)
-            log.info("[Agent] 正在请求 AI Agent 生成异动播报并调用 MCP 发送飞书...");
+            log.info("[Agent] 正在请求 AI Agent 生成异动播报并发送到指定飞书 Webhook...");
             restTemplate.postForEntity(AI_ALERT_URL, entity, String.class);
             
             log.info("[System] AI 智能告警指令下达成功。");
 
         } catch (Exception e) {
-            // 确保告警系统的故障不会影响主交易数据采集
             log.error("[System] AI 智能告警系统故障: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * 发送市场每日简报
+     *
+     * @param webhookUrl 目标飞书 Webhook 地址
+     * @param content    简报 Markdown 内容
+     */
+    @Override
+    public void sendMarketBriefing(String webhookUrl, String content) {
+        if (webhookUrl == null || webhookUrl.isEmpty()) {
+            log.warn("[Feishu] Webhook URL 为空，无法发送简报");
+            return;
+        }
+
+        try {
+            // 构造飞书 Markdown 消息格式
+            // 格式参考: https://open.feishu.cn/document/common-capabilities/dispatch-messages-and-groups/message-types/content-types/post
+            Map<String, Object> body = Map.of(
+                "msg_type", "interactive",
+                "card", Map.of(
+                    "header", Map.of(
+                        "title", Map.of("tag", "plain_text", "content", "📊 CryptoRate AI 市场每日简报"),
+                        "template", "blue"
+                    ),
+                    "elements", List.of(
+                        Map.of(
+                            "tag", "markdown",
+                            "content", content
+                        ),
+                        Map.of(
+                            "tag", "note",
+                            "elements", List.of(Map.of("tag", "plain_text", "content", "生成时间: " + LocalDateTime.now()))
+                        )
+                    )
+                )
+            );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+            restTemplate.postForLocation(webhookUrl, entity);
+            log.info("[Feishu] 每日简报已成功发送至 Webhook");
+
+        } catch (Exception e) {
+            log.error("[Feishu] 发送每日简报失败: {}", e.getMessage());
         }
     }
 }

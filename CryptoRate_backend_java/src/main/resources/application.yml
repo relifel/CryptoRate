@@ -92,10 +92,11 @@ coinlayer:
 scheduler:
   # 是否启用定时同步（true=启用  false=禁用，可避免 429）
   enabled: false
-  # 首次执行延迟：程序启动后等待 30 秒再执行，单位毫秒
-  initial-delay-ms: 30000
-  # 采集间隔：默认 24 小时（86400000 毫秒）
+  # 采集间隔：默认 24 小时
   rate-sync-interval-ms: 86400000
+  # AI 每日简报配置
+  daily-briefing-enabled: false
+  daily-briefing-cron: "0 0 8 * * ?"
 
 # 日志配置
 logging:

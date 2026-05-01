@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 import json
 from pydantic import BaseModel
 from alert_agent import FeishuAlertAgent
+from briefing_agent import DailyBriefingAgent
 
 # LangChain 及数据库相关依赖
 from pymilvus import connections
@@ -46,7 +47,8 @@ class AlertRequest(BaseModel):
     symbol: str
     price: float
     change: float
-    reason: Optional[str] = None  # 允许后端传入特定的异动原因
+    reason: Optional[str] = None
+    webhook_url: Optional[str] = None  # 支持用户自定义 Webhook
 
 # =============================================
 # 3. 生命周期管理 (Lifespan)
@@ -119,6 +121,11 @@ async def lifespan(app: FastAPI):
     print("[*] 初始化飞书告警 Agent...")
     alert_agent = FeishuAlertAgent()
     app.state.alert_agent = alert_agent
+    
+    # g. 初始化每日简报 Agent
+    print("[*] 初始化每日简报 Agent...")
+    app.state.briefing_agent = DailyBriefingAgent()
+
     app.state.rag_chain = rag_chain
 
     print("[OK] RAG 服务初始化完成！监听中...\n")
@@ -226,15 +233,39 @@ async def trigger_ai_alert(body: AlertRequest, request: Request):
     agent: FeishuAlertAgent = request.app.state.alert_agent
     
     try:
-        print(f"[*] 收到告警指令: {body.symbol} 波动 {body.change}%")
-        # 传入可选的 reason
-        content = await agent.run_alert_workflow(body.symbol, body.price, body.change, body.reason)
+        print(f"[*] 收到告警指令: {body.symbol} 波动 {body.change}% (Webhook: {'Custom' if body.webhook_url else 'Default'})")
+        # 传入可选的 reason 和 webhook_url
+        content = await agent.run_alert_workflow(
+            body.symbol, 
+            body.price, 
+            body.change, 
+            body.reason,
+            body.webhook_url
+        )
         return {"code": 200, "msg": "告警分析并发送成功", "data": content}
     except Exception as e:
-        print(f"[!] /ai/alert 接口异常: {e}")
         return JSONResponse(
             status_code=500,
             content={"code": 500, "msg": f"告警发送失败: {str(e)}"}
+        )
+
+@app.get("/ai/daily_brief")
+async def get_daily_brief(request: Request):
+    """
+    获取每日市场简报。由 Java 调度器触发。
+    利用 Qwen-Max 的搜索能力搜集今日资讯。
+    """
+    agent: DailyBriefingAgent = request.app.state.briefing_agent
+    
+    try:
+        print("[*] 收到每日简报生成请求...")
+        content = await agent.generate_briefing()
+        return {"code": 200, "content": content}
+    except Exception as e:
+        print(f"[!] /ai/daily_brief 接口异常: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={"code": 500, "msg": f"简报生成失败: {str(e)}"}
         )
 
 # =============================================

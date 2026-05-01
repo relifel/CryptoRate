@@ -28,4 +28,7 @@ public class AiAlertRequest {
 
     /** 异动深度原因 (Mock/Real Reason) */
     private String reason;
+
+    /** 飞书 Webhook 地址 (可选) */
+    private String webhookUrl;
 }

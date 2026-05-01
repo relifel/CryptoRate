@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext, Navigate, useNavigate } from 'react-router-dom';
+import { profileAPI } from '../api';
 
 /**
  * 详情项辅助组件 - 遵循 Hyper-Minimalism 规范
@@ -17,11 +18,41 @@ const ProfileDetailItem = ({ label, value, type = 'text' }) => (
 export default function UserCenter() {
     const { user, setUser } = useOutletContext();
     const navigate = useNavigate();
+    const [isUpdating, setIsUpdating] = useState(false);
     
     // 如果没有登录态，直接重定向回首页
     if (!user) {
         return <Navigate to="/" replace />;
     }
+
+    // 切换飞书预警状态
+    const handleToggleFeishuAlert = async () => {
+        if (isUpdating) return;
+        
+        setIsUpdating(true);
+        try {
+            const nextValue = user.feishuAlertEnabled === 1 ? 0 : 1;
+            const res = await profileAPI.updateProfile({
+                feishuAlertEnabled: nextValue
+            });
+            
+            if (res.code === 200) {
+                // 更新全局 User 上下文
+                setUser({ ...user, feishuAlertEnabled: nextValue });
+                // 同时更新本地存储（如果有存储整个 user 对象的话）
+                const stored = localStorage.getItem('cryptorate_user');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    localStorage.setItem('cryptorate_user', JSON.stringify({ ...parsed, feishuAlertEnabled: nextValue }));
+                }
+            }
+        } catch (error) {
+            console.error('更新预警设置失败:', error);
+            alert('更新设置失败，请稍后再试');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
     // 登出逻辑：清除上下文及本地存储的 Token
     const handleLogout = () => {
@@ -29,6 +60,35 @@ export default function UserCenter() {
         localStorage.removeItem('cryptorate_user');
         localStorage.removeItem('cryptorate_token');
         navigate('/');
+    };
+
+    // 切换飞书每日简报状态
+    const handleToggleDailyBriefing = async () => {
+        if (isUpdating) return;
+        
+        setIsUpdating(true);
+        try {
+            const nextValue = user.dailyBriefingEnabled === 1 ? 0 : 1;
+            const res = await profileAPI.updateProfile({
+                dailyBriefingEnabled: nextValue
+            });
+            
+            if (res.code === 200) {
+                // 更新全局 User 上下文
+                setUser({ ...user, dailyBriefingEnabled: nextValue });
+                // 同时更新本地存储
+                const stored = localStorage.getItem('cryptorate_user');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    localStorage.setItem('cryptorate_user', JSON.stringify({ ...parsed, dailyBriefingEnabled: nextValue }));
+                }
+            }
+        } catch (error) {
+            console.error('更新简报设置失败:', error);
+            alert('更新设置失败，请稍后再试');
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     return (
@@ -117,10 +177,9 @@ export default function UserCenter() {
                             </div>
 
                             <div className="space-y-1">
-                                <ProfileDetailItem label="用户唯一数字标识 (UID)" value={user.id || 'UID-8910-X'} type="mono" />
+                                 <ProfileDetailItem label="用户唯一数字标识 (UID)" value={user.id || 'UID-8910-X'} type="mono" />
                                 <ProfileDetailItem label="通讯邮箱 (Security Email)" value={user.email || '未绑定安全邮箱'} />
                                 <ProfileDetailItem label="通行证创建时间" value={user.createdAt ? new Date(user.createdAt).toLocaleString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '2025年10月12日'} />
-                                <ProfileDetailItem label="最后已知登录位置" value="中国 / 上海 (IPv4: 192.168.*.*)" />
                             </div>
 
                             {/* 偏好开关组 */}
@@ -128,28 +187,80 @@ export default function UserCenter() {
                                 <h3 className="text-lg font-bold text-slate-900 mb-8 tracking-tight">智能推送与偏好设置</h3>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="flex items-center justify-between p-5 bg-slate-50/30 rounded-2xl border border-slate-100/50">
-                                        <div className="pr-4">
-                                            <p className="text-[14px] font-bold text-slate-800">行情异动实时预警</p>
-                                            <p className="text-[11px] text-slate-400 font-medium mt-0.5">自选资产波动超 5% 时推送</p>
-                                        </div>
-                                        <div className="w-11 h-6 bg-slate-900 rounded-full relative p-1 cursor-pointer">
-                                            <div className="w-4 h-4 bg-white rounded-full translate-x-5 transition-transform shadow-sm"></div>
+                                    <div className="flex flex-col gap-4">
+                                        <div className={`flex items-center justify-between p-5 bg-slate-50/30 rounded-2xl border border-slate-100/50 transition-all ${user.feishuAlertEnabled === 1 ? 'ring-1 ring-slate-900/5 bg-slate-50/80 shadow-sm' : ''}`}>
+                                            <div className="pr-4">
+                                                <p className="text-[14px] font-bold text-slate-800">行情异动实时预警</p>
+                                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">自选资产波动超 5% 时推送</p>
+                                            </div>
+                                            <div 
+                                                onClick={handleToggleFeishuAlert}
+                                                className={`w-11 h-6 rounded-full relative p-1 cursor-pointer transition-colors duration-300 ${user.feishuAlertEnabled === 1 ? 'bg-slate-900' : 'bg-slate-200'}`}
+                                            >
+                                                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-sm ${user.feishuAlertEnabled === 1 ? 'translate-x-5' : ''}`}></div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-5 bg-slate-50/30 rounded-2xl border border-slate-100/50">
-                                        <div className="pr-4">
-                                            <p className="text-[14px] font-bold text-slate-800">AI 智库每日简报</p>
-                                            <p className="text-[11px] text-slate-400 font-medium mt-0.5">早间生成全市场行情解读</p>
+                                    <div className={`flex flex-col gap-4 p-5 bg-slate-50/30 rounded-2xl border border-slate-100/50 transition-all ${user.dailyBriefingEnabled === 1 ? 'ring-1 ring-slate-900/5 bg-slate-50/80 shadow-sm' : ''}`}>
+                                        <div className="flex items-center justify-between">
+                                            <div className="pr-4">
+                                                <p className="text-[14px] font-bold text-slate-800">AI 智库每日简报</p>
+                                                <p className="text-[11px] text-slate-400 font-medium mt-0.5">早间生成全市场行情解读</p>
+                                            </div>
+                                            <div 
+                                                onClick={handleToggleDailyBriefing}
+                                                className={`w-11 h-6 rounded-full relative p-1 cursor-pointer transition-colors duration-300 ${user.dailyBriefingEnabled === 1 ? 'bg-slate-900' : 'bg-slate-200'}`}
+                                            >
+                                                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-sm ${user.dailyBriefingEnabled === 1 ? 'translate-x-5' : ''}`}></div>
+                                            </div>
                                         </div>
-                                        <div className="w-11 h-6 bg-slate-200 rounded-full relative p-1 cursor-pointer">
-                                            <div className="w-4 h-4 bg-white rounded-full transition-transform shadow-sm"></div>
+                                    </div>
+                                </div>
+
+                                {/* 全局 Webhook 配置区域 - 只要开启了推送功能就显示 */}
+                                <div className={`overflow-hidden transition-all duration-500 ease-in-out mt-6 ${(user.feishuAlertEnabled === 1 || user.dailyBriefingEnabled === 1) ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                    <div className="px-5 py-6 bg-white border border-slate-100 rounded-2xl shadow-sm space-y-4">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">飞书 Webhook 配置</span>
+                                                {user.feishuWebhook && <span className="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-md">已连接</span>}
+                                            </div>
+                                            <span className="text-[10px] text-slate-300">必填项</span>
                                         </div>
+                                        <div className="relative group">
+                                            <input 
+                                                type="text" 
+                                                defaultValue={user.feishuWebhook || ''}
+                                                onBlur={async (e) => {
+                                                    const val = e.target.value;
+                                                    if (val === user.feishuWebhook) return;
+                                                    try {
+                                                        const res = await profileAPI.updateProfile({ feishuWebhook: val });
+                                                        if (res.code === 200) {
+                                                            setUser({ ...user, feishuWebhook: val });
+                                                            message.success('推送地址更新成功');
+                                                        }
+                                                    } catch (err) {
+                                                        console.error('Webhook 保存失败', err);
+                                                        message.error('推送地址更新失败，请检查网络');
+                                                    }
+                                                }}
+                                                placeholder="请粘贴飞书机器人的 Webhook 地址..."
+                                                className="w-full bg-slate-50 border-none rounded-xl px-4 py-3 text-[13px] font-mono text-slate-600 placeholder:text-slate-300 focus:ring-2 focus:ring-slate-900/5 transition-all"
+                                            />
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <svg width="14" height="14" fill="none" stroke="currentColor" className="text-slate-400" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <p className="text-[10px] text-slate-400 font-medium">配置完成后，系统将通过该地址发送通知。请确保 Webhook 地址有效且群机器人已开启。</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         {/* 2. 风险警示区 (次级视觉) */}
                         <div className="p-8 bg-rose-50/30 rounded-[28px] border border-rose-100/50 flex flex-col md:flex-row items-center gap-6">

@@ -73,19 +73,23 @@ class FeishuAlertAgent:
         lines = [line.strip() for line in text.split("\n") if line.strip()]
         return "\n".join(lines)
 
-    async def run_alert_workflow(self, symbol: str, price: float, change: float, reason: str = None):
+    async def run_alert_workflow(self, symbol: str, price: float, change: float, reason: str = None, manual_webhook: str = None):
         """
         Agentic Workflow: 思考 -> 清洗内容 -> 调用卡片接口
         """
+        # 优先级：手动 Webhook > 默认环境变量 Webhook
+        target_webhook = manual_webhook if manual_webhook else self.webhook_url
+        
         prompt = f"当前异动数据：币种={symbol}, 当前价格={price}, 5分钟变化率={change}%。"
         if reason:
             prompt += f"\n背景参考事项：{reason}\n请结合以上背景，直接开始你的分析。"
         else:
             prompt += "直接开始你的分析。"
         
+        # 启动 MCP 服务器时注入目标 Webhook 地址
         server_params = StdioServerParameters(
             command=sys.executable,
-            args=[self.mcp_path, "--webhook", self.webhook_url],
+            args=[self.mcp_path, "--webhook", target_webhook],
             env=os.environ.copy()
         )
 

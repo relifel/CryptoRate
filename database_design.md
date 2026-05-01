@@ -27,6 +27,8 @@ CREATE TABLE `user` (
   `nickname` varchar(50) DEFAULT NULL COMMENT '昵称',
   `role` varchar(20) NOT NULL DEFAULT 'USER' COMMENT '角色: ADMIN, USER',
   `status` varchar(20) NOT NULL DEFAULT 'ACTIVE' COMMENT '状态: ACTIVE, DISABLED',
+  `feishu_webhook` varchar(255) DEFAULT NULL COMMENT '用户的飞书机器人 Webhook URL',
+  `daily_briefing_enabled` tinyint NOT NULL DEFAULT '0' COMMENT '是否订阅 AI 每日简报 (0-否, 1-是)',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),

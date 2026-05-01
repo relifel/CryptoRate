@@ -27,6 +27,9 @@
         <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
         <result column="role" property="role" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="feishu_alert_enabled" property="feishuAlertEnabled" jdbcType="TINYINT"/>
+        <result column="feishu_webhook" property="feishuWebhook" jdbcType="VARCHAR"/>
+        <result column="daily_briefing_enabled" property="dailyBriefingEnabled" jdbcType="TINYINT"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -37,7 +40,7 @@
     
     <!-- 基础字段列表 -->
     <sql id="Base_Column_List">
-        id, username, password, email, nickname, role, status, created_at, update_time
+        id, username, password, email, nickname, role, status, feishu_alert_enabled, feishu_webhook, daily_briefing_enabled, created_at, update_time
     </sql>
 
     <!-- ========================================
@@ -51,71 +54,55 @@
             username,
             password,
             email,
+            nickname,
             role,
             status,
+            feishu_alert_enabled,
+            feishu_webhook,
+            daily_briefing_enabled,
             created_at
         ) VALUES (
             #{username},
             #{password},
             #{email},
+            #{nickname},
             #{role},
             #{status},
+            #{feishuAlertEnabled},
+            #{feishuWebhook},
+            #{dailyBriefingEnabled},
             #{createdAt}
         )
     </insert>
 
-    <!-- ========================================
-         删除操作
-         ======================================== -->
-    
-    <!-- 根据 ID 删除用户 -->
-    <delete id="deleteById" parameterType="java.lang.Long">
-        DELETE FROM user
-        WHERE id = #{id}
-    </delete>
-
-    <!-- ========================================
-         更新操作
-         ======================================== -->
-    
-    <!-- 更新用户信息（动态 SQL，只更新非空字段） -->
+    <!-- 更新用户信息 -->
     <update id="update" parameterType="com.cryptorate.entity.User">
         UPDATE user
         <set>
-            <if test="username != null and username != ''">
-                username = #{username},
-            </if>
-            <if test="password != null and password != ''">
-                password = #{password},
-            </if>
-            <if test="email != null and email != ''">
-                email = #{email},
-            </if>
-            <if test="nickname != null">
-                nickname = #{nickname},
-            </if>
-            <if test="role != null and role != ''">
-                role = #{role},
-            </if>
-            <if test="status != null and status != ''">
-                status = #{status},
-            </if>
-            update_time = NOW(),
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="role != null">role = #{role},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="feishuAlertEnabled != null">feishu_alert_enabled = #{feishuAlertEnabled},</if>
+            <if test="feishuWebhook != null">feishu_webhook = #{feishuWebhook},</if>
+            <if test="dailyBriefingEnabled != null">daily_briefing_enabled = #{dailyBriefingEnabled},</if>
+            update_time = NOW()
         </set>
         WHERE id = #{id}
     </update>
 
-    <!-- 仅更新个人资料字段（昵称、邮箱），不涉及密码 -->
+    <!-- 更新个人资料 -->
     <update id="updateProfile" parameterType="com.cryptorate.entity.User">
         UPDATE user
         <set>
-            <if test="nickname != null">
-                nickname = #{nickname},
-            </if>
-            <if test="email != null">
-                email = #{email},
-            </if>
-            update_time = NOW(),
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="feishuAlertEnabled != null">feishu_alert_enabled = #{feishuAlertEnabled},</if>
+            <if test="feishuWebhook != null">feishu_webhook = #{feishuWebhook},</if>
+            <if test="dailyBriefingEnabled != null">daily_briefing_enabled = #{dailyBriefingEnabled},</if>
+            update_time = NOW()
         </set>
         WHERE id = #{id}
     </update>
@@ -175,6 +162,14 @@
             </if>
         </where>
         ORDER BY created_at DESC
+    </select>
+
+    <!-- 获取所有开启了飞书预警的用户 -->
+    <select id="selectUsersWithFeishuAlertEnabled" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM user
+        WHERE feishu_alert_enabled = 1 AND status = 'ACTIVE'
     </select>
 
 </mapper>

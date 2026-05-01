@@ -22,6 +22,14 @@ public interface FeishuAlertService {
      * @param triggerPrice 用户设定的触发阈值
      * @param trend        异动趋势 ("up" 为上涨, "down" 为下跌)
      * @param reason       异动深度原因 (情报描述)
+     * @param webhookUrl   目标飞书 Webhook 地址 (可选)
      */
-    void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason);
+    void sendPriceAlert(String coinSymbol, BigDecimal currentPrice, BigDecimal triggerPrice, String trend, String reason, String webhookUrl);
+    /**
+     * 发送市场每日简报
+     *
+     * @param webhookUrl 目标飞书 Webhook 地址
+     * @param content    简报 Markdown 内容
+     */
+    void sendMarketBriefing(String webhookUrl, String content);
 }

@@ -25,4 +25,15 @@ public class ProfileUpdateDTO {
     /** 邮箱 */
     @Email(message = "邮箱格式不正确")
     private String email;
+
+    /** 飞书预警开关 (0:关闭, 1:开启) */
+    private Integer feishuAlertEnabled;
+
+    /** 飞书自定义 Webhook 地址 */
+    private String feishuWebhook;
+
+    /**
+     * 是否订阅 AI 每日简报 (0-否, 1-是)
+     */
+    private Integer dailyBriefingEnabled;
 }
